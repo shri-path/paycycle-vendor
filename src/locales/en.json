@@ -1,0 +1,80 @@
+{
+  "common": {
+    "app_name": "Deli Vendor",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "offline": "Offline Mode",
+    "offline_message": "You are currently offline. Data will sync when connection is restored.",
+    "retry": "Retry",
+    "close": "Close"
+  },
+  "auth": {
+    "welcome": "Welcome",
+    "login": "Login",
+    "logout": "Logout",
+    "phone": "Phone Number",
+    "password": "Password",
+    "forgot_password": "Forgot Password?",
+    "sign_up": "Sign Up",
+    "already_have_account": "Already have an account?"
+  },
+  "ledger": {
+    "title": "Ledger",
+    "add_credit": "Add Credit",
+    "add_payment": "Add Payment",
+    "credit": "Credit",
+    "debit": "Debit",
+    "payment": "Payment",
+    "entries": "Entries",
+    "date": "Date",
+    "amount": "Amount",
+    "notes": "Notes",
+    "customer": "Customer",
+    "balance": "Balance",
+    "outstanding": "Outstanding"
+  },
+  "customer": {
+    "title": "Customers",
+    "add_customer": "Add Customer",
+    "name": "Name",
+    "phone": "Phone",
+    "address": "Address",
+    "list": "Customer List",
+    "details": "Customer Details",
+    "edit_customer": "Edit Customer",
+    "delete_customer": "Delete Customer"
+  },
+  "home": {
+    "title": "Home",
+    "today": "Today",
+    "recent": "Recent",
+    "outstanding": "Outstanding",
+    "collection": "Collection"
+  },
+  "settings": {
+    "title": "Settings",
+    "account": "Account",
+    "language": "Language",
+    "theme": "Theme",
+    "notifications": "Notifications",
+    "about": "About",
+    "version": "Version",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  },
+  "validation": {
+    "required": "This field is required",
+    "invalid_phone": "Invalid phone number",
+    "invalid_email": "Invalid email",
+    "password_too_short": "Password must be at least 6 characters",
+    "passwords_do_not_match": "Passwords do not match"
+  }
+}

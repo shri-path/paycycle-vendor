@@ -1,0 +1,80 @@
+{
+  "common": {
+    "app_name": "डेली विक्रेता",
+    "confirm": "पुष्टि करें",
+    "cancel": "रद्द करें",
+    "save": "सहेजें",
+    "delete": "हटाएं",
+    "edit": "संपादित करें",
+    "add": "जोड़ें",
+    "loading": "लोड हो रहा है...",
+    "error": "त्रुटि",
+    "success": "सफल",
+    "warning": "चेतावनी",
+    "offline": "ऑफ़लाइन मोड",
+    "offline_message": "आप वर्तमान में ऑफ़लाइन हैं। कनेक्शन बहाल होने पर डेटा सिंक हो जाएगा।",
+    "retry": "पुनः प्रयास करें",
+    "close": "बंद करें"
+  },
+  "auth": {
+    "welcome": "स्वागत है",
+    "login": "लॉगिन करें",
+    "logout": "लॉगआउट करें",
+    "phone": "फोन नंबर",
+    "password": "पासवर्ड",
+    "forgot_password": "पासवर्ड भूल गए?",
+    "sign_up": "साइन अप करें",
+    "already_have_account": "पहले से खाता है?"
+  },
+  "ledger": {
+    "title": "बहीखाता",
+    "add_credit": "क्रेडिट जोड़ें",
+    "add_payment": "भुगतान जोड़ें",
+    "credit": "क्रेडिट",
+    "debit": "डेबिट",
+    "payment": "भुगतान",
+    "entries": "प्रविष्टियां",
+    "date": "तारीख",
+    "amount": "राशि",
+    "notes": "नोट्स",
+    "customer": "ग्राहक",
+    "balance": "शेष",
+    "outstanding": "बकाया"
+  },
+  "customer": {
+    "title": "ग्राहक",
+    "add_customer": "ग्राहक जोड़ें",
+    "name": "नाम",
+    "phone": "फोन",
+    "address": "पता",
+    "list": "ग्राहक सूची",
+    "details": "ग्राहक विवरण",
+    "edit_customer": "ग्राहक संपादित करें",
+    "delete_customer": "ग्राहक हटाएं"
+  },
+  "home": {
+    "title": "होम",
+    "today": "आज",
+    "recent": "हाल ही",
+    "outstanding": "बकाया",
+    "collection": "संग्रह"
+  },
+  "settings": {
+    "title": "सेटिंग्स",
+    "account": "खाता",
+    "language": "भाषा",
+    "theme": "थीम",
+    "notifications": "सूचनाएं",
+    "about": "परिचय",
+    "version": "संस्करण",
+    "privacy": "गोपनीयता नीति",
+    "terms": "सेवा की शर्तें"
+  },
+  "validation": {
+    "required": "यह क्षेत्र आवश्यक है",
+    "invalid_phone": "अमान्य फोन नंबर",
+    "invalid_email": "अमान्य ईमेल",
+    "password_too_short": "पासवर्ड कम से कम 6 वर्णों का होना चाहिए",
+    "passwords_do_not_match": "पासवर्ड मेल नहीं खाते"
+  }
+}
