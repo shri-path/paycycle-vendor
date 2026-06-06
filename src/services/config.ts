@@ -2,6 +2,9 @@
  * API Service Configuration
  * Purpose: Switch between mock and real API modes
  * Usage: Import and use API_MODE to determine which implementation to use
+ *
+ * Env vars must use EXPO_PUBLIC_ prefix to be exposed in Expo/Metro bundles.
+ * REACT_APP_* vars are a Create React App convention and are NOT supported in Expo.
  */
 
 /**
@@ -9,7 +12,7 @@
  * 'mock': Use mock data for development
  * 'real': Use real API endpoints (requires backend)
  */
-export const API_MODE = (process.env.REACT_APP_API_MODE || 'mock') as 'mock' | 'real'
+export const API_MODE = (process.env.EXPO_PUBLIC_API_MODE || 'mock') as 'mock' | 'real'
 
 /**
  * Check if using mock mode
@@ -21,8 +24,8 @@ export const isMockMode = API_MODE === 'mock'
  */
 export const API_CONFIG = {
   mode: API_MODE,
-  baseUrl: process.env.REACT_APP_API_URL || 'http://localhost:3000/api',
-  socketUrl: process.env.REACT_APP_SOCKET_URL || 'http://localhost:3000',
+  baseUrl: process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000/api',
+  socketUrl: process.env.EXPO_PUBLIC_SOCKET_URL || 'http://localhost:3000',
   timeout: 30000, // 30 seconds
   mockDelay: 500, // Simulate network delay in mock mode
 }
