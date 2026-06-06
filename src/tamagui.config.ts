@@ -1,6 +1,6 @@
 /**
  * Tamagui Design System Configuration
- * Trust Green Theme for Deli Vendor App
+ * Trust Green Theme for PayCycle Vendor App
  *
  * Design tokens: colors, typography, spacing, shadows
  */

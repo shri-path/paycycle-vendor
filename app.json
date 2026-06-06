@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "deli_vendor",
-    "slug": "deli_vendor",
+    "name": "paycycle_vendor",
+    "slug": "paycycle_vendor",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "delivendor",
+    "scheme": "paycyclevendor",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {

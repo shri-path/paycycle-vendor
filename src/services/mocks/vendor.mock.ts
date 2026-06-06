@@ -13,7 +13,7 @@ export const mockVendor: Vendor = {
   id: 'vendor-1',
   name: 'राजीव कुमार शर्मा',
   phone: '9876543200',
-  email: 'rajeev@delivendor.app',
+  email: 'rajeev@paycyclevendor.app',
   businessName: 'शर्मा डेली स्टोर्स',
   businessType: 'दैनिक आवश्यकता की दुकान',
   city: 'भोपाल',
