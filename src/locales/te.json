@@ -48,7 +48,22 @@
     "terms_agree": "ఖాతా సృష్టించడం ద్వారా మీరు అంగీకరిస్తున్నారు",
     "terms_of_service": "సేవా నిబంధనలు",
     "invalid_credentials": "చెల్లని ఫోన్ నంబర్ లేదా పాస్‌వర్డ్",
-    "phone_already_registered": "ఈ ఫోన్ నంబర్ ఇప్పటికే నమోదు చేయబడింది"
+    "phone_already_registered": "ఈ ఫోన్ నంబర్ ఇప్పటికే నమోదు చేయబడింది",
+    "otp_expired": "OTP గడువు తీరింది. కొత్తది అభ్యర్థించండి.",
+    "reset_token_invalid": "రీసెట్ లింక్ చెల్లదు. మళ్ళీ ప్రయత్నించండి.",
+    "show_password": "పాస్‌వర్డ్ చూపు",
+    "hide_password": "పాస్‌వర్డ్ దాచు",
+    "back": "వెనక్కి వెళ్ళు",
+    "category_placeholder": "వర్గాన్ని ఎంచుకోండి (ఐచ్ఛికం)",
+    "category_milk_dairy": "పాలు మరియు డెయిరీ",
+    "category_newspaper": "వార్తాపత్రిక",
+    "category_bread_bakery": "బ్రెడ్ మరియు బేకరీ",
+    "category_vegetables": "కూరగాయలు",
+    "category_other": "ఇతర",
+    "offline_sign_in": "మీరు ఆఫ్‌లైన్‌లో ఉన్నారు. సైన్ ఇన్ చేయడానికి కనెక్ట్ అవ్వండి."
+  },
+  "errors": {
+    "server_error": "సర్వర్ లోపం. తర్వాత మళ్ళీ ప్రయత్నించండి."
   },
   "ledger": {
     "title": "ఖాతా పుస్తకం",

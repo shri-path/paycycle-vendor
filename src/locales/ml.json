@@ -48,7 +48,22 @@
     "terms_agree": "അക്കൗണ്ട് ഉണ്ടാക്കുന്നതിലൂടെ നിങ്ങൾ സമ്മതിക്കുന്നു",
     "terms_of_service": "സേവന നിബന്ധനകൾ",
     "invalid_credentials": "അസാധുവായ ഫോൺ നമ്പർ അല്ലെങ്കിൽ പാസ്‌വേഡ്",
-    "phone_already_registered": "ഈ ഫോൺ നമ്പർ ഇതിനകം രജിസ്റ്റർ ചെയ്തിട്ടുണ്ട്"
+    "phone_already_registered": "ഈ ഫോൺ നമ്പർ ഇതിനകം രജിസ്റ്റർ ചെയ്തിട്ടുണ്ട്",
+    "otp_expired": "OTP കാലഹരണപ്പെട്ടു. പുതിയത് അഭ്യർത്ഥിക്കുക.",
+    "reset_token_invalid": "റീസെറ്റ് ലിങ്ക് അസാധുവാണ്. വീണ്ടും ശ്രമിക്കുക.",
+    "show_password": "പാസ്‌വേഡ് കാണിക്കുക",
+    "hide_password": "പാസ്‌വേഡ് മറയ്ക്കുക",
+    "back": "തിരിച്ചു പോകുക",
+    "category_placeholder": "വിഭാഗം തിരഞ്ഞെടുക്കുക (ഐച്ഛികം)",
+    "category_milk_dairy": "പാലും ഡെയറി ഉൽപ്പന്നങ്ങളും",
+    "category_newspaper": "പത്രം",
+    "category_bread_bakery": "ബ്രെഡ് & ബേക്കറി",
+    "category_vegetables": "പച്ചക്കറികൾ",
+    "category_other": "മറ്റുള്ളവ",
+    "offline_sign_in": "നിങ്ങൾ ഓഫ്‌ലൈനിലാണ്. സൈൻ ഇൻ ചെയ്യാൻ കണക്ട് ചെയ്യുക."
+  },
+  "errors": {
+    "server_error": "സർവ്വർ പിശക്. പിന്നീട് വീണ്ടും ശ്രമിക്കുക."
   },
   "ledger": {
     "title": "ലെഡ്ജർ",

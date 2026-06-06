@@ -3,55 +3,48 @@
  * Purpose: New vendor owner account creation
  */
 
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import {
-  View,
-  StyleSheet,
-  ScrollView,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
   TouchableOpacity,
+  StyleSheet,
+  View,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
+import * as Haptics from 'expo-haptics'
+import { useShallow } from 'zustand/react/shallow'
 import { AppText } from '@components/primitives/AppText'
 import { AppButton } from '@components/primitives/AppButton'
 import { AppInput } from '@components/primitives/AppInput'
 import { AppPhoneInput } from '@components/primitives/AppPhoneInput'
 import { AppSelect } from '@components/primitives/AppSelect'
+import { AppAlert } from '@components/primitives/AppAlert'
+import { ScreenErrorBoundary } from '@components/composite/ScreenErrorBoundary'
 import { useAuthStore } from '../store/auth.store'
 import { useTranslation } from '@hooks/useTranslation'
+import { useNetworkStatus } from '@hooks/useNetworkStatus'
 import { colors, spacing } from '@constants/tokens'
+import { validatePassword } from '@utils/validation'
 
-const CATEGORIES = [
-  { label: 'Milk & Dairy', value: 'milk_dairy' },
-  { label: 'Newspaper', value: 'newspaper' },
-  { label: 'Bread & Bakery', value: 'bread_bakery' },
-  { label: 'Vegetables', value: 'vegetables' },
-  { label: 'Other', value: 'other' },
-]
+/** Category values — labels are resolved via t() at render time */
+const CATEGORY_KEYS = ['milk_dairy', 'newspaper', 'bread_bakery', 'vegetables', 'other'] as const
 
-const PASSWORD_REGEX = {
-  uppercase: /[A-Z]/,
-  lowercase: /[a-z]/,
-  digit: /[0-9]/,
-  special: /[^A-Za-z0-9]/,
-}
-
-function validatePassword(password: string): string | null {
-  if (password.length < 8) return 'validation.password_min_8'
-  if (!PASSWORD_REGEX.uppercase.test(password)) return 'validation.password_complexity'
-  if (!PASSWORD_REGEX.lowercase.test(password)) return 'validation.password_complexity'
-  if (!PASSWORD_REGEX.digit.test(password)) return 'validation.password_complexity'
-  if (!PASSWORD_REGEX.special.test(password)) return 'validation.password_complexity'
-  return null
-}
-
-export default function SignupScreen() {
+function SignupScreenContent() {
   const { t } = useTranslation()
   const router = useRouter()
-  const { signup, isLoading, error, clearError } = useAuthStore()
+  const { signup, isLoading, error, clearError } = useAuthStore(
+    useShallow((s) => ({
+      signup: s.signup,
+      isLoading: s.isLoading,
+      error: s.error,
+      clearError: s.clearError,
+    })),
+  )
+  const { isConnected } = useNetworkStatus()
 
   const [businessName, setBusinessName] = useState('')
   const [countryCode, setCountryCode] = useState('+91')
@@ -61,7 +54,16 @@ export default function SignupScreen() {
   const [showPassword, setShowPassword] = useState(false)
   const [validationError, setValidationError] = useState<string | null>(null)
 
+  // Double-tap protection
+  const submitting = useRef(false)
+
   const fullPhone = `${countryCode}${phone}`
+
+  // Resolve category options with translated labels at render time
+  const categoryOptions = CATEGORY_KEYS.map((k) => ({
+    label: t(`auth.category_${k}`),
+    value: k,
+  }))
 
   const validate = (): boolean => {
     if (!businessName.trim()) {
@@ -81,14 +83,28 @@ export default function SignupScreen() {
   }
 
   const handleSignup = async () => {
+    if (submitting.current || isLoading) return
+    submitting.current = true
+
     clearError()
     setValidationError(null)
-    if (!validate()) return
+
+    if (!validate()) {
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+      submitting.current = false
+      return
+    }
+
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+
     try {
       await signup(fullPhone, password, businessName.trim())
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
       router.replace('/(app)/home')
     } catch {
-      // error is set in store
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+    } finally {
+      submitting.current = false
     }
   }
 
@@ -105,9 +121,19 @@ export default function SignupScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
+          {/* Offline banner */}
+          {!isConnected ? (
+            <AppAlert type="warning" title={t('auth.offline_sign_in')} />
+          ) : null}
+
           {/* Header */}
           <View style={styles.header}>
-            <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <TouchableOpacity
+              onPress={() => router.back()}
+              style={styles.backButton}
+              accessibilityRole="button"
+              accessibilityLabel={t('auth.back')}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
             </TouchableOpacity>
             <AppText variant="h3" weight="bold">
@@ -120,7 +146,7 @@ export default function SignupScreen() {
             {displayError ? (
               <View style={styles.errorBanner}>
                 <AppText variant="caption" color={colors.error}>
-                  {displayError}
+                  {t(displayError)}
                 </AppText>
               </View>
             ) : null}
@@ -151,7 +177,11 @@ export default function SignupScreen() {
               placeholder="••••••••"
               helperText={t('validation.password_complexity')}
               rightIcon={
-                <TouchableOpacity onPress={() => setShowPassword((v) => !v)}>
+                <TouchableOpacity
+                  onPress={() => setShowPassword((v) => !v)}
+                  accessibilityRole="button"
+                  accessibilityLabel={showPassword ? t('auth.hide_password') : t('auth.show_password')}
+                >
                   <Ionicons
                     name={showPassword ? 'eye-off-outline' : 'eye-outline'}
                     size={20}
@@ -163,10 +193,10 @@ export default function SignupScreen() {
 
             <AppSelect
               label={t('auth.category')}
-              options={CATEGORIES}
+              options={categoryOptions}
               value={category}
               onChange={setCategory}
-              placeholder="Select category (optional)"
+              placeholder={t('auth.category_placeholder')}
             />
 
             <AppButton
@@ -175,6 +205,7 @@ export default function SignupScreen() {
               variant="primary"
               fullWidth
               loading={isLoading}
+              disabled={isLoading || !isConnected}
             />
 
             <View style={styles.termsRow}>
@@ -191,6 +222,16 @@ export default function SignupScreen() {
     </SafeAreaView>
   )
 }
+
+export default function SignupScreen() {
+  return (
+    <ScreenErrorBoundary>
+      <SignupScreenContent />
+    </ScreenErrorBoundary>
+  )
+}
+
+SignupScreen.displayName = 'SignupScreen'
 
 const styles = StyleSheet.create({
   safe: {

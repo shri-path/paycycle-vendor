@@ -48,7 +48,22 @@
     "terms_agree": "অ্যাকাউন্ট তৈরি করে আপনি সম্মত হচ্ছেন",
     "terms_of_service": "সেবার শর্তাবলী",
     "invalid_credentials": "অবৈধ ফোন নম্বর বা পাসওয়ার্ড",
-    "phone_already_registered": "এই ফোন নম্বর ইতিমধ্যে নিবন্ধিত"
+    "phone_already_registered": "এই ফোন নম্বর ইতিমধ্যে নিবন্ধিত",
+    "otp_expired": "OTP মেয়াদ শেষ। নতুনটির জন্য অনুরোধ করুন।",
+    "reset_token_invalid": "রিসেট লিঙ্ক অবৈধ। আবার চেষ্টা করুন।",
+    "show_password": "পাসওয়ার্ড দেখুন",
+    "hide_password": "পাসওয়ার্ড লুকান",
+    "back": "ফিরে যান",
+    "category_placeholder": "বিভাগ নির্বাচন করুন (ঐচ্ছিক)",
+    "category_milk_dairy": "দুধ ও ডেইরি",
+    "category_newspaper": "সংবাদপত্র",
+    "category_bread_bakery": "রুটি ও বেকারি",
+    "category_vegetables": "সবজি",
+    "category_other": "অন্যান্য",
+    "offline_sign_in": "আপনি অফলাইনে আছেন। সাইন ইন করতে সংযুক্ত হন।"
+  },
+  "errors": {
+    "server_error": "সার্ভার ত্রুটি। পরে আবার চেষ্টা করুন।"
   },
   "ledger": {
     "title": "খাতা",

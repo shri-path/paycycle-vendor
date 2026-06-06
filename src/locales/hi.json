@@ -48,7 +48,22 @@
     "terms_agree": "खाता बनाकर आप हमारी",
     "terms_of_service": "सेवा शर्तें",
     "invalid_credentials": "अमान्य फोन नंबर या पासवर्ड",
-    "phone_already_registered": "यह फोन नंबर पहले से पंजीकृत है"
+    "phone_already_registered": "यह फोन नंबर पहले से पंजीकृत है",
+    "otp_expired": "OTP समाप्त हो गया है। कृपया नया OTP मांगें।",
+    "reset_token_invalid": "रीसेट लिंक अमान्य या समाप्त है। कृपया पुनः प्रयास करें।",
+    "show_password": "पासवर्ड दिखाएं",
+    "hide_password": "पासवर्ड छिपाएं",
+    "back": "वापस जाएं",
+    "category_placeholder": "श्रेणी चुनें (वैकल्पिक)",
+    "category_milk_dairy": "दूध और डेयरी",
+    "category_newspaper": "समाचार पत्र",
+    "category_bread_bakery": "ब्रेड और बेकरी",
+    "category_vegetables": "सब्जियां",
+    "category_other": "अन्य",
+    "offline_sign_in": "आप ऑफ़लाइन हैं। साइन इन करने के लिए कनेक्ट करें।"
+  },
+  "errors": {
+    "server_error": "सर्वर त्रुटि। कृपया बाद में पुनः प्रयास करें।"
   },
   "ledger": {
     "title": "बहीखाता",

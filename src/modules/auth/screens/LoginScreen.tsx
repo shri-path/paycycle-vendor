@@ -3,36 +3,52 @@
  * Purpose: Phone + password sign-in for vendor owners and staff
  */
 
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import {
-  View,
-  StyleSheet,
-  ScrollView,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
   TouchableOpacity,
+  StyleSheet,
+  View,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
+import * as Haptics from 'expo-haptics'
+import { useShallow } from 'zustand/react/shallow'
 import { AppText } from '@components/primitives/AppText'
 import { AppButton } from '@components/primitives/AppButton'
 import { AppInput } from '@components/primitives/AppInput'
 import { AppPhoneInput } from '@components/primitives/AppPhoneInput'
+import { AppAlert } from '@components/primitives/AppAlert'
+import { ScreenErrorBoundary } from '@components/composite/ScreenErrorBoundary'
 import { useAuthStore } from '../store/auth.store'
 import { useTranslation } from '@hooks/useTranslation'
+import { useNetworkStatus } from '@hooks/useNetworkStatus'
 import { colors, spacing } from '@constants/tokens'
 
-export default function LoginScreen() {
+function LoginScreenContent() {
   const { t } = useTranslation()
   const router = useRouter()
-  const { login, isLoading, error, clearError } = useAuthStore()
+  const { login, isLoading, error, clearError } = useAuthStore(
+    useShallow((s) => ({
+      login: s.login,
+      isLoading: s.isLoading,
+      error: s.error,
+      clearError: s.clearError,
+    })),
+  )
+  const { isConnected } = useNetworkStatus()
 
   const [countryCode, setCountryCode] = useState('+91')
   const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [validationError, setValidationError] = useState<string | null>(null)
+
+  // Double-tap protection — ref to avoid stale closure issues
+  const submitting = useRef(false)
 
   const fullPhone = `${countryCode}${phone}`
 
@@ -49,14 +65,28 @@ export default function LoginScreen() {
   }
 
   const handleLogin = async () => {
+    if (submitting.current || isLoading) return
+    submitting.current = true
+
     clearError()
     setValidationError(null)
-    if (!validate()) return
+
+    if (!validate()) {
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+      submitting.current = false
+      return
+    }
+
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+
     try {
       await login(fullPhone, password)
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
       router.replace('/(app)/home')
     } catch {
-      // error is set in store
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+    } finally {
+      submitting.current = false
     }
   }
 
@@ -73,6 +103,11 @@ export default function LoginScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
+          {/* Offline banner */}
+          {!isConnected ? (
+            <AppAlert type="warning" title={t('auth.offline_sign_in')} />
+          ) : null}
+
           {/* Logo area */}
           <View style={styles.logoArea}>
             <View style={styles.logoCircle}>
@@ -91,7 +126,7 @@ export default function LoginScreen() {
             {displayError ? (
               <View style={styles.errorBanner}>
                 <AppText variant="caption" color={colors.error}>
-                  {displayError}
+                  {t(displayError)}
                 </AppText>
               </View>
             ) : null}
@@ -113,7 +148,11 @@ export default function LoginScreen() {
               secureTextEntry={!showPassword}
               placeholder="••••••••"
               rightIcon={
-                <TouchableOpacity onPress={() => setShowPassword((v) => !v)}>
+                <TouchableOpacity
+                  onPress={() => setShowPassword((v) => !v)}
+                  accessibilityRole="button"
+                  accessibilityLabel={showPassword ? t('auth.hide_password') : t('auth.show_password')}
+                >
                   <Ionicons
                     name={showPassword ? 'eye-off-outline' : 'eye-outline'}
                     size={20}
@@ -129,6 +168,7 @@ export default function LoginScreen() {
               variant="primary"
               fullWidth
               loading={isLoading}
+              disabled={isLoading || !isConnected}
             />
 
             <AppButton
@@ -149,7 +189,11 @@ export default function LoginScreen() {
             <AppText variant="body" color={colors.textSecondary}>
               {t('auth.new_vendor')}{' '}
             </AppText>
-            <TouchableOpacity onPress={() => router.push('/(auth)/signup')}>
+            <TouchableOpacity
+              onPress={() => router.push('/(auth)/signup')}
+              accessibilityRole="button"
+              accessibilityLabel={t('auth.sign_up')}
+            >
               <AppText variant="body" weight="semibold" color={colors.primary}>
                 {t('auth.sign_up')}
               </AppText>
@@ -160,6 +204,16 @@ export default function LoginScreen() {
     </SafeAreaView>
   )
 }
+
+export default function LoginScreen() {
+  return (
+    <ScreenErrorBoundary>
+      <LoginScreenContent />
+    </ScreenErrorBoundary>
+  )
+}
+
+LoginScreen.displayName = 'LoginScreen'
 
 const styles = StyleSheet.create({
   safe: {

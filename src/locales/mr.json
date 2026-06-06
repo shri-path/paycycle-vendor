@@ -48,7 +48,22 @@
     "terms_agree": "खाते तयार केल्याने तुम्ही मान्य करता",
     "terms_of_service": "सेवा अटी",
     "invalid_credentials": "अमान्य फोन नंबर किंवा पासवर्ड",
-    "phone_already_registered": "हा फोन नंबर आधीच नोंदणीकृत आहे"
+    "phone_already_registered": "हा फोन नंबर आधीच नोंदणीकृत आहे",
+    "otp_expired": "OTP कालबाह्य झाला आहे. नवीन मागवा.",
+    "reset_token_invalid": "रीसेट लिंक अवैध आहे. पुन्हा प्रयत्न करा.",
+    "show_password": "पासवर्ड दाखवा",
+    "hide_password": "पासवर्ड लपवा",
+    "back": "मागे जा",
+    "category_placeholder": "श्रेणी निवडा (पर्यायी)",
+    "category_milk_dairy": "दूध आणि डेअरी",
+    "category_newspaper": "वर्तमानपत्र",
+    "category_bread_bakery": "ब्रेड आणि बेकरी",
+    "category_vegetables": "भाज्या",
+    "category_other": "इतर",
+    "offline_sign_in": "तुम्ही ऑफलाइन आहात. साइन इन करण्यासाठी कनेक्ट करा."
+  },
+  "errors": {
+    "server_error": "सर्व्हर त्रुटी. नंतर पुन्हा प्रयत्न करा."
   },
   "ledger": {
     "title": "खातेवही",

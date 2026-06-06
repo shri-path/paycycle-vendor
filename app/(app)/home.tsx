@@ -9,9 +9,11 @@ import { useRouter } from 'expo-router'
 import { AppText } from '@components/primitives/AppText'
 import { AppButton } from '@components/primitives/AppButton'
 import { useAuthStore } from '@modules/auth/store/auth.store'
+import { useTranslation } from '@hooks/useTranslation'
 import { colors, spacing } from '@constants/tokens'
 
 export default function HomeScreen() {
+  const { t } = useTranslation()
   const router = useRouter()
   const { logout, vendorContext, user } = useAuthStore()
 
@@ -38,7 +40,7 @@ export default function HomeScreen() {
         ) : null}
         <View style={styles.spacer} />
         <AppButton
-          label="Logout"
+          label={t('auth.logout')}
           onPress={handleLogout}
           variant="secondary"
           fullWidth

@@ -48,7 +48,22 @@
     "terms_agree": "By creating an account, you agree to our",
     "terms_of_service": "Terms of Service",
     "invalid_credentials": "Invalid phone number or password",
-    "phone_already_registered": "Phone number already registered"
+    "phone_already_registered": "Phone number already registered",
+    "otp_expired": "OTP has expired. Please request a new one.",
+    "reset_token_invalid": "Reset link is invalid or expired. Please try again.",
+    "show_password": "Show password",
+    "hide_password": "Hide password",
+    "back": "Go back",
+    "category_placeholder": "Select category (optional)",
+    "category_milk_dairy": "Milk & Dairy",
+    "category_newspaper": "Newspaper",
+    "category_bread_bakery": "Bread & Bakery",
+    "category_vegetables": "Vegetables",
+    "category_other": "Other",
+    "offline_sign_in": "You're offline. Please connect to sign in."
+  },
+  "errors": {
+    "server_error": "Server error. Please try again later."
   },
   "ledger": {
     "title": "Ledger",

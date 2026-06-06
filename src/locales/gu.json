@@ -48,7 +48,22 @@
     "terms_agree": "ખાતું બનાવીને તમે સહમત છો",
     "terms_of_service": "સેવાની શરતો",
     "invalid_credentials": "અમાન્ય ફોન નંબર અથવા પાસવર્ડ",
-    "phone_already_registered": "આ ફોન નંબર પહેલેથી નોંધાયેલ છે"
+    "phone_already_registered": "આ ફોન નંબર પહેલેથી નોંધાયેલ છે",
+    "otp_expired": "OTP ની સમય સીમા પૂરી. નવો વિનંતી કરો.",
+    "reset_token_invalid": "રીસેટ લિંક અમાન્ય. ફરી પ્રયાસ કરો.",
+    "show_password": "પાસવર્ડ બતાવો",
+    "hide_password": "પાસવર્ડ છુપાવો",
+    "back": "પાછળ જાઓ",
+    "category_placeholder": "શ્રેણી પસંદ કરો (વૈકલ્પિક)",
+    "category_milk_dairy": "દૂધ અને ડેરી",
+    "category_newspaper": "અખબાર",
+    "category_bread_bakery": "બ્રેડ અને બેકરી",
+    "category_vegetables": "શાકભાજી",
+    "category_other": "અન્ય",
+    "offline_sign_in": "તમે ઑફલાઇન છો. સાઇન ઇન કરવા માટે કનેક્ટ કરો."
+  },
+  "errors": {
+    "server_error": "સર્વર ભૂલ. પછી ફરી પ્રયાસ કરો."
   },
   "ledger": {
     "title": "ખાતાવહી",
