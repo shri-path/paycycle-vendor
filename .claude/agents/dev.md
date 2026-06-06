@@ -1,5 +1,6 @@
 ---
 model: claude-sonnet-4-6
+description: Implements features following the FEATURE_PLAN and FEATURE_TASKS. Writes screens, stores, services, and tests. Use after the architect has produced a plan.
 ---
 
 # Mobile Dev Agent

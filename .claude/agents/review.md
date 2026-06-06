@@ -1,5 +1,6 @@
 ---
 model: claude-sonnet-4-6
+description: Reviews implemented features against skills and architecture rules. Produces REVIEW_REPORT.md with BLOCKER/CRITICAL/MAJOR/MINOR findings. Use after dev completes a feature.
 ---
 
 # Mobile Review Agent
