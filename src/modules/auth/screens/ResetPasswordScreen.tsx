@@ -3,51 +3,51 @@
  * Purpose: OTP + new password entry to complete password reset
  */
 
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import {
-  View,
-  StyleSheet,
   KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
+  StyleSheet,
+  View,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
+import * as Haptics from 'expo-haptics'
+import { useShallow } from 'zustand/react/shallow'
 import { AppText } from '@components/primitives/AppText'
 import { AppButton } from '@components/primitives/AppButton'
 import { AppInput } from '@components/primitives/AppInput'
+import { AppAlert } from '@components/primitives/AppAlert'
+import { ScreenErrorBoundary } from '@components/composite/ScreenErrorBoundary'
 import { useAuthStore } from '../store/auth.store'
 import { useTranslation } from '@hooks/useTranslation'
+import { useNetworkStatus } from '@hooks/useNetworkStatus'
 import { colors, spacing } from '@constants/tokens'
-import { isMockMode } from '@services/config'
-import { MOCK_OTP } from '@services/mocks'
+import { validatePassword } from '@utils/validation'
 
-const PASSWORD_REGEX = {
-  uppercase: /[A-Z]/,
-  lowercase: /[a-z]/,
-  digit: /[0-9]/,
-  special: /[^A-Za-z0-9]/,
-}
-
-function validatePassword(password: string): string | null {
-  if (password.length < 8) return 'validation.password_min_8'
-  if (!PASSWORD_REGEX.uppercase.test(password)) return 'validation.password_complexity'
-  if (!PASSWORD_REGEX.lowercase.test(password)) return 'validation.password_complexity'
-  if (!PASSWORD_REGEX.digit.test(password)) return 'validation.password_complexity'
-  if (!PASSWORD_REGEX.special.test(password)) return 'validation.password_complexity'
-  return null
-}
-
-export default function ResetPasswordScreen() {
+function ResetPasswordScreenContent() {
   const { t } = useTranslation()
   const router = useRouter()
-  const { resetPassword, isLoading, error, clearError, pendingResetPhone } = useAuthStore()
+  const { resetPassword, isLoading, error, clearError, pendingResetPhone } = useAuthStore(
+    useShallow((s) => ({
+      resetPassword: s.resetPassword,
+      isLoading: s.isLoading,
+      error: s.error,
+      clearError: s.clearError,
+      pendingResetPhone: s.pendingResetPhone,
+    })),
+  )
+  const { isConnected } = useNetworkStatus()
 
   const [otp, setOtp] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [validationError, setValidationError] = useState<string | null>(null)
+
+  // Double-tap protection
+  const submitting = useRef(false)
 
   const validate = (): boolean => {
     if (!/^[0-9]{6}$/.test(otp)) {
@@ -63,14 +63,28 @@ export default function ResetPasswordScreen() {
   }
 
   const handleReset = async () => {
+    if (submitting.current || isLoading) return
+    submitting.current = true
+
     clearError()
     setValidationError(null)
-    if (!validate()) return
+
+    if (!validate()) {
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+      submitting.current = false
+      return
+    }
+
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+
     try {
       await resetPassword(otp, newPassword)
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
       router.replace('/(auth)/login')
     } catch {
-      // error is set in store
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+    } finally {
+      submitting.current = false
     }
   }
 
@@ -83,9 +97,19 @@ export default function ResetPasswordScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <View style={styles.container}>
+          {/* Offline banner */}
+          {!isConnected ? (
+            <AppAlert type="warning" title={t('auth.offline_sign_in')} />
+          ) : null}
+
           {/* Header */}
           <View style={styles.header}>
-            <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <TouchableOpacity
+              onPress={() => router.back()}
+              style={styles.backButton}
+              accessibilityRole="button"
+              accessibilityLabel={t('auth.back')}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
             </TouchableOpacity>
             <AppText variant="h3" weight="bold">
@@ -106,11 +130,11 @@ export default function ResetPasswordScreen() {
             </View>
           ) : null}
 
-          {/* Dev hint in mock mode */}
-          {isMockMode ? (
+          {/* Dev hint: only visible in development builds, tree-shaken in production */}
+          {__DEV__ ? (
             <View style={styles.devHint}>
               <AppText variant="caption" color={colors.warning}>
-                [Dev] OTP: {MOCK_OTP}
+                [Dev] OTP: 123456
               </AppText>
             </View>
           ) : null}
@@ -118,7 +142,7 @@ export default function ResetPasswordScreen() {
           {displayError ? (
             <View style={styles.errorBanner}>
               <AppText variant="caption" color={colors.error}>
-                {displayError}
+                {t(displayError)}
               </AppText>
             </View>
           ) : null}
@@ -140,7 +164,11 @@ export default function ResetPasswordScreen() {
             placeholder="••••••••"
             helperText={t('validation.password_complexity')}
             rightIcon={
-              <TouchableOpacity onPress={() => setShowPassword((v) => !v)}>
+              <TouchableOpacity
+                onPress={() => setShowPassword((v) => !v)}
+                accessibilityRole="button"
+                accessibilityLabel={showPassword ? t('auth.hide_password') : t('auth.show_password')}
+              >
                 <Ionicons
                   name={showPassword ? 'eye-off-outline' : 'eye-outline'}
                   size={20}
@@ -156,12 +184,23 @@ export default function ResetPasswordScreen() {
             variant="primary"
             fullWidth
             loading={isLoading}
+            disabled={isLoading || !isConnected}
           />
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   )
 }
+
+export default function ResetPasswordScreen() {
+  return (
+    <ScreenErrorBoundary>
+      <ResetPasswordScreenContent />
+    </ScreenErrorBoundary>
+  )
+}
+
+ResetPasswordScreen.displayName = 'ResetPasswordScreen'
 
 const styles = StyleSheet.create({
   safe: {
