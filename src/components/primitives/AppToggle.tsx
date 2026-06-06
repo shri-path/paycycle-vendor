@@ -162,7 +162,7 @@ export const AppToggle: React.FC<AppToggleProps> = ({
     inputRange: [0, 1],
     outputRange: [
       spacing[1],
-      config.width - config.thumbSize - spacing[1],
+      config.width - config.thumb - spacing[1],
     ],
   })
 
@@ -220,9 +220,9 @@ export const AppToggle: React.FC<AppToggleProps> = ({
           style={[
             styles.toggleThumb,
             {
-              width: config.thumbSize,
-              height: config.thumbSize,
-              borderRadius: config.thumbSize / 2,
+              width: config.thumb,
+              height: config.thumb,
+              borderRadius: config.thumb / 2,
               transform: [{ translateX: thumbTranslateX }],
             },
           ]}

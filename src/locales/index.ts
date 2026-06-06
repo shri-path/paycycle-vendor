@@ -18,7 +18,7 @@ import gu from './gu.json'
 // Supported language codes
 export type SupportedLanguage = 'en' | 'hi' | 'ta' | 'te' | 'mr' | 'bn' | 'kn' | 'ml' | 'gu'
 
-export const SUPPORTED_LANGUAGES: Array<{ code: SupportedLanguage; label: string; nativeLabel: string }> = [
+export const SUPPORTED_LANGUAGES: { code: SupportedLanguage; label: string; nativeLabel: string }[] = [
   { code: 'en', label: 'English', nativeLabel: 'English' },
   { code: 'hi', label: 'Hindi', nativeLabel: 'हिंदी' },
   { code: 'ta', label: 'Tamil', nativeLabel: 'தமிழ்' },
@@ -83,7 +83,7 @@ export const t = (key: string, defaultValue?: string): string => {
     }
 
     return defaultValue || key
-  } catch (error) {
+  } catch (_error) {
     console.warn(`Translation missing for key: ${key}`)
     return defaultValue || key
   }

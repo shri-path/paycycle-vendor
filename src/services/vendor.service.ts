@@ -5,7 +5,8 @@
  */
 
 import { isMockMode, simulateNetworkDelay } from './config'
-import { mockVendor, Vendor, getVendorStats } from './mocks'
+import type { Vendor } from '../types'
+import { mockVendor, getVendorStats } from './mocks'
 
 /**
  * Vendor API Service

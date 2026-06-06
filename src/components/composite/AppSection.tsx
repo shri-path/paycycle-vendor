@@ -19,7 +19,7 @@ import {
   ViewStyle,
 } from 'react-native'
 import { AppText } from '../primitives/AppText'
-import { colors, spacing } from '@constants/tokens'
+import { spacing } from '@constants/tokens'
 
 export interface AppSectionProps {
   /** Section title */

@@ -20,8 +20,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   ViewStyle,
+  DimensionValue,
   Dimensions,
-  SafeAreaView,
 } from 'react-native'
 import { AppText } from '../primitives/AppText'
 import { AppIconButton } from '../primitives/AppIconButton'
@@ -144,7 +144,7 @@ export const AppBottomSheet: React.FC<AppBottomSheetProps> = ({
           style={[
             styles.container,
             containerStyle,
-            { height: sheetHeightValue },
+            { height: sheetHeightValue as DimensionValue },
           ]}
           activeOpacity={1}
           onPress={() => {}}
@@ -162,7 +162,7 @@ export const AppBottomSheet: React.FC<AppBottomSheetProps> = ({
               </AppText>
               <AppIconButton
                 icon="✕"
-                onPress={onDismiss}
+                onPress={onDismiss ?? (() => {})}
                 variant="ghost"
                 size="sm"
                 style={styles.closeButton}

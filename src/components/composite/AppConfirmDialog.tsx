@@ -22,7 +22,6 @@ import {
   ViewStyle,
   GestureResponderEvent,
 } from 'react-native'
-import { AppCard } from '../primitives/AppCard'
 import { AppText } from '../primitives/AppText'
 import { AppButton } from '../primitives/AppButton'
 import { colors, spacing, borderRadius, componentSizes } from '@constants/tokens'
@@ -180,13 +179,13 @@ export const AppConfirmDialog: React.FC<AppConfirmDialogProps> = ({
           <View style={styles.buttonContainer}>
             <AppButton
               label={confirmLabel}
-              onPress={onConfirm}
+              onPress={onConfirm ?? (() => {})}
               variant={confirmVariant}
               style={styles.button}
             />
             <AppButton
               label={cancelLabel}
-              onPress={onCancel}
+              onPress={onCancel ?? (() => {})}
               variant="secondary"
               style={styles.button}
             />

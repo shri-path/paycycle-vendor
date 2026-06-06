@@ -22,7 +22,7 @@ import {
   View,
 } from 'react-native'
 import { AppText } from './AppText'
-import { colors, spacing, borderRadius, fontSize, fontWeight, componentSizes, borderWidth, animation } from '@constants/tokens'
+import { colors, borderRadius, fontSize, fontWeight, componentSizes, borderWidth, animation } from '@constants/tokens'
 
 export type IconButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost'
 export type IconButtonSize = 'sm' | 'md' | 'lg'
@@ -181,8 +181,7 @@ export const AppIconButton: React.FC<AppIconButtonProps> = ({
   style,
   testID,
 }) => {
-  // Determine text/icon color based on variant
-  let iconColor = colors.white
+  let iconColor: string = colors.white
 
   if (disabled) {
     iconColor = colors.gray400

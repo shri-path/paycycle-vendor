@@ -20,9 +20,6 @@ import {
   StyleSheet,
   ViewStyle,
   Modal,
-  Platform,
-  DatePickerAndroid,
-  TimePickerAndroid,
 } from 'react-native'
 import { AppText } from './AppText'
 import { colors, spacing, borderRadius, fontSize, fontWeight, componentSizes } from '@constants/tokens'
@@ -224,8 +221,8 @@ export const AppDatePicker: React.FC<AppDatePickerProps> = ({
   value,
   onChange,
   mode = 'date',
-  minimumDate,
-  maximumDate,
+  minimumDate: _minimumDate,
+  maximumDate: _maximumDate,
   placeholder = 'Select date',
   error,
   helperText,
@@ -244,61 +241,9 @@ export const AppDatePicker: React.FC<AppDatePickerProps> = ({
     ...(disabled && styles.pickerWrapperDisabled),
   }
 
-  const handleOpenAndroidPicker = async () => {
-    if (Platform.OS !== 'android') {
-      setIsModalVisible(true)
-      return
-    }
-
-    try {
-      if (mode === 'date' || mode === 'datetime') {
-        const result = await DatePickerAndroid.open({
-          date: value || new Date(),
-          minDate: minimumDate,
-          maxDate: maximumDate,
-        })
-
-        if (result.action === DatePickerAndroid.dateSetAction) {
-          const selectedDate = new Date(result.year, result.month, result.day)
-
-          if (mode === 'datetime') {
-            setTempDate(selectedDate)
-            // Then open time picker
-            const timeResult = await TimePickerAndroid.open({
-              hour: value?.getHours() || 0,
-              minute: value?.getMinutes() || 0,
-              is24Hour: true,
-            })
-
-            if (timeResult.action === TimePickerAndroid.timeSetAction) {
-              selectedDate.setHours(timeResult.hour, timeResult.minute)
-              onChange?.(selectedDate)
-            }
-          } else {
-            onChange?.(selectedDate)
-          }
-        }
-      } else if (mode === 'time') {
-        const result = await TimePickerAndroid.open({
-          hour: value?.getHours() || 0,
-          minute: value?.getMinutes() || 0,
-          is24Hour: true,
-        })
-
-        if (result.action === TimePickerAndroid.timeSetAction) {
-          const selectedTime = new Date()
-          selectedTime.setHours(result.hour, result.minute)
-          onChange?.(selectedTime)
-        }
-      }
-    } catch (error) {
-      console.warn('Date picker error:', error)
-    }
-  }
-
   const handleOpenPicker = () => {
     if (!disabled) {
-      handleOpenAndroidPicker()
+      setIsModalVisible(true)
     }
   }
 
@@ -353,7 +298,7 @@ export const AppDatePicker: React.FC<AppDatePickerProps> = ({
       )}
 
       <Modal
-        visible={isModalVisible && Platform.OS !== 'android'}
+        visible={isModalVisible}
         transparent
         animationType="slide"
         onRequestClose={handleCancel}

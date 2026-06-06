@@ -145,8 +145,8 @@ export const AppSegmentedControl: React.FC<AppSegmentedControlProps> = ({
 
   const handlePress = (index: number) => {
     if (!disabled && onChange) {
-      const value = normalizedSegments[index].value
-      onChange(index, value)
+      const item = normalizedSegments[index]
+      if (item) onChange(index, item.value)
     }
   }
 

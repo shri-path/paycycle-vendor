@@ -46,9 +46,7 @@ export interface AppTextProps extends TextProps {
 // STYLES - Created once at module load (performance optimization)
 // ============================================================================
 
-const baseStyle: TextStyle = {
-  allowFontScaling: false,
-}
+const baseStyle: TextStyle = {}
 
 const variantStyles = StyleSheet.create({
   h1: {
@@ -156,6 +154,7 @@ export const AppText: React.FC<AppTextProps> = ({
   return (
     <Text
       {...props}
+      allowFontScaling={false}
       style={[
         baseStyle,
         variantStyles[variant],

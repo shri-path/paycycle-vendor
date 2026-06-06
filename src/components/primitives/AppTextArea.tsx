@@ -160,7 +160,7 @@ export const AppTextArea: React.FC<AppTextAreaProps> = ({
   const charCount = String(value || '').length
   const charLimitPercentage = maxLength ? (charCount / maxLength) * 100 : 0
 
-  let counterColor = colors.textSecondary
+  let counterColor: string = colors.textSecondary
   if (charLimitPercentage > 90) {
     counterColor = colors.error
   } else if (charLimitPercentage > 75) {

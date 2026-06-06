@@ -19,7 +19,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   ViewStyle,
-  ScrollView,
 } from 'react-native'
 import { AppText } from './AppText'
 import { colors, spacing, borderRadius, componentSizes, borderWidth } from '@constants/tokens'

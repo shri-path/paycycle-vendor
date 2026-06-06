@@ -18,6 +18,7 @@ import {
   View,
   StyleSheet,
   ViewStyle,
+  StyleProp,
   ViewProps,
   TouchableOpacity,
   GestureResponderEvent,
@@ -40,7 +41,7 @@ export interface AppCardProps extends ViewProps {
   /** Horizontal padding override */
   paddingHorizontal?: number
   /** Style overrides */
-  style?: ViewStyle
+  style?: StyleProp<ViewStyle>
 }
 
 // ============================================================================

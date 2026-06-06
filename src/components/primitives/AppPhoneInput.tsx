@@ -37,6 +37,8 @@ export interface CountryCode {
 export interface AppPhoneInputProps extends Omit<TextInputProps, 'onChange'> {
   /** Label text displayed above input */
   label?: string
+  /** Disable the input */
+  disabled?: boolean
   /** Country code (e.g., +91, +1) */
   countryCode?: string
   /** Phone number without country code */

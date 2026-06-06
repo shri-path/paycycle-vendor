@@ -12,7 +12,7 @@
  */
 
 import React from 'react'
-import { View, StyleSheet, ViewStyle } from 'react-native'
+import { View, ViewStyle } from 'react-native'
 import { colors, spacing } from '@constants/tokens'
 
 export type DividerVariant = 'solid' | 'dashed' | 'dotted'

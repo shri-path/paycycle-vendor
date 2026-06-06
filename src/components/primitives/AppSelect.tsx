@@ -19,11 +19,10 @@ import {
   StyleSheet,
   ViewStyle,
   Modal,
-  ScrollView,
   FlatList,
 } from 'react-native'
 import { AppText } from './AppText'
-import { colors, spacing, borderRadius, fontSize, componentSizes, fontWeight } from '@constants/tokens'
+import { colors, spacing, borderRadius, fontSize, componentSizes } from '@constants/tokens'
 
 export interface SelectOption {
   label: string

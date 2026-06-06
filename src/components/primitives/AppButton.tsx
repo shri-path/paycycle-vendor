@@ -25,7 +25,7 @@ import {
   View,
 } from 'react-native'
 import { AppText } from './AppText'
-import { colors, spacing, borderRadius, fontWeight, componentSizes, borderWidth, animation } from '@constants/tokens'
+import { colors, spacing, borderRadius, componentSizes, borderWidth, animation } from '@constants/tokens'
 
 export type ButtonVariant =
   | 'primary'
@@ -85,58 +85,6 @@ const sizeStyles = StyleSheet.create({
   },
 })
 
-const variantStyles = StyleSheet.create({
-  // Filled variants
-  primary: {
-    backgroundColor: colors.primary,
-  },
-  primaryDisabled: {
-    backgroundColor: colors.gray300,
-  },
-
-  danger: {
-    backgroundColor: colors.error,
-  },
-  dangerDisabled: {
-    backgroundColor: colors.gray300,
-  },
-
-  // Outlined variants
-  secondary: {
-    backgroundColor: 'transparent',
-    borderWidth: borderWidth.medium,
-    borderColor: colors.primary,
-  },
-  secondaryDisabled: {
-    borderColor: colors.gray300,
-  },
-
-  outline: {
-    backgroundColor: 'transparent',
-    borderWidth: borderWidth.medium,
-    borderColor: colors.primary,
-  },
-  outlineDisabled: {
-    borderColor: colors.gray300,
-  },
-
-  // Ghost variant (minimal)
-  ghost: {
-    backgroundColor: colors.gray50,
-  },
-  ghostDisabled: {
-    backgroundColor: colors.gray100,
-  },
-
-  // Link variant (text-only)
-  link: {
-    backgroundColor: 'transparent',
-  },
-  linkDisabled: {
-    backgroundColor: 'transparent',
-  },
-})
-
 const baseButtonStyle: ViewStyle = {
   justifyContent: 'center',
   alignItems: 'center',
@@ -179,9 +127,8 @@ export const AppButton: React.FC<AppButtonProps> = ({
   style,
   testID,
 }) => {
-  // Determine text and background colors based on variant
-  let textColor = colors.white
-  let backgroundColor = colors.primary
+  let textColor: string = colors.white
+  let backgroundColor: string | undefined
 
   if (disabled) {
     textColor = colors.gray400
@@ -195,6 +142,7 @@ export const AppButton: React.FC<AppButtonProps> = ({
       case 'secondary':
       case 'outline':
         textColor = colors.primary
+        backgroundColor = undefined
         break
       case 'danger':
         textColor = colors.white
@@ -211,8 +159,7 @@ export const AppButton: React.FC<AppButtonProps> = ({
     }
   }
 
-  // Determine border if needed
-  let borderColor: string | undefined = undefined
+  let borderColor: string | undefined
   if ((variant === 'secondary' || variant === 'outline') && !disabled) {
     borderColor = colors.primary
   } else if ((variant === 'secondary' || variant === 'outline') && disabled) {
@@ -222,8 +169,8 @@ export const AppButton: React.FC<AppButtonProps> = ({
   const buttonStyle: ViewStyle = {
     ...baseButtonStyle,
     ...sizeStyles[size],
-    backgroundColor: variant === 'primary' ? colors.primary : undefined,
-    borderColor: borderColor,
+    backgroundColor,
+    borderColor,
     borderWidth: variant === 'secondary' || variant === 'outline' ? borderWidth.medium : 0,
     opacity: disabled ? animation.opacity.disabled : 1,
     ...(fullWidth && { width: '100%' }),
