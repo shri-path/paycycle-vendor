@@ -132,3 +132,32 @@ paycycle_vendor/
 - No inline styles — use Tamagui tokens only
 - Use FlatList for lists, memoize where needed
 - Each file includes purpose comment
+
+---
+
+## Commit Strategy (MANDATORY)
+
+Follows conventional commit format, consistent with the `paycycle_api` backend repo.
+
+**Format**: `type: short description`
+
+**Types**:
+
+| Type | Usage |
+|---|---|
+| `feat` | New feature or capability |
+| `fix` | Bug fix |
+| `chore` | Maintenance, cleanup, config, tooling |
+| `refactor` | Code restructure without behavior change |
+| `docs` | Documentation only |
+| `test` | Adding or updating tests |
+| `perf` | Performance improvement |
+| `ci` | CI/CD changes |
+
+**Rules**:
+1. Lowercase type, no capital after colon: `feat: add customer list screen`
+2. Short first line — imperative mood, under 72 characters
+3. Body (optional) — blank line after subject, explain *why* not *what*, wrap at 72 chars
+4. Split logically — group related changes into separate commits by concern
+5. Co-author line at end: `Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>`
+6. Never bundle unrelated changes — a feature commit shouldn't include cleanup or config changes
