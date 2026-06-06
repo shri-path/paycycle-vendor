@@ -1,0 +1,80 @@
+{
+  "common": {
+    "app_name": "PayCycle વિક્રેતા",
+    "confirm": "ખાતરી કરો",
+    "cancel": "રદ કરો",
+    "save": "સાચવો",
+    "delete": "કાઢી નાખો",
+    "edit": "ફેરફાર કરો",
+    "add": "ઉમેરો",
+    "loading": "લોડ થઈ રહ્યું છે...",
+    "error": "ભૂલ",
+    "success": "સફળ",
+    "warning": "ચેતવણી",
+    "offline": "ઑફલાઇન મોડ",
+    "offline_message": "તમે હાલમાં ઑફલાઇન છો. કનેક્શન પુનઃસ્થાપિત થયા પછી ડેટા સિંક થશે.",
+    "retry": "ફરી પ્રયાસ કરો",
+    "close": "બંધ કરો"
+  },
+  "auth": {
+    "welcome": "સ્વાગત છે",
+    "login": "લૉગિન કરો",
+    "logout": "લૉગઆઉટ કરો",
+    "phone": "ફોન નંબર",
+    "password": "પાસવર્ડ",
+    "forgot_password": "પાસવર્ડ ભૂલી ગયા?",
+    "sign_up": "સાઇન અપ કરો",
+    "already_have_account": "પહેલેથી ખાતું છે?"
+  },
+  "ledger": {
+    "title": "ખાતાવહી",
+    "add_credit": "ક્રેડિટ ઉમેરો",
+    "add_payment": "ચુકવણી ઉમેરો",
+    "credit": "ક્રેડિટ",
+    "debit": "ડેબિટ",
+    "payment": "ચુકવણી",
+    "entries": "એન્ટ્રીઓ",
+    "date": "તારીખ",
+    "amount": "રકમ",
+    "notes": "નોંધ",
+    "customer": "ગ્રાહક",
+    "balance": "બેલેન્સ",
+    "outstanding": "બાકી"
+  },
+  "customer": {
+    "title": "ગ્રાહકો",
+    "add_customer": "ગ્રાહક ઉમેરો",
+    "name": "નામ",
+    "phone": "ફોન",
+    "address": "સરનામું",
+    "list": "ગ્રાહક યાદી",
+    "details": "ગ્રાહક વિગતો",
+    "edit_customer": "ગ્રાહક ફેરફાર કરો",
+    "delete_customer": "ગ્રાહક કાઢી નાખો"
+  },
+  "home": {
+    "title": "હોમ",
+    "today": "આજે",
+    "recent": "તાજેતરનું",
+    "outstanding": "બાકી",
+    "collection": "વસૂલાત"
+  },
+  "settings": {
+    "title": "સેટિંગ્સ",
+    "account": "ખાતું",
+    "language": "ભાષા",
+    "theme": "થીમ",
+    "notifications": "સૂચનાઓ",
+    "about": "વિશે",
+    "version": "સંસ્કરણ",
+    "privacy": "ગોપનીયતા નીતિ",
+    "terms": "સેવાની શરતો"
+  },
+  "validation": {
+    "required": "આ ફીલ્ડ જરૂરી છે",
+    "invalid_phone": "અમાન્ય ફોન નંબર",
+    "invalid_email": "અમાન્ય ઇમેઇલ",
+    "password_too_short": "પાસવર્ડ ઓછામાં ઓછા 6 અક્ષરોનો હોવો જોઈએ",
+    "passwords_do_not_match": "પાસવર્ડ મેળ ખાતા નથી"
+  }
+}

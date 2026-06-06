@@ -1,0 +1,80 @@
+{
+  "common": {
+    "app_name": "PayCycle বিক্রেতা",
+    "confirm": "নিশ্চিত করুন",
+    "cancel": "বাতিল করুন",
+    "save": "সংরক্ষণ করুন",
+    "delete": "মুছুন",
+    "edit": "সম্পাদনা করুন",
+    "add": "যোগ করুন",
+    "loading": "লোড হচ্ছে...",
+    "error": "ত্রুটি",
+    "success": "সফল",
+    "warning": "সতর্কতা",
+    "offline": "অফলাইন মোড",
+    "offline_message": "আপনি বর্তমানে অফলাইনে আছেন। সংযোগ পুনরুদ্ধার হলে ডেটা সিঙ্ক হবে।",
+    "retry": "আবার চেষ্টা করুন",
+    "close": "বন্ধ করুন"
+  },
+  "auth": {
+    "welcome": "স্বাগতম",
+    "login": "লগইন করুন",
+    "logout": "লগআউট করুন",
+    "phone": "ফোন নম্বর",
+    "password": "পাসওয়ার্ড",
+    "forgot_password": "পাসওয়ার্ড ভুলে গেছেন?",
+    "sign_up": "সাইন আপ করুন",
+    "already_have_account": "ইতিমধ্যে একটি অ্যাকাউন্ট আছে?"
+  },
+  "ledger": {
+    "title": "খাতা",
+    "add_credit": "ক্রেডিট যোগ করুন",
+    "add_payment": "পেমেন্ট যোগ করুন",
+    "credit": "ক্রেডিট",
+    "debit": "ডেবিট",
+    "payment": "পেমেন্ট",
+    "entries": "এন্ট্রি",
+    "date": "তারিখ",
+    "amount": "পরিমাণ",
+    "notes": "নোটস",
+    "customer": "গ্রাহক",
+    "balance": "ব্যালেন্স",
+    "outstanding": "বকেয়া"
+  },
+  "customer": {
+    "title": "গ্রাহকরা",
+    "add_customer": "গ্রাহক যোগ করুন",
+    "name": "নাম",
+    "phone": "ফোন",
+    "address": "ঠিকানা",
+    "list": "গ্রাহক তালিকা",
+    "details": "গ্রাহক বিবরণ",
+    "edit_customer": "গ্রাহক সম্পাদনা করুন",
+    "delete_customer": "গ্রাহক মুছুন"
+  },
+  "home": {
+    "title": "হোম",
+    "today": "আজ",
+    "recent": "সাম্প্রতিক",
+    "outstanding": "বকেয়া",
+    "collection": "আদায়"
+  },
+  "settings": {
+    "title": "সেটিংস",
+    "account": "অ্যাকাউন্ট",
+    "language": "ভাষা",
+    "theme": "থিম",
+    "notifications": "বিজ্ঞপ্তি",
+    "about": "সম্পর্কে",
+    "version": "সংস্করণ",
+    "privacy": "গোপনীয়তা নীতি",
+    "terms": "পরিষেবার শর্তাবলী"
+  },
+  "validation": {
+    "required": "এই ক্ষেত্রটি প্রয়োজনীয়",
+    "invalid_phone": "অবৈধ ফোন নম্বর",
+    "invalid_email": "অবৈধ ইমেইল",
+    "password_too_short": "পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে",
+    "passwords_do_not_match": "পাসওয়ার্ড মিলছে না"
+  }
+}

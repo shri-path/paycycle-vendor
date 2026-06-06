@@ -1,0 +1,80 @@
+{
+  "common": {
+    "app_name": "PayCycle ಮಾರಾಟಗಾರ",
+    "confirm": "ದೃಢೀಕರಿಸಿ",
+    "cancel": "ರದ್ದುಮಾಡಿ",
+    "save": "ಉಳಿಸಿ",
+    "delete": "ಅಳಿಸಿ",
+    "edit": "ಸಂಪಾದಿಸಿ",
+    "add": "ಸೇರಿಸಿ",
+    "loading": "ಲೋಡ್ ಆಗುತ್ತಿದೆ...",
+    "error": "ದೋಷ",
+    "success": "ಯಶಸ್ವಿ",
+    "warning": "ಎಚ್ಚರಿಕೆ",
+    "offline": "ಆಫ್‌ಲೈನ್ ಮೋಡ್",
+    "offline_message": "ನೀವು ಪ್ರಸ್ತುತ ಆಫ್‌ಲೈನ್‌ನಲ್ಲಿದ್ದೀರಿ. ಸಂಪರ್ಕ ಮರುಸ್ಥಾಪಿತವಾದಾಗ ಡೇಟಾ ಸಿಂಕ್ ಆಗುತ್ತದೆ.",
+    "retry": "ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
+    "close": "ಮುಚ್ಚಿ"
+  },
+  "auth": {
+    "welcome": "ಸ್ವಾಗತ",
+    "login": "ಲಾಗಿನ್ ಮಾಡಿ",
+    "logout": "ಲಾಗ್ ಔಟ್ ಮಾಡಿ",
+    "phone": "ಫೋನ್ ಸಂಖ್ಯೆ",
+    "password": "ಪಾಸ್‌ವರ್ಡ್",
+    "forgot_password": "ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿರಾ?",
+    "sign_up": "ಸೈನ್ ಅಪ್ ಮಾಡಿ",
+    "already_have_account": "ಈಗಾಗಲೇ ಖಾತೆ ಇದೆಯೇ?"
+  },
+  "ledger": {
+    "title": "ಖಾತಾ ಪುಸ್ತಕ",
+    "add_credit": "ಕ್ರೆಡಿಟ್ ಸೇರಿಸಿ",
+    "add_payment": "ಪಾವತಿ ಸೇರಿಸಿ",
+    "credit": "ಕ್ರೆಡಿಟ್",
+    "debit": "ಡೆಬಿಟ್",
+    "payment": "ಪಾವತಿ",
+    "entries": "ನಮೂದುಗಳು",
+    "date": "ದಿನಾಂಕ",
+    "amount": "ಮೊತ್ತ",
+    "notes": "ಟಿಪ್ಪಣಿಗಳು",
+    "customer": "ಗ್ರಾಹಕ",
+    "balance": "ಬ್ಯಾಲೆನ್ಸ್",
+    "outstanding": "ಬಾಕಿ"
+  },
+  "customer": {
+    "title": "ಗ್ರಾಹಕರು",
+    "add_customer": "ಗ್ರಾಹಕರನ್ನು ಸೇರಿಸಿ",
+    "name": "ಹೆಸರು",
+    "phone": "ಫೋನ್",
+    "address": "ವಿಳಾಸ",
+    "list": "ಗ್ರಾಹಕ ಪಟ್ಟಿ",
+    "details": "ಗ್ರಾಹಕ ವಿವರಗಳು",
+    "edit_customer": "ಗ್ರಾಹಕರನ್ನು ಸಂಪಾದಿಸಿ",
+    "delete_customer": "ಗ್ರಾಹಕರನ್ನು ಅಳಿಸಿ"
+  },
+  "home": {
+    "title": "ಹೋಮ್",
+    "today": "ಇಂದು",
+    "recent": "ಇತ್ತೀಚಿನ",
+    "outstanding": "ಬಾಕಿ",
+    "collection": "ವಸೂಲಿ"
+  },
+  "settings": {
+    "title": "ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+    "account": "ಖಾತೆ",
+    "language": "ಭಾಷೆ",
+    "theme": "ಥೀಮ್",
+    "notifications": "ಅಧಿಸೂಚನೆಗಳು",
+    "about": "ಬಗ್ಗೆ",
+    "version": "ಆವೃತ್ತಿ",
+    "privacy": "ಗೌಪ್ಯತೆ ನೀತಿ",
+    "terms": "ಸೇವಾ ನಿಯಮಗಳು"
+  },
+  "validation": {
+    "required": "ಈ ಕ್ಷೇತ್ರ ಅಗತ್ಯವಿದೆ",
+    "invalid_phone": "ಅಮಾನ್ಯ ಫೋನ್ ಸಂಖ್ಯೆ",
+    "invalid_email": "ಅಮಾನ್ಯ ಇಮೇಲ್",
+    "password_too_short": "ಪಾಸ್‌ವರ್ಡ್ ಕನಿಷ್ಠ 6 ಅಕ್ಷರಗಳಾಗಿರಬೇಕು",
+    "passwords_do_not_match": "ಪಾಸ್‌ವರ್ಡ್‌ಗಳು ಹೊಂದಿಕೆಯಾಗುತ್ತಿಲ್ಲ"
+  }
+}

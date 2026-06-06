@@ -5,11 +5,12 @@
  */
 
 import { create } from 'zustand'
+import type { SupportedLanguage } from '@locales/index'
 
 export interface AppStoreState {
   // Language
-  language: 'en' | 'hi'
-  setLanguage: (language: 'en' | 'hi') => void
+  language: SupportedLanguage
+  setLanguage: (language: SupportedLanguage) => void
 
   // Theme
   isDarkMode: boolean

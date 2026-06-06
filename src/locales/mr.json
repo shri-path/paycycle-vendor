@@ -1,0 +1,80 @@
+{
+  "common": {
+    "app_name": "PayCycle विक्रेता",
+    "confirm": "पुष्टी करा",
+    "cancel": "रद्द करा",
+    "save": "जतन करा",
+    "delete": "हटवा",
+    "edit": "संपादित करा",
+    "add": "जोडा",
+    "loading": "लोड होत आहे...",
+    "error": "त्रुटी",
+    "success": "यशस्वी",
+    "warning": "चेतावणी",
+    "offline": "ऑफलाइन मोड",
+    "offline_message": "तुम्ही सध्या ऑफलाइन आहात. कनेक्शन पुनर्संचयित झाल्यावर डेटा सिंक होईल.",
+    "retry": "पुन्हा प्रयत्न करा",
+    "close": "बंद करा"
+  },
+  "auth": {
+    "welcome": "स्वागत आहे",
+    "login": "लॉगिन करा",
+    "logout": "लॉगआउट करा",
+    "phone": "फोन नंबर",
+    "password": "पासवर्ड",
+    "forgot_password": "पासवर्ड विसरलात?",
+    "sign_up": "साइन अप करा",
+    "already_have_account": "आधीच खाते आहे?"
+  },
+  "ledger": {
+    "title": "खातेवही",
+    "add_credit": "क्रेडिट जोडा",
+    "add_payment": "पेमेंट जोडा",
+    "credit": "क्रेडिट",
+    "debit": "डेबिट",
+    "payment": "पेमेंट",
+    "entries": "नोंदी",
+    "date": "तारीख",
+    "amount": "रक्कम",
+    "notes": "टिपा",
+    "customer": "ग्राहक",
+    "balance": "शिल्लक",
+    "outstanding": "बाकी"
+  },
+  "customer": {
+    "title": "ग्राहक",
+    "add_customer": "ग्राहक जोडा",
+    "name": "नाव",
+    "phone": "फोन",
+    "address": "पत्ता",
+    "list": "ग्राहक यादी",
+    "details": "ग्राहक तपशील",
+    "edit_customer": "ग्राहक संपादित करा",
+    "delete_customer": "ग्राहक हटवा"
+  },
+  "home": {
+    "title": "होम",
+    "today": "आज",
+    "recent": "अलीकडील",
+    "outstanding": "बाकी",
+    "collection": "वसुली"
+  },
+  "settings": {
+    "title": "सेटिंग्ज",
+    "account": "खाते",
+    "language": "भाषा",
+    "theme": "थीम",
+    "notifications": "सूचना",
+    "about": "माहिती",
+    "version": "आवृत्ती",
+    "privacy": "गोपनीयता धोरण",
+    "terms": "सेवा अटी"
+  },
+  "validation": {
+    "required": "हे क्षेत्र आवश्यक आहे",
+    "invalid_phone": "अवैध फोन नंबर",
+    "invalid_email": "अवैध ईमेल",
+    "password_too_short": "पासवर्ड किमान 6 वर्णांचा असावा",
+    "passwords_do_not_match": "पासवर्ड जुळत नाहीत"
+  }
+}
