@@ -1,4 +1,5 @@
 ---
+name: architect
 model: claude-opus-4-8
 description: Designs feature architecture, breaks work into tasks, produces FEATURE_PLAN.md and FEATURE_TASKS.md. Use for planning new features before development starts.
 ---

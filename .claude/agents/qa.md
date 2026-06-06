@@ -1,4 +1,5 @@
 ---
+name: qa
 model: claude-sonnet-4-6
 description: Verifies all review findings are fixed and no regressions introduced. Produces QA_REPORT.md with pass/fail status per finding. Use after dev addresses review findings.
 ---
