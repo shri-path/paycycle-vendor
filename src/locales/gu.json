@@ -24,7 +24,31 @@
     "password": "પાસવર્ડ",
     "forgot_password": "પાસવર્ડ ભૂલી ગયા?",
     "sign_up": "સાઇન અપ કરો",
-    "already_have_account": "પહેલેથી ખાતું છે?"
+    "already_have_account": "પહેલેથી ખાતું છે?",
+    "sign_in": "સાઇન ઇન કરો",
+    "create_account": "ખાતું બનાવો",
+    "business_name": "વ્યવસાયનું નામ",
+    "business_name_placeholder": "કૃષ્ણ ડેરી",
+    "phone_placeholder": "9876543210",
+    "create_password": "પાસવર્ડ બનાવો",
+    "category": "શ્રેણી",
+    "new_vendor": "નવા વિક્રેતા?",
+    "tagline": "દૈનિક પુરવઠો સરળ બનાવ્યો",
+    "otp_code": "OTP કોડ",
+    "otp_placeholder": "6 અંકનો OTP",
+    "new_password": "નવો પાસવર્ડ",
+    "send_otp": "OTP મોકલો",
+    "reset_password": "પાસવર્ડ રીસેટ કરો",
+    "forgot_password_title": "પાસવર્ડ ભૂલ્યા?",
+    "forgot_password_desc": "OTP મેળવવા ફોન નંબર દાખલ કરો.",
+    "reset_password_title": "પાસવર્ડ રીસેટ",
+    "reset_password_desc": "તમારા ફોન પર મોકલેલ OTP દાખલ કરો.",
+    "otp_sent_to": "OTP મોકલ્યો",
+    "back_to_login": "સાઇન ઇન પર પાછા",
+    "terms_agree": "ખાતું બનાવીને તમે સહમત છો",
+    "terms_of_service": "સેવાની શરતો",
+    "invalid_credentials": "અમાન્ય ફોન નંબર અથવા પાસવર્ડ",
+    "phone_already_registered": "આ ફોન નંબર પહેલેથી નોંધાયેલ છે"
   },
   "ledger": {
     "title": "ખાતાવહી",
@@ -75,6 +99,10 @@
     "invalid_phone": "અમાન્ય ફોન નંબર",
     "invalid_email": "અમાન્ય ઇમેઇલ",
     "password_too_short": "પાસવર્ડ ઓછામાં ઓછા 6 અક્ષરોનો હોવો જોઈએ",
-    "passwords_do_not_match": "પાસવર્ડ મેળ ખાતા નથી"
+    "passwords_do_not_match": "પાસવર્ડ મેળ ખાતા નથી",
+    "password_min_8": "પાસવર્ડ ઓછામાં ઓછા 8 અક્ષરોનો હોવો જોઈએ",
+    "password_complexity": "જરૂરી: મોટો અક્ષર, નાનો અક્ષર, અંક અને વિશેષ અક્ષર",
+    "otp_invalid": "સાચો 6 અંકનો OTP દાખલ કરો",
+    "business_name_required": "વ્યવસાયનું નામ જરૂરી છે"
   }
 }

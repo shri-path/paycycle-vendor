@@ -1,0 +1,105 @@
+/**
+ * Auth Service
+ * Purpose: Authentication API calls — mock in dev, real API in production
+ */
+
+import axios from 'axios'
+import { isMockMode, simulateNetworkDelay, API_CONFIG } from '@services/config'
+import {
+  mockUser,
+  mockTokens,
+  mockVendorContext,
+  MOCK_RESET_TOKEN,
+} from '@services/mocks'
+import type {
+  SignupResponseDto,
+  LoginResponseDto,
+  RefreshResponseDto,
+} from '../../../types/auth'
+
+const api = axios.create({
+  baseURL: API_CONFIG.baseUrl,
+  timeout: API_CONFIG.timeout,
+})
+
+export const authService = {
+  async signup(
+    phone: string,
+    password: string,
+    vendorName: string,
+  ): Promise<SignupResponseDto> {
+    if (isMockMode) {
+      await simulateNetworkDelay()
+      return {
+        user: { ...mockUser, phone },
+        tokens: mockTokens,
+        vendorContext: { ...mockVendorContext, vendorName },
+      }
+    }
+    const { data } = await api.post('/v1/auth/signup', { phone, password, vendorName })
+    return data.data as SignupResponseDto
+  },
+
+  async login(phone: string, password: string): Promise<LoginResponseDto> {
+    if (isMockMode) {
+      await simulateNetworkDelay()
+      if (password.length === 0) {
+        throw new Error('auth.invalid_credentials')
+      }
+      return {
+        user: { ...mockUser, phone },
+        tokens: mockTokens,
+        vendorContexts: [mockVendorContext],
+      }
+    }
+    const { data } = await api.post('/v1/auth/login', { phone, password })
+    return data.data as LoginResponseDto
+  },
+
+  async logout(refreshToken: string, accessToken: string): Promise<void> {
+    if (isMockMode) {
+      await simulateNetworkDelay()
+      return
+    }
+    await api.post(
+      '/v1/auth/logout',
+      { refreshToken },
+      { headers: { Authorization: `Bearer ${accessToken}` } },
+    )
+  },
+
+  async refreshTokens(refreshToken: string): Promise<RefreshResponseDto> {
+    if (isMockMode) {
+      await simulateNetworkDelay()
+      return mockTokens
+    }
+    const { data } = await api.post('/v1/auth/refresh', { refreshToken })
+    return data.data as RefreshResponseDto
+  },
+
+  async forgotPassword(phone: string): Promise<string> {
+    if (isMockMode) {
+      await simulateNetworkDelay()
+      // In real mode the reset token is delivered via SMS; in mock we return it directly
+      return MOCK_RESET_TOKEN
+    }
+    await api.post('/v1/auth/forgot-password', { phone })
+    // Reset token is sent via SMS — not in response
+    return ''
+  },
+
+  async resetPassword(
+    phone: string,
+    resetToken: string,
+    otpCode: string,
+    newPassword: string,
+  ): Promise<void> {
+    if (isMockMode) {
+      await simulateNetworkDelay()
+      return
+    }
+    await api.post('/v1/auth/reset-password', { phone, resetToken, otpCode, newPassword })
+  },
+}
+
+export default authService

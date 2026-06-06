@@ -24,7 +24,31 @@
     "password": "Password",
     "forgot_password": "Forgot Password?",
     "sign_up": "Sign Up",
-    "already_have_account": "Already have an account?"
+    "already_have_account": "Already have an account?",
+    "sign_in": "Sign In",
+    "create_account": "Create Account",
+    "business_name": "Business Name",
+    "business_name_placeholder": "e.g. Krishna Dairy",
+    "phone_placeholder": "9876543210",
+    "create_password": "Create Password",
+    "category": "Category",
+    "new_vendor": "New vendor?",
+    "tagline": "Daily Supplies Made Simple",
+    "otp_code": "OTP Code",
+    "otp_placeholder": "Enter 6-digit OTP",
+    "new_password": "New Password",
+    "send_otp": "Send OTP",
+    "reset_password": "Reset Password",
+    "forgot_password_title": "Forgot Password?",
+    "forgot_password_desc": "Enter your phone number to receive an OTP.",
+    "reset_password_title": "Reset Password",
+    "reset_password_desc": "Enter the OTP sent to your phone and set a new password.",
+    "otp_sent_to": "OTP sent to",
+    "back_to_login": "Back to Sign In",
+    "terms_agree": "By creating an account, you agree to our",
+    "terms_of_service": "Terms of Service",
+    "invalid_credentials": "Invalid phone number or password",
+    "phone_already_registered": "Phone number already registered"
   },
   "ledger": {
     "title": "Ledger",
@@ -75,6 +99,10 @@
     "invalid_phone": "Invalid phone number",
     "invalid_email": "Invalid email",
     "password_too_short": "Password must be at least 6 characters",
-    "passwords_do_not_match": "Passwords do not match"
+    "passwords_do_not_match": "Passwords do not match",
+    "password_min_8": "Password must be at least 8 characters",
+    "password_complexity": "Need: uppercase, lowercase, number & special character",
+    "otp_invalid": "Enter a valid 6-digit OTP",
+    "business_name_required": "Business name is required"
   }
 }

@@ -24,7 +24,31 @@
     "password": "पासवर्ड",
     "forgot_password": "पासवर्ड विसरलात?",
     "sign_up": "साइन अप करा",
-    "already_have_account": "आधीच खाते आहे?"
+    "already_have_account": "आधीच खाते आहे?",
+    "sign_in": "साइन इन करा",
+    "create_account": "खाते तयार करा",
+    "business_name": "व्यवसायाचे नाव",
+    "business_name_placeholder": "कृष्णा डेअरी",
+    "phone_placeholder": "9876543210",
+    "create_password": "पासवर्ड तयार करा",
+    "category": "श्रेणी",
+    "new_vendor": "नवीन विक्रेता?",
+    "tagline": "दैनंदिन पुरवठा सोपा केला",
+    "otp_code": "OTP कोड",
+    "otp_placeholder": "6 अंकी OTP",
+    "new_password": "नवीन पासवर्ड",
+    "send_otp": "OTP पाठवा",
+    "reset_password": "पासवर्ड रीसेट करा",
+    "forgot_password_title": "पासवर्ड विसरलात?",
+    "forgot_password_desc": "OTP मिळवण्यासाठी फोन नंबर टाका.",
+    "reset_password_title": "पासवर्ड रीसेट करा",
+    "reset_password_desc": "तुमच्या फोनवर आलेला OTP टाका.",
+    "otp_sent_to": "OTP पाठवला",
+    "back_to_login": "साइन इनवर परत जा",
+    "terms_agree": "खाते तयार केल्याने तुम्ही मान्य करता",
+    "terms_of_service": "सेवा अटी",
+    "invalid_credentials": "अमान्य फोन नंबर किंवा पासवर्ड",
+    "phone_already_registered": "हा फोन नंबर आधीच नोंदणीकृत आहे"
   },
   "ledger": {
     "title": "खातेवही",
@@ -75,6 +99,10 @@
     "invalid_phone": "अवैध फोन नंबर",
     "invalid_email": "अवैध ईमेल",
     "password_too_short": "पासवर्ड किमान 6 वर्णांचा असावा",
-    "passwords_do_not_match": "पासवर्ड जुळत नाहीत"
+    "passwords_do_not_match": "पासवर्ड जुळत नाहीत",
+    "password_min_8": "पासवर्ड किमान 8 वर्णांचा असावा",
+    "password_complexity": "आवश्यक: मोठे अक्षर, लहान अक्षर, अंक आणि विशेष वर्ण",
+    "otp_invalid": "योग्य 6 अंकी OTP टाका",
+    "business_name_required": "व्यवसायाचे नाव आवश्यक आहे"
   }
 }

@@ -24,7 +24,31 @@
     "password": "പാസ്‌വേഡ്",
     "forgot_password": "പാസ്‌വേഡ് മറന്നോ?",
     "sign_up": "സൈൻ അപ്പ് ചെയ്യുക",
-    "already_have_account": "ഇതിനകം ഒരു അക്കൗണ്ട് ഉണ്ടോ?"
+    "already_have_account": "ഇതിനകം ഒരു അക്കൗണ്ട് ഉണ്ടോ?",
+    "sign_in": "സൈൻ ഇൻ ചെയ്യുക",
+    "create_account": "അക്കൗണ്ട് ഉണ്ടാക്കുക",
+    "business_name": "ബിസിനസ്സ് പേര്",
+    "business_name_placeholder": "കൃഷ്ണ ഡെയറി",
+    "phone_placeholder": "9876543210",
+    "create_password": "പാസ്‌വേഡ് ഉണ്ടാക്കുക",
+    "category": "വിഭാഗം",
+    "new_vendor": "പുതിയ വെണ്ടർ?",
+    "tagline": "ദൈനംദിന വിതരണം ലളിതമാക്കി",
+    "otp_code": "OTP കോഡ്",
+    "otp_placeholder": "6 അക്ക OTP",
+    "new_password": "പുതിയ പാസ്‌വേഡ്",
+    "send_otp": "OTP അയക്കുക",
+    "reset_password": "പാസ്‌വേഡ് റീസെറ്റ് ചെയ്യുക",
+    "forgot_password_title": "പാസ്‌വേഡ് മറന്നോ?",
+    "forgot_password_desc": "OTP ലഭിക്കാൻ ഫോൺ നമ്പർ നൽകുക.",
+    "reset_password_title": "പാസ്‌വേഡ് റീസെറ്റ്",
+    "reset_password_desc": "നിങ്ങളുടെ ഫോണിലേക്ക് അയച്ച OTP നൽകുക.",
+    "otp_sent_to": "OTP അയച്ചു",
+    "back_to_login": "സൈൻ ഇനിലേക്ക് മടങ്ങുക",
+    "terms_agree": "അക്കൗണ്ട് ഉണ്ടാക്കുന്നതിലൂടെ നിങ്ങൾ സമ്മതിക്കുന്നു",
+    "terms_of_service": "സേവന നിബന്ധനകൾ",
+    "invalid_credentials": "അസാധുവായ ഫോൺ നമ്പർ അല്ലെങ്കിൽ പാസ്‌വേഡ്",
+    "phone_already_registered": "ഈ ഫോൺ നമ്പർ ഇതിനകം രജിസ്റ്റർ ചെയ്തിട്ടുണ്ട്"
   },
   "ledger": {
     "title": "ലെഡ്ജർ",
@@ -75,6 +99,10 @@
     "invalid_phone": "അസാധുവായ ഫോൺ നമ്പർ",
     "invalid_email": "അസാധുവായ ഇമെയിൽ",
     "password_too_short": "പാസ്‌വേഡ് കുറഞ്ഞത് 6 അക്ഷരങ്ങൾ ആയിരിക്കണം",
-    "passwords_do_not_match": "പാസ്‌വേഡുകൾ പൊരുത്തപ്പെടുന്നില്ല"
+    "passwords_do_not_match": "പാസ്‌വേഡുകൾ പൊരുത്തപ്പെടുന്നില്ല",
+    "password_min_8": "പാസ്‌വേഡ് കുറഞ്ഞത് 8 അക്ഷരങ്ങൾ ആയിരിക്കണം",
+    "password_complexity": "ആവശ്യം: വലിയ അക്ഷരം, ചെറിയ അക്ഷരം, സംഖ്യ, പ്രത്യേക അക്ഷരം",
+    "otp_invalid": "ശരിയായ 6 അക്ക OTP നൽകുക",
+    "business_name_required": "ബിസിനസ്സ് പേര് ആവശ്യമാണ്"
   }
 }

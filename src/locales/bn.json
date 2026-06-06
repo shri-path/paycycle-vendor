@@ -24,7 +24,31 @@
     "password": "পাসওয়ার্ড",
     "forgot_password": "পাসওয়ার্ড ভুলে গেছেন?",
     "sign_up": "সাইন আপ করুন",
-    "already_have_account": "ইতিমধ্যে একটি অ্যাকাউন্ট আছে?"
+    "already_have_account": "ইতিমধ্যে একটি অ্যাকাউন্ট আছে?",
+    "sign_in": "সাইন ইন করুন",
+    "create_account": "অ্যাকাউন্ট তৈরি করুন",
+    "business_name": "ব্যবসার নাম",
+    "business_name_placeholder": "কৃষ্ণা ডেইরি",
+    "phone_placeholder": "9876543210",
+    "create_password": "পাসওয়ার্ড তৈরি করুন",
+    "category": "বিভাগ",
+    "new_vendor": "নতুন বিক্রেতা?",
+    "tagline": "দৈনিক সরবরাহ সহজ করা হয়েছে",
+    "otp_code": "OTP কোড",
+    "otp_placeholder": "6 সংখ্যার OTP",
+    "new_password": "নতুন পাসওয়ার্ড",
+    "send_otp": "OTP পাঠান",
+    "reset_password": "পাসওয়ার্ড রিসেট করুন",
+    "forgot_password_title": "পাসওয়ার্ড ভুলে গেছেন?",
+    "forgot_password_desc": "OTP পেতে ফোন নম্বর দিন।",
+    "reset_password_title": "পাসওয়ার্ড রিসেট করুন",
+    "reset_password_desc": "আপনার ফোনে পাঠানো OTP দিন।",
+    "otp_sent_to": "OTP পাঠানো হয়েছে",
+    "back_to_login": "সাইন ইনে ফিরুন",
+    "terms_agree": "অ্যাকাউন্ট তৈরি করে আপনি সম্মত হচ্ছেন",
+    "terms_of_service": "সেবার শর্তাবলী",
+    "invalid_credentials": "অবৈধ ফোন নম্বর বা পাসওয়ার্ড",
+    "phone_already_registered": "এই ফোন নম্বর ইতিমধ্যে নিবন্ধিত"
   },
   "ledger": {
     "title": "খাতা",
@@ -75,6 +99,10 @@
     "invalid_phone": "অবৈধ ফোন নম্বর",
     "invalid_email": "অবৈধ ইমেইল",
     "password_too_short": "পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে",
-    "passwords_do_not_match": "পাসওয়ার্ড মিলছে না"
+    "passwords_do_not_match": "পাসওয়ার্ড মিলছে না",
+    "password_min_8": "পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে",
+    "password_complexity": "প্রয়োজন: বড় অক্ষর, ছোট অক্ষর, সংখ্যা এবং বিশেষ অক্ষর",
+    "otp_invalid": "সঠিক ৬ সংখ্যার OTP দিন",
+    "business_name_required": "ব্যবসার নাম আবশ্যক"
   }
 }
