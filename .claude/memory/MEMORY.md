@@ -1,0 +1,6 @@
+- [Agent Workflow Pipeline](project_workflow.md) — Mandatory 4-agent pipeline: architect -> dev -> review -> qa
+- [Backend API Location](reference_backend.md) — paycycle_api project at D:\Shrihari\Sourcecode\personal\paycycle\paycycle_api
+- [Product Context](project_context.md) — Vendor app for tier 2-3 Indian cities, WhatsApp UX, offline-first
+- [Fresh Start Policy](feedback_fresh_start.md) — Keep base components/infra when resetting, only remove feature screens
+- [Commit Strategy](feedback_commit_strategy.md) — Conventional commits (type: desc), split by concern, match paycycle_api style
+- [Project Document Paths](reference_project_docs.md) — Absolute paths to features, wireframes, user stories, DB design, and progress tracker; agent update rules

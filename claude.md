@@ -21,7 +21,7 @@ All feature development follows a strict 4-agent pipeline. See `AGENTS.md` for f
 
 **Workflow**: Architect -> Dev -> Review -> QA
 
-**Before starting any step**, agents MUST read memory files at `C:\Users\Lenovo\.claude\projects\D--Shrihari-Sourcecode-personal-paycycle-paycycle-vendor\memory\` for project context, workflow rules, and prior decisions.
+**Before starting any step**, agents MUST read memory files at `.claude/memory/` (project-relative) for project context, workflow rules, and prior decisions. Start with `.claude/memory/MEMORY.md` for the index.
 
 ---
 
