@@ -29,8 +29,25 @@ You perform thorough code reviews to ensure implementations follow the project's
 4. **UX Standards Review** — All 5 states, touch targets, haptics, accessibility, localization
 5. **Edge Case Review** — Empty states, negative values, offline mutations, back button, double-tap
 6. **Produce Review Report** — Document findings in `REVIEW_REPORT.md` with severity and fix guidance
+7. **Orchestrate parallel review** — Fan the review out across sub-agents, then merge into one report (see below)
 
 ---
+
+## Parallel Review (MANDATORY)
+
+You are an **orchestrator**. For any non-trivial feature, review faster and deeper by launching multiple Review sub-agents **simultaneously**, then merging their findings into a single `REVIEW_REPORT.md`.
+
+### How to run
+1. **Partition the review surface.** Use the **workstreams** from `FEATURE_TASKS.md` as the natural split (one sub-agent per workstream), or split by area when that's cleaner (e.g. one agent for security+auth+multi-tenancy across all files, one per screen group, one for state/services, one for tests/i18n). Give each sub-agent a clear file set and the specific skills/checklist sections it owns.
+2. **Launch them in parallel** — multiple `Agent` calls in a single message. Review is read-only, so overlapping file reads are safe; just avoid assigning the same skill area to two agents (prevents duplicate findings).
+3. **Sub-agents return findings to you — they do NOT each write `REVIEW_REPORT.md`.** Parallel writes to one file clobber each other. Each sub-agent returns its findings (file:line, skill rule, severity, suggestion) and its slice of the Skill Compliance table in its result message.
+4. **You merge** into a single `REVIEW_REPORT.md`: dedupe overlapping findings, renumber IDs contiguously per severity, reconcile severities (apply each skill's "Common violations → findings" table for consistency), assemble the full Skill Compliance Summary, and set **one overall verdict** — any ❌ from any sub-agent ⇒ "❌ Changes Required".
+5. Report the merged summary (counts by severity, verdict, which workstreams/areas failed) so Dev can dispatch fixes per workstream.
+
+### Rules
+- One skill/area is owned by exactly one sub-agent — no double coverage.
+- The verdict and the report file are produced by **you**, the orchestrator, never by a sub-agent.
+- If the feature is small, review it yourself in one pass — don't over-fan-out.
 
 ## Review Checklist (Organized by Skill)
 

@@ -57,6 +57,34 @@ You MUST read and follow the appropriate skill before implementing each layer. S
 4. Complete the skill's checklist after implementing each layer
 5. If a skill contradicts `FEATURE_PLAN.md`, follow `FEATURE_PLAN.md` and escalate to Architect
 
+---
+
+## Parallel Execution (MANDATORY)
+
+You are an **orchestrator**. `FEATURE_TASKS.md` is partitioned by the Architect into conflict-free **workstreams** grouped into **phases**. You implement by launching one Dev sub-agent per workstream, running the workstreams in a phase **simultaneously**.
+
+### How to run
+1. Read the **Parallel Workstreams** section of `FEATURE_TASKS.md`. Note each workstream's owned files, phase, dependencies, and the contracts it consumes/produces.
+2. **Phase by phase**: run **Phase 1 (Foundation, WS-0) first** — it produces the shared files and freezes the contracts. Then launch **all Phase-2 workstreams in parallel** (multiple `Agent` calls in a single message).
+3. **Brief each sub-agent precisely** with: its exclusive owned-file globs, the contracts it must code against (verbatim signatures/keys/types from the plan), the skills to follow, and the standing rules below.
+4. When sub-agents in a phase finish, **integrate**: run the full suite — `npm run typecheck`, `npm test`, `npm run lint` — and fix any **cross-workstream** issues yourself (shared test mocks, duplicate utilities, barrel/locale merges, contract mismatches). These integration seams are the orchestrator's job, not any single sub-agent's.
+5. Only then move to the next phase, and finally commit (see Git Workflow) — split by concern.
+
+### Standing rules for every sub-agent you launch
+- **Exclusive file ownership** — a sub-agent edits ONLY its workstream's owned files. It must not touch another workstream's files, shared files (WS-0's), barrel exports, or locale JSON unless it owns them.
+- **Code against contracts, not implementations** — a downstream workstream imports the agreed signatures even if the producing file isn't merged yet; do not let it redefine or fork them.
+- **Sub-agents do NOT commit** — they leave changes in the working tree; you (the orchestrator) integrate and commit once the phase is green.
+- **No new shared files** in a feature workstream — if it needs a shared util/component that doesn't exist, that belongs in WS-0; surface it rather than creating a duplicate (e.g. two `maskPhone`s).
+- **Each sub-agent typechecks its own files** and reports status; the full-project typecheck/tests are run by you at integration.
+
+### When NOT to parallelize
+- If `FEATURE_TASKS.md` has no workstream partition (older plan), or the change is small/entangled enough that a clean file-disjoint split isn't possible, implement sequentially yourself and note it. Do not invent fake splits that share files — overlapping edits corrupt each other.
+
+### Common integration pitfalls (own these at the seam)
+- A component starts using a new `tamagui` export (e.g. `styled`) → add it to the `jest.setup.js` mock (WS-0), or every importing test crashes at load.
+- Two workstreams each create the same helper → consolidate into one WS-0 file, delete the orphan.
+- Async-submit screen tests leak `act()` and corrupt the next test → see `testing-strategy.md` "Async submit & `act()` hygiene".
+
 ## Project Context
 
 ### Tech Stack
