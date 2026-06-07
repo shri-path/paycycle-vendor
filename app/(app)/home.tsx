@@ -6,6 +6,7 @@
 import { View, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
+import { useShallow } from 'zustand/react/shallow'
 import { AppText } from '@components/primitives/AppText'
 import { AppButton } from '@components/primitives/AppButton'
 import { useAuthStore } from '@modules/auth/store/auth.store'
@@ -15,7 +16,9 @@ import { colors, spacing } from '@constants/tokens'
 export default function HomeScreen() {
   const { t } = useTranslation()
   const router = useRouter()
-  const { logout, vendorContext, user } = useAuthStore()
+  const { logout, vendorContext, user } = useAuthStore(
+    useShallow((s) => ({ logout: s.logout, vendorContext: s.vendorContext, user: s.user })),
+  )
 
   const handleLogout = async () => {
     await logout()
@@ -26,7 +29,7 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.safe}>
       <View style={styles.container}>
         <AppText variant="h2" weight="bold" color={colors.primary}>
-          PayCycle Vendor
+          {t('common.app_name')}
         </AppText>
         {vendorContext ? (
           <AppText variant="body" color={colors.textSecondary}>

@@ -19,6 +19,8 @@ interface Props {
   title?: string
   /** Optional subtitle override for the error fallback */
   subtitle?: string
+  /** Optional label for the retry button */
+  retryLabel?: string
 }
 
 interface State {
@@ -58,6 +60,7 @@ export class ScreenErrorBoundary extends React.Component<Props, State> {
 
     const title = this.props.title ?? 'Something went wrong'
     const subtitle = this.props.subtitle ?? 'An unexpected error occurred. Tap Retry to reload the screen.'
+    const retryLabel = this.props.retryLabel ?? 'Retry'
 
     return (
       <SafeAreaView style={styles.safe}>
@@ -69,9 +72,9 @@ export class ScreenErrorBoundary extends React.Component<Props, State> {
             style={styles.retryButton}
             onPress={this.handleRetry}
             accessibilityRole="button"
-            accessibilityLabel="Retry"
+            accessibilityLabel={retryLabel}
           >
-            <Text style={styles.retryLabel}>Retry</Text>
+            <Text style={styles.retryLabel}>{retryLabel}</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
