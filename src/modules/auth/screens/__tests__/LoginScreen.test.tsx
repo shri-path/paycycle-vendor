@@ -114,8 +114,8 @@ describe('LoginScreen', () => {
     )
 
     const screen = await render(<LoginScreen />)
-    // In test env, t() returns the key itself, so we look for the key
-    expect(screen.getByText('auth.invalid_credentials')).toBeTruthy()
+    // t() resolves the key to the actual English string from en.json
+    expect(screen.getByText('Invalid phone number or password')).toBeTruthy()
   })
 
   it('does not call login when form fields are empty', async () => {

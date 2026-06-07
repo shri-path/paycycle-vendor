@@ -4,7 +4,7 @@
  */
 module.exports = {
   preset: 'jest-expo',
-  setupFilesAfterFramework: [],
+  setupFiles: ['<rootDir>/jest.setup.js'],
   transformIgnorePatterns: [
     'node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|zustand|tamagui)',
   ],
@@ -20,7 +20,7 @@ module.exports = {
     '^@types/(.*)$': '<rootDir>/src/types/$1',
     '^@db/(.*)$': '<rootDir>/src/db/$1',
   },
-  testPathPattern: ['src/**/__tests__/**/*.test.{ts,tsx}'],
+  testMatch: ['<rootDir>/src/**/__tests__/**/*.test.{ts,tsx}'],
   collectCoverageFrom: [
     'src/modules/**/*.{ts,tsx}',
     'src/services/**/*.{ts,tsx}',

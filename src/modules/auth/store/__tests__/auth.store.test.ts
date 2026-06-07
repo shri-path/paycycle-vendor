@@ -15,6 +15,7 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
   getItem: jest.fn().mockResolvedValue(null),
   setItem: jest.fn().mockResolvedValue(undefined),
   removeItem: jest.fn().mockResolvedValue(undefined),
+  multiRemove: jest.fn().mockResolvedValue(undefined),
 }))
 
 // Force mock mode
@@ -30,9 +31,6 @@ jest.mock('@services/config', () => ({
   simulateNetworkDelay: jest.fn().mockResolvedValue(undefined),
 }))
 
-import * as SecureStore from 'expo-secure-store'
-import { authService } from '../../service/auth.service'
-
 // Mock the auth service
 jest.mock('../../service/auth.service', () => ({
   authService: {
@@ -45,31 +43,16 @@ jest.mock('../../service/auth.service', () => ({
   },
 }))
 
+import * as SecureStore from 'expo-secure-store'
+import { authService } from '../../service/auth.service'
+import { useAuthStore } from '../auth.store'
+
 const mockedAuthService = authService as jest.Mocked<typeof authService>
 
 describe('useAuthStore', () => {
-  let useAuthStore: typeof import('../auth.store').useAuthStore
-
-  beforeEach(async () => {
-    // Reset module registry to get a clean store for each test
-    jest.resetModules()
-
-    // Re-mock after resetModules
-    jest.mock('expo-secure-store', () => ({
-      getItemAsync: jest.fn().mockResolvedValue(null),
-      setItemAsync: jest.fn().mockResolvedValue(undefined),
-      deleteItemAsync: jest.fn().mockResolvedValue(undefined),
-    }))
-    jest.mock('@react-native-async-storage/async-storage', () => ({
-      getItem: jest.fn().mockResolvedValue(null),
-      setItem: jest.fn().mockResolvedValue(undefined),
-      removeItem: jest.fn().mockResolvedValue(undefined),
-    }))
-
-    const storeModule = await import('../auth.store')
-    useAuthStore = storeModule.useAuthStore
-
-    // Reset store to initial state
+  beforeEach(() => {
+    jest.clearAllMocks()
+    // Reset store to clean initial state before each test
     useAuthStore.setState({
       isAuthenticated: false,
       user: null,
@@ -109,7 +92,17 @@ describe('useAuthStore', () => {
 
   describe('login', () => {
     const mockLoginResponse = {
-      user: { id: 'u1', phone: '+919876543210', name: null, email: null, profilePhotoUrl: null, preferredLanguage: 'en', lastLoginAt: null, createdAt: '2026-01-01T00:00:00Z', updatedAt: '2026-01-01T00:00:00Z' },
+      user: {
+        id: 'u1',
+        phone: '+919876543210',
+        name: null,
+        email: null,
+        profilePhotoUrl: null,
+        preferredLanguage: 'en',
+        lastLoginAt: null,
+        createdAt: '2026-01-01T00:00:00Z',
+        updatedAt: '2026-01-01T00:00:00Z',
+      },
       tokens: { accessToken: 'access-token', refreshToken: 'refresh-token' },
       vendorContexts: [{ vendorId: 'v1', vendorName: 'Krishna Dairy', role: 'vendor_owner' }],
     }
@@ -155,7 +148,17 @@ describe('useAuthStore', () => {
 
   describe('signup', () => {
     const mockSignupResponse = {
-      user: { id: 'u2', phone: '+911234567890', name: null, email: null, profilePhotoUrl: null, preferredLanguage: 'en', lastLoginAt: null, createdAt: '2026-01-01T00:00:00Z', updatedAt: '2026-01-01T00:00:00Z' },
+      user: {
+        id: 'u2',
+        phone: '+911234567890',
+        name: null,
+        email: null,
+        profilePhotoUrl: null,
+        preferredLanguage: 'en',
+        lastLoginAt: null,
+        createdAt: '2026-01-01T00:00:00Z',
+        updatedAt: '2026-01-01T00:00:00Z',
+      },
       tokens: { accessToken: 'access-2', refreshToken: 'refresh-2' },
       vendorContext: { vendorId: 'v2', vendorName: 'Test Vendor', role: 'vendor_owner' },
     }
@@ -180,7 +183,21 @@ describe('useAuthStore', () => {
   describe('logout', () => {
     it('clears auth state and deletes secure tokens', async () => {
       // Set up authenticated state
-      useAuthStore.setState({ isAuthenticated: true, user: { id: 'u1', phone: '+91', name: null, email: null, profilePhotoUrl: null, preferredLanguage: 'en', lastLoginAt: null, createdAt: '', updatedAt: '' }, vendorContext: null })
+      useAuthStore.setState({
+        isAuthenticated: true,
+        user: {
+          id: 'u1',
+          phone: '+91',
+          name: null,
+          email: null,
+          profilePhotoUrl: null,
+          preferredLanguage: 'en',
+          lastLoginAt: null,
+          createdAt: '',
+          updatedAt: '',
+        },
+        vendorContext: null,
+      })
       mockedAuthService.logout.mockResolvedValueOnce(undefined)
 
       await useAuthStore.getState().logout()
