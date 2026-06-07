@@ -13,9 +13,10 @@
  * - Disabled state
  */
 
-import React, { useState } from 'react'
+import React from 'react'
 import {
   View,
+  Animated,
   TextInput,
   StyleSheet,
   ViewStyle,
@@ -23,6 +24,7 @@ import {
   TextStyle,
 } from 'react-native'
 import { AppText } from './AppText'
+import { useFocusRing, inputOutlineReset } from '@hooks/useFocusRing'
 import { colors, spacing, borderRadius, fontSize, componentSizes } from '@constants/tokens'
 
 export interface AppTextAreaProps extends TextInputProps {
@@ -155,7 +157,10 @@ export const AppTextArea: React.FC<AppTextAreaProps> = ({
   placeholderTextColor,
   ...props
 }) => {
-  const [isFocused, setIsFocused] = useState(false)
+  const { onFocus, onBlur, focusRingStyle } = useFocusRing({
+    error: !!error,
+    disabled: !editable,
+  })
 
   const charCount = String(value || '').length
   const charLimitPercentage = maxLength ? (charCount / maxLength) * 100 : 0
@@ -167,15 +172,9 @@ export const AppTextArea: React.FC<AppTextAreaProps> = ({
     counterColor = colors.warning
   }
 
-  const textAreaWrapperStyle: ViewStyle = {
-    ...styles.textAreaWrapper,
-    ...(error && styles.textAreaWrapperError),
-    ...(!editable && styles.textAreaWrapperDisabled),
-    borderColor: isFocused && !error ? colors.primary : (error ? colors.error : colors.gray200),
-  }
-
   const textAreaStyle: TextStyle = {
     ...styles.textArea,
+    ...inputOutlineReset,
     ...(!editable && styles.textAreaDisabled),
   }
 
@@ -187,7 +186,14 @@ export const AppTextArea: React.FC<AppTextAreaProps> = ({
         </AppText>
       )}
 
-      <View style={textAreaWrapperStyle}>
+      <Animated.View
+        style={[
+          styles.textAreaWrapper,
+          error && styles.textAreaWrapperError,
+          !editable && styles.textAreaWrapperDisabled,
+          focusRingStyle,
+        ]}
+      >
         <TextInput
           {...props}
           value={value}
@@ -198,15 +204,15 @@ export const AppTextArea: React.FC<AppTextAreaProps> = ({
           maxLength={maxLength}
           placeholderTextColor={placeholderTextColor || colors.textSecondary}
           onFocus={(e) => {
-            setIsFocused(true)
+            onFocus()
             props.onFocus?.(e)
           }}
           onBlur={(e) => {
-            setIsFocused(false)
+            onBlur()
             props.onBlur?.(e)
           }}
         />
-      </View>
+      </Animated.View>
 
       {(error || helperText || showCounter) && (
         <View style={styles.footerContainer}>

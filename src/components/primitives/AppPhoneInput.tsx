@@ -16,6 +16,7 @@
 import React, { useState } from 'react'
 import {
   View,
+  Animated,
   TextInput,
   StyleSheet,
   ViewStyle,
@@ -26,6 +27,7 @@ import {
   FlatList,
 } from 'react-native'
 import { AppText } from './AppText'
+import { useFocusRing, inputOutlineReset } from '@hooks/useFocusRing'
 import { colors, spacing, borderRadius, fontSize, fontWeight, componentSizes } from '@constants/tokens'
 
 export interface CountryCode {
@@ -247,7 +249,10 @@ export const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
   ...props
 }) => {
   const [isModalVisible, setIsModalVisible] = useState(false)
-  const [isFocused, setIsFocused] = useState(false)
+  const { isFocused, onFocus, onBlur, focusRingStyle } = useFocusRing({
+    error: !!error,
+    disabled: !editable,
+  })
 
   const selectedCountry = countryCodes.find((c) => c.dial === countryCode)
 
@@ -255,18 +260,12 @@ export const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
     ...styles.countryCodeButton,
     ...(error && styles.countryCodeButtonError),
     ...(!editable && styles.countryCodeButtonDisabled),
-    borderColor: isFocused && !error ? colors.primary : (error ? colors.error : colors.gray200),
-  }
-
-  const phoneInputFieldStyle: ViewStyle = {
-    ...styles.phoneInputField,
-    ...(error && styles.phoneInputFieldError),
-    ...(!editable && styles.phoneInputFieldDisabled),
-    borderColor: isFocused && !error ? colors.primary : (error ? colors.error : colors.gray200),
+    borderColor: isFocused && !error ? colors.focusBorder : (error ? colors.error : colors.gray200),
   }
 
   const phoneInputStyle: TextStyle = {
     ...styles.phoneInput,
+    ...inputOutlineReset,
     ...(!editable && styles.phoneInputDisabled),
   }
 
@@ -308,7 +307,14 @@ export const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
           </AppText>
         </TouchableOpacity>
 
-        <View style={phoneInputFieldStyle}>
+        <Animated.View
+          style={[
+            styles.phoneInputField,
+            error && styles.phoneInputFieldError,
+            !editable && styles.phoneInputFieldDisabled,
+            focusRingStyle,
+          ]}
+        >
           <TextInput
             {...props}
             testID={testID}
@@ -320,15 +326,15 @@ export const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
             keyboardType="phone-pad"
             onChangeText={handlePhoneChange}
             onFocus={(e) => {
-              setIsFocused(true)
+              onFocus()
               props.onFocus?.(e)
             }}
             onBlur={(e) => {
-              setIsFocused(false)
+              onBlur()
               props.onBlur?.(e)
             }}
           />
-        </View>
+        </Animated.View>
       </View>
 
       {(error || helperText) && (

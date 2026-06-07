@@ -13,6 +13,10 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Slot } from 'expo-router'
 import { TamaguiProvider } from 'tamagui'
 import tamaguiConfig from '../src/tamagui.config'
+import { installWebFocusRing } from '../src/styles/webFocusRing'
+
+// Install the global brand focus-ring on web (no-op on native).
+installWebFocusRing()
 
 export default function RootLayout() {
   return (
