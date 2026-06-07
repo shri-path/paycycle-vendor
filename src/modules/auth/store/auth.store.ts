@@ -17,6 +17,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as SecureStore from 'expo-secure-store'
 import { authService } from '../service/auth.service'
 import { mapApiError } from '@utils/errorMapper'
+import { logError } from '@utils/logger'
 import type { UserDto, VendorContextDto } from '../../../types/auth'
 
 // SSR-safe storage: AsyncStorage on native, localStorage on web browser, no-op in Node.js
@@ -103,6 +104,7 @@ export const useAuthStore = create<AuthState>()(
             isLoading: false,
           })
         } catch (err) {
+          void logError(err, { screen: 'Login', action: 'login', endpoint: '/auth/login' })
           const i18nKey = mapApiError(err)
           set({ isLoading: false, error: i18nKey })
           throw err
@@ -122,6 +124,7 @@ export const useAuthStore = create<AuthState>()(
             isLoading: false,
           })
         } catch (err) {
+          void logError(err, { screen: 'Signup', action: 'signup', endpoint: '/auth/signup' })
           const i18nKey = mapApiError(err)
           set({ isLoading: false, error: i18nKey })
           throw err
@@ -138,6 +141,9 @@ export const useAuthStore = create<AuthState>()(
           if (accessToken && refreshToken) {
             await authService.logout(refreshToken, accessToken)
           }
+        } catch (err) {
+          // Server-side logout failure is non-fatal — local tokens are still cleared below.
+          void logError(err, { screen: 'Settings', action: 'logout', endpoint: '/auth/logout' })
         } finally {
           await clearSecureTokens()
           set({
@@ -164,6 +170,11 @@ export const useAuthStore = create<AuthState>()(
             pendingResetPhone: phone,
           })
         } catch (err) {
+          void logError(err, {
+            screen: 'ForgotPassword',
+            action: 'forgotPassword',
+            endpoint: '/auth/forgot-password',
+          })
           const i18nKey = mapApiError(err)
           set({ isLoading: false, error: i18nKey })
           throw err
@@ -180,8 +191,10 @@ export const useAuthStore = create<AuthState>()(
 
         const resetToken = await SecureStore.getItemAsync(SECURE_KEY_PENDING_RESET_TOKEN)
         if (!resetToken) {
+          const err = new Error('No pending reset token in secure storage')
+          void logError(err, { screen: 'ResetPassword', action: 'resetPassword' })
           set({ isLoading: false, error: 'common.error' })
-          throw new Error('No pending reset token in secure storage')
+          throw err
         }
 
         try {
@@ -192,6 +205,11 @@ export const useAuthStore = create<AuthState>()(
             pendingResetPhone: null,
           })
         } catch (err) {
+          void logError(err, {
+            screen: 'ResetPassword',
+            action: 'resetPassword',
+            endpoint: '/auth/reset-password',
+          })
           const i18nKey = mapApiError(err)
           set({ isLoading: false, error: i18nKey })
           throw err
@@ -204,7 +222,8 @@ export const useAuthStore = create<AuthState>()(
         try {
           const refreshed = await authService.refreshTokens(refreshToken)
           await storeTokens(refreshed.accessToken, refreshed.refreshToken)
-        } catch {
+        } catch (err) {
+          void logError(err, { action: 'refreshTokens', endpoint: '/auth/refresh' })
           await clearSecureTokens()
           set({
             isAuthenticated: false,
