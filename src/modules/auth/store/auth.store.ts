@@ -7,16 +7,26 @@
  *   (Keychain on iOS, EncryptedSharedPreferences on Android). Never in AsyncStorage.
  * - pendingResetToken is stored in SecureStore, not in Zustand state.
  * - Only non-sensitive fields (isAuthenticated, user, vendorContext) are persisted
- *   via AsyncStorage through the Zustand persist middleware.
+ *   via AsyncStorage (native) / localStorage (web) through the Zustand persist middleware.
  */
 
+import { Platform } from 'react-native'
 import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware'
+import { persist, createJSONStorage, type StateStorage } from 'zustand/middleware'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as SecureStore from 'expo-secure-store'
 import { authService } from '../service/auth.service'
 import { mapApiError } from '@utils/errorMapper'
 import type { UserDto, VendorContextDto } from '../../../types/auth'
+
+// SSR-safe storage: AsyncStorage on native, localStorage on web browser, no-op in Node.js
+function buildStorage(): StateStorage {
+  if (Platform.OS !== 'web') return AsyncStorage
+  if (typeof window === 'undefined') {
+    return { getItem: () => null, setItem: () => {}, removeItem: () => {} }
+  }
+  return window.localStorage
+}
 
 // SecureStore key constants
 const SECURE_KEY_ACCESS_TOKEN = 'auth.accessToken'
@@ -207,14 +217,19 @@ export const useAuthStore = create<AuthState>()(
     {
       name: 'auth-storage',
       // Only AsyncStorage for non-sensitive fields; tokens live in SecureStore
-      storage: createJSONStorage(() => AsyncStorage),
+      storage: createJSONStorage(() => buildStorage()),
       partialize: (state) => ({
         isAuthenticated: state.isAuthenticated,
         user: state.user,
         vendorContext: state.vendorContext,
       }),
       onRehydrateStorage: () => (state) => {
-        state?.setHydrated(true)
+        if (state) {
+          state.setHydrated(true)
+        } else {
+          // Rehydration failed (e.g. AsyncStorage error) — unblock the app anyway
+          useAuthStore.getState().setHydrated(true)
+        }
       },
     },
   ),
