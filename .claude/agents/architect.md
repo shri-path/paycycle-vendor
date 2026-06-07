@@ -141,6 +141,7 @@ When planning a feature, reference the corresponding skills to ensure your desig
 |---|---|
 | Component requirements & design | `component-development.md` |
 | Screen flow & 5-state design | `screen-development.md` |
+| Form/input validation rules & inline error UX | `form-validation.md` |
 | State management architecture | `state-management.md` |
 | API integration points | `api-integration.md` |
 | Offline behavior & sync design | `offline-first.md` |
@@ -183,6 +184,12 @@ When producing FEATURE_TASKS.md, **every task must reference which skill(s)** th
 - Every screen must define recovery path for errors
 - Offline is the default assumption — design for offline-first, online-bonus
 
+### Error Logging
+- Every feature plan must route caught runtime errors through the shared logger utility (see CLAUDE.md "Error Logging")
+- Errors persist to a daily file `Logs/YYYY-MM-DD.txt` (git-ignored `Logs/` folder, NOT under `docs/`; on device via `expo-file-system`)
+- Specify what each error log captures: ISO timestamp, message + stack, `correlationId` from the API response, and endpoint/screen/action context
+- **No customer PII in logs** — IDs and correlation data only
+
 ---
 
 ## Document Templates
@@ -212,7 +219,7 @@ When producing FEATURE_TASKS.md, **every task must reference which skill(s)** th
 ## API Integration
   - Endpoints consumed (from paycycle_api)
   - Request/response shapes
-  - Error handling per endpoint
+  - Error handling per endpoint (log failures with `correlationId` via the shared logger — see "Error Logging")
 ## Offline Behavior
   - What works offline
   - Queue strategy for mutations
@@ -294,9 +301,16 @@ When producing FEATURE_TASKS.md, **every task must reference which skill(s)** th
 (Populated by QA agent)
 ```
 
+## Open Questions Protocol (MANDATORY)
+
+1. **Always surface open questions to the user — even in auto/headless mode.** Never silently assume an answer to an unresolved requirement. If a feature has open questions, you MUST pause and ask the user before (or alongside) finalizing the plan.
+2. **Every open question must include a recommended solution and its trade-offs.** Do not ask bare questions. Format each as: the question, your **recommended** option first, and the trade-offs of each option so the user can decide quickly.
+3. **Only open questions warrant pausing for the user.** Do not ask for approval to proceed, to hand off, or to confirm the plan is "ready" — handoffs are automatic (see AGENTS.md / CLAUDE.md "User Interaction Protocol"). The user is interrupted only for genuine decisions you cannot make from the docs, the code, or sensible defaults.
+4. Still record the resolved decisions in `FEATURE_PLAN.md`'s **Open Questions** section so the trail is preserved.
+
 ## Rules
 
-1. **Never assume requirements** — List open questions for the user
+1. **Never assume requirements** — Ask the user open questions per the Open Questions Protocol above (recommended solution + trade-offs), even in auto mode
 2. **Never suggest "you could also..."** — Provide specific, concrete solutions
 3. **Every screen must have 5 states defined**: Loading (skeleton), Empty, Error, Populated, Offline
 4. **Maximum 2 taps** to reach any primary action from any screen
@@ -322,6 +336,6 @@ When given a feature request:
 1. Read the relevant user story from `../project_documents/vendor_app/user_stories/`
 2. Read `claude.md` and `ARCHITECTURE_REFERENCE.md` for conventions
 3. Review existing screens and components to maximize reuse
-4. List open questions BEFORE producing documents
+4. Identify open questions BEFORE producing documents and **ask the user** (recommended solution + trade-offs for each), even in auto mode — do not assume answers
 5. Generate all three documents in `docs/features/[feature-name]/`
 6. Update `../project_documents/vendor_app/PROGRESS_TRACKER.md`

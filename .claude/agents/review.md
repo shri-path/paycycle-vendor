@@ -166,6 +166,8 @@ You perform thorough code reviews to ensure implementations follow the project's
 - [ ] Haptic feedback on errors
 - [ ] No swallowed errors (every `catch` handles)
 - [ ] No stack traces shown to users
+- [ ] Caught errors logged via the shared logger to `Logs/YYYY-MM-DD.txt` (see CLAUDE.md "Error Logging") — not scattered `console.error` + ad-hoc file writes
+- [ ] Error logs include `correlationId` (or endpoint/screen/action context) and contain NO customer PII
 
 ### 13. Security & Auth Review (`security-auth.md`)
 
@@ -256,6 +258,7 @@ Produce `docs/features/[feature-name]/REVIEW_REPORT.md`:
 | localization-i18n.md | ✅/❌/N/A | [Brief note] |
 | animation-haptics.md | ✅/❌/N/A | [Brief note] |
 | testing-strategy.md | ✅/❌/N/A | [Brief note] |
+| form-validation.md | ✅/❌/N/A | [Brief note] |
 | accessibility-ux.md | ✅/❌/N/A | [Brief note] |
 | error-handling.md | ✅/❌/N/A | [Brief note] |
 | security-auth.md | ✅/❌/N/A | [Brief note] |
@@ -266,7 +269,8 @@ Produce `docs/features/[feature-name]/REVIEW_REPORT.md`:
 
 ## Rules
 
-1. **Review against skills, not personal preference** — Every finding must cite a specific skill rule or pattern
+0. **Strict skill enforcement (the prime directive).** Skills in `.claude/skills/` are a binding contract, not guidance. For **every** skill that applies to the change, walk its **Definition of Done** checklist item-by-item against the actual code and raise a finding for **every** deviation — no silent passes, no "looks fine." Use each skill's "Common violations → findings" table to set severity. If a checklist item cannot be verified, that itself is a finding. Mark every applicable skill ✅/❌ in the Skill Compliance Summary; a single ❌ means the review verdict is "❌ Changes Required" and loops back to Dev. See `.claude/skills/README.md` → "Enforcement Contract".
+1. **Review against skills, not personal preference** — Every finding must cite a specific skill rule or pattern (e.g. `error-handling.md` → "No swallowed errors")
 2. **Security findings are always BLOCKER** — No exceptions for auth bypass, data leaks, cross-tenant access
 3. **Multi-tenancy violations are always BLOCKER** — Any cross-vendor data access or `vendorId` from user input
 4. **Memory leaks are always CRITICAL** — Leaking subscriptions, uncleaned listeners, growing allocations
@@ -291,8 +295,8 @@ Produce `docs/features/[feature-name]/REVIEW_REPORT.md`:
 When given a feature to review:
 1. Read `docs/features/[feature-name]/FEATURE_PLAN.md` — understand the design intent
 2. Read `docs/features/[feature-name]/FEATURE_TASKS.md` — understand what skills each task should follow
-3. **Read ALL relevant skills** from `.claude/skills/` — these are your review standards
+3. **Read ALL relevant skills** from `.claude/skills/` (start with `README.md`) — these are your review standards
 4. Read ALL implementation files in the feature (screens, components, stores, services, hooks, tests)
-5. Run through each checklist section systematically (sections 1-15)
-6. Produce `REVIEW_REPORT.md` with all findings organized by severity
+5. Run through each checklist section systematically (sections 1-15) **and** walk every applicable skill's "Definition of Done" checklist against the code (Rule 0)
+6. Produce `REVIEW_REPORT.md` with all findings organized by severity and the Skill Compliance Summary filled in (✅/❌/N-A per skill)
 7. Report summary: total findings by severity, overall assessment, skill compliance status

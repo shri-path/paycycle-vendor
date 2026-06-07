@@ -311,6 +311,7 @@ When testing, validate observable outcomes against these skills:
 | Offline mutations, sync indicators, conflict UX | `offline-first.md` |
 | Haptic feedback on interactions | `animation-haptics.md` |
 | Auth flow, session expiry, logout cleanup | `security-auth.md` |
+| Input validation, inline errors, injection/length limits | `form-validation.md` |
 
 ---
 

@@ -35,6 +35,7 @@ You MUST read and follow the appropriate skill before implementing each layer. S
 |---|---|
 | Creating/modifying UI components | `component-development.md` |
 | Building screens (all 5 states) | `screen-development.md` |
+| Form/input validation + inline errors | `form-validation.md` |
 | Setting up Zustand stores | `state-management.md` |
 | API service layer + mocks | `api-integration.md` |
 | Offline DB + sync + mutation queue | `offline-first.md` |
@@ -314,6 +315,15 @@ try {
 </ErrorBoundary>
 ```
 
+### Error Logging (MANDATORY)
+
+Persist every caught runtime error to a daily log file via a shared logger utility (e.g. `src/utils/logger.ts`) — see CLAUDE.md "Error Logging":
+
+- Write to `Logs/YYYY-MM-DD.txt` (today's date, append) — `Logs/` is at project root, git-ignored, NOT under `docs/`. On device, use `expo-file-system` under a `Logs/` dir in the document directory.
+- Each entry: ISO timestamp, error message + stack, `correlationId` from the API error response when present, plus endpoint/screen/action context for debugging.
+- **Never log customer PII** (phone, address, name) — log IDs and correlation data only.
+- Log in `catch` blocks alongside user-facing handling (snackbar/banner/empty state) — logging never replaces the user-facing error UX.
+
 ## Haptic Feedback Pattern
 ```typescript
 import * as Haptics from 'expo-haptics';
@@ -344,6 +354,16 @@ Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 9. **Offline works** — Every read shows cached data, every write queues
 10. **Small files** — Keep under 200 lines, split into sub-components if needed
 11. **Add translations to all 9 locale files** (en, hi, ta, te, mr, bn, kn, ml, gu) for every new string
+
+## Git Workflow Rules
+
+Follow the **Git Workflow (MANDATORY)** section in `CLAUDE.md`. In short:
+
+1. **Branch freely** — Create/checkout new branches as needed; branch off `main` unless told otherwise. Never commit feature work directly to `main`.
+2. **Never delete branches** without the user's explicit instruction.
+3. **Commit your work** using the conventional Commit Strategy in `CLAUDE.md` (split by concern, co-author line).
+4. **Never push** to a remote without the user's explicit instruction — commit locally and stop.
+5. **Never rewrite shared history** (force-push, hard-reset, amend pushed commits) without explicit instruction.
 
 ## Enterprise Development Rules
 

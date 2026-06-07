@@ -3,4 +3,9 @@
 - [Product Context](project_context.md) — Vendor app for tier 2-3 Indian cities, WhatsApp UX, offline-first
 - [Fresh Start Policy](feedback_fresh_start.md) — Keep base components/infra when resetting, only remove feature screens
 - [Commit Strategy](feedback_commit_strategy.md) — Conventional commits (type: desc), split by concern, match paycycle_api style
+- [Git Workflow](feedback_git_workflow.md) — May branch & commit; must NOT delete branches or push without explicit instruction
+- [Babel Config Must Stay CommonJS](reference_babel_commonjs.md) — babel.config.js must use module.exports; native ESM breaks Metro
+- [Agent Interaction Protocol](feedback_agent_interaction.md) — Handoffs auto (no approval); pause only for open questions with recommendation + trade-offs; architect asks even in auto mode
+- [Error Logging Standard](project_error_logging.md) — Runtime errors to Logs/YYYY-MM-DD.txt via shared logger, correlationId, no PII, git-ignored
+- [Skills Are A Binding Contract](project_skills.md) — 15 mandatory skills at .claude/skills/ (+README); dev follows step order, review enforces each Definition of Done
 - [Project Document Paths](reference_project_docs.md) — Absolute paths to features, wireframes, user stories, DB design, and progress tracker; agent update rules

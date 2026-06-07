@@ -23,6 +23,13 @@ All feature development follows a strict 4-agent pipeline. See `AGENTS.md` for f
 
 **Before starting any step**, agents MUST read memory files at `.claude/memory/` (project-relative) for project context, workflow rules, and prior decisions. Start with `.claude/memory/MEMORY.md` for the index.
 
+### User Interaction Protocol
+
+- **Handoffs are automatic** — agents move through the pipeline (and fix loops) without pausing for user approval. Never ask "should I proceed / hand off / is this ready?".
+- **Pause for the user ONLY for genuine open questions** — decisions that cannot be resolved from the docs, code, backend contracts, or sensible defaults.
+- **When asking, always include a recommended solution and the trade-offs** of each option. No bare questions.
+- The Architect must surface open questions to the user **even in auto/headless mode** — it never assumes answers.
+
 ---
 
 ## Product Documentation
@@ -135,6 +142,18 @@ paycycle_vendor/
 
 ---
 
+## Error Logging (MANDATORY)
+
+All app runtime errors must be persisted to a daily log file for debugging:
+
+- **Location**: a `Logs/` folder at the project root (sibling of `src/`). At runtime on device, write via `expo-file-system` under a `Logs/` directory in the document directory. The `Logs/` folder is **git-ignored** — never committed, never placed under `docs/`.
+- **File per day**: `Logs/YYYY-MM-DD.txt` (today's date), append mode.
+- **Each entry must include**: ISO timestamp, error message + stack/details, `correlationId` (from the API error response when available) or other identifying data (endpoint, request id, screen, user action) needed to debug.
+- **Never log customer PII** (phone numbers, addresses, names) — consistent with the data-privacy rule. Log IDs and correlation data, not personal data.
+- Route all error logging through a single shared logger utility (e.g. `src/utils/logger.ts`) — do not scatter `console.error` + file writes across the codebase.
+
+---
+
 ## Commit Strategy (MANDATORY)
 
 Follows conventional commit format, consistent with the `paycycle_api` backend repo.
@@ -161,3 +180,15 @@ Follows conventional commit format, consistent with the `paycycle_api` backend r
 4. Split logically — group related changes into separate commits by concern
 5. Co-author line at end: `Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>`
 6. Never bundle unrelated changes — a feature commit shouldn't include cleanup or config changes
+
+---
+
+## Git Workflow (MANDATORY)
+
+These rules apply to Claude and all agents performing git operations:
+
+1. **Branching**: Claude MAY create and check out new branches when needed (e.g. starting a feature). Branch off `main` unless told otherwise. Never commit feature work directly to `main`.
+2. **No branch deletion**: NEVER delete a branch (`git branch -d/-D`, `git push --delete`) without the user's explicit instruction.
+3. **Committing**: Claude SHOULD commit completed work following the Commit Strategy above (conventional format, split by concern).
+4. **No pushing**: NEVER push to a remote (`git push`) without the user's explicit instruction. Commit locally and wait.
+5. **No history rewrites**: Never force-push, hard-reset shared history, or amend pushed commits without explicit instruction.

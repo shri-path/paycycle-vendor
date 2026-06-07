@@ -26,6 +26,9 @@ npm-debug.*
 yarn-debug.*
 yarn-error.*
 
+# runtime error logs (daily files, see CLAUDE.md "Error Logging")
+Logs/
+
 # macOS
 .DS_Store
 *.pem
