@@ -1,6 +1,7 @@
 /**
  * ResetPasswordScreen Tests
- * Purpose: Render and interaction tests for the ResetPasswordScreen component
+ * Purpose: Render and interaction tests for the ResetPasswordScreen component.
+ * All assertions use testID or i18n keys (t()) — never hardcoded English (MAJOR-7).
  */
 
 // Mock native modules before component imports
@@ -22,6 +23,10 @@ jest.mock('expo-haptics', () => ({
   ImpactFeedbackStyle: { Light: 'light', Medium: 'medium', Heavy: 'heavy' },
   NotificationFeedbackType: { Success: 'success', Warning: 'warning', Error: 'error' },
 }))
+
+// Mock vector-icons so Ionicons doesn't load fonts asynchronously (the async
+// font-load setState causes overlapping act() warnings and flaky renders).
+jest.mock('@expo/vector-icons', () => ({ Ionicons: 'Ionicons' }))
 
 const mockPush = jest.fn()
 const mockBack = jest.fn()
@@ -64,8 +69,11 @@ jest.mock('@modules/auth/store/auth.store', () => ({
 }))
 
 import React from 'react'
-import { render, fireEvent, waitFor } from '@testing-library/react-native'
+import { render, fireEvent, waitFor, act } from '@testing-library/react-native'
 import ResetPasswordScreen from '../ResetPasswordScreen'
+import { t } from '@locales/index'
+
+const VALID_PASSWORD = 'TestPass@1'
 
 describe('ResetPasswordScreen', () => {
   beforeEach(() => {
@@ -84,30 +92,73 @@ describe('ResetPasswordScreen', () => {
 
   it('renders without crashing', async () => {
     const screen = await render(<ResetPasswordScreen />)
-    // "Reset Password" appears as both the heading and the button
-    const elements = screen.getAllByText('Reset Password')
+    // t('auth.reset_password') appears as both the heading and the button label
+    const elements = screen.getAllByText(t('auth.reset_password'))
     expect(elements.length).toBeGreaterThanOrEqual(1)
   })
 
   it('renders OTP and password inputs', async () => {
     const screen = await render(<ResetPasswordScreen />)
-    expect(screen.getByText('OTP Code')).toBeTruthy()
-    expect(screen.getByText('New Password')).toBeTruthy()
+    expect(screen.getByTestId('reset-otp')).toBeTruthy()
+    expect(screen.getByTestId('reset-password')).toBeTruthy()
   })
 
-  it('shows OTP validation error when form submitted with empty OTP', async () => {
+  it('shows inline per-field OTP error when form submitted with empty OTP', async () => {
     const screen = await render(<ResetPasswordScreen />)
-    const buttons = screen.getAllByText('Reset Password')
+    const buttons = screen.getAllByText(t('auth.reset_password'))
     await fireEvent.press(buttons[buttons.length - 1]!)
 
     await waitFor(() => {
-      expect(screen.getByText('Enter a valid 6-digit OTP')).toBeTruthy()
+      expect(screen.getByTestId('reset-otp-error')).toHaveTextContent(t('validation.required'))
+    })
+  })
+
+  it('live re-validates the OTP once touched: error clears when valid', async () => {
+    const screen = await render(<ResetPasswordScreen />)
+    const otpInput = screen.getByTestId('reset-otp')
+
+    fireEvent.changeText(otpInput, '123') // too short -> invalid
+    await waitFor(() => expect(otpInput.props.value).toBe('123'))
+
+    fireEvent(otpInput, 'blur')
+    await waitFor(() => {
+      expect(screen.getByTestId('reset-otp-error')).toHaveTextContent(t('validation.otp_invalid'))
+    })
+
+    fireEvent.changeText(otpInput, '123456') // valid
+    await waitFor(() => {
+      expect(screen.queryByTestId('reset-otp-error')).toBeNull()
+    })
+  })
+
+  it('live re-validates the password once touched: error clears when valid', async () => {
+    const screen = await render(<ResetPasswordScreen />)
+    const pwInput = screen.getByTestId('reset-password')
+
+    fireEvent.changeText(pwInput, 'short') // too short -> invalid once touched
+    // Await the controlled value commit so the touched re-render flushes before blur.
+    await waitFor(() => expect(pwInput.props.value).toBe('short'))
+
+    fireEvent(pwInput, 'blur')
+    await waitFor(() => {
+      expect(screen.getByTestId('reset-password-error')).toHaveTextContent(
+        t('validation.password_min_8'),
+      )
+    })
+
+    fireEvent.changeText(pwInput, VALID_PASSWORD) // valid
+
+    // AppInput always renders the `${testID}-error` node when helperText is set,
+    // so assert the validation message itself is absent from the tree rather than
+    // that the (always-present) error element lacks it.
+    await waitFor(() => {
+      expect(screen.queryByText(t('validation.password_min_8'))).toBeNull()
     })
   })
 
   it('does not call resetPassword when form is empty', async () => {
     const screen = await render(<ResetPasswordScreen />)
-    const buttons = screen.getAllByText('Reset Password')
+    const buttons = screen.getAllByText(t('auth.reset_password'))
     await fireEvent.press(buttons[buttons.length - 1]!)
 
     await waitFor(() => {
@@ -128,9 +179,9 @@ describe('ResetPasswordScreen', () => {
     )
 
     const screen = await render(<ResetPasswordScreen />)
-    // When loading=true, AppButton shows ActivityIndicator; "Reset Password" text only in heading
-    const elements = screen.getAllByText('Reset Password')
-    expect(elements.length).toBe(1) // only the heading, not the button
+    // When loading=true, AppButton shows ActivityIndicator; only the heading remains
+    const elements = screen.getAllByText(t('auth.reset_password'))
+    expect(elements.length).toBe(1)
   })
 
   it('shows error banner when store returns an error', async () => {
@@ -146,58 +197,44 @@ describe('ResetPasswordScreen', () => {
     )
 
     const screen = await render(<ResetPasswordScreen />)
-    // t() resolves the key to the English string from en.json
-    expect(screen.getByText('OTP has expired. Please request a new one.')).toBeTruthy()
-  })
-
-  it('calls resetPassword with correct args on valid submission', async () => {
-    mockResetPassword.mockResolvedValueOnce(undefined)
-
-    const screen = await render(<ResetPasswordScreen />)
-
-    // Fill in OTP
-    const otpInput = screen.getByPlaceholderText('Enter 6-digit OTP')
-    await fireEvent.changeText(otpInput, '123456')
-
-    // Fill in password
-    const passwordInput = screen.getByPlaceholderText('••••••••')
-    await fireEvent.changeText(passwordInput, 'TestPass@1')
-
-    const buttons = screen.getAllByText('Reset Password')
-    await fireEvent.press(buttons[buttons.length - 1]!)
-
-    await waitFor(() => {
-      expect(mockResetPassword).toHaveBeenCalledWith('123456', 'TestPass@1')
-    })
-  })
-
-  it('navigates to login on successful reset', async () => {
-    mockResetPassword.mockResolvedValueOnce(undefined)
-
-    const screen = await render(<ResetPasswordScreen />)
-
-    const otpInput = screen.getByPlaceholderText('Enter 6-digit OTP')
-    await fireEvent.changeText(otpInput, '123456')
-
-    const passwordInput = screen.getByPlaceholderText('••••••••')
-    await fireEvent.changeText(passwordInput, 'TestPass@1')
-
-    const buttons = screen.getAllByText('Reset Password')
-    await fireEvent.press(buttons[buttons.length - 1]!)
-
-    await waitFor(() => {
-      expect(mockReplace).toHaveBeenCalledWith('/(auth)/login')
-    })
+    // Assert via testID + key, never a hardcoded English string
+    expect(screen.getByTestId('reset-error-banner')).toHaveTextContent(t('auth.otp_expired'))
   })
 
   it('navigates back on back button press', async () => {
     const screen = await render(<ResetPasswordScreen />)
-    // Use findByLabelText — async variant waits for accessibilityLabel to be set
-    const backButton = await screen.findByLabelText('Go back')
+    const backButton = await screen.findByLabelText(t('auth.back'))
     fireEvent.press(backButton)
 
     await waitFor(() => {
       expect(mockBack).toHaveBeenCalled()
     })
+  })
+
+  // NOTE: keep this submit-success test LAST. Its handler awaits the resolved
+  // resetPassword promise and then navigates; react-test-renderer leaves that
+  // async teardown in a state that corrupts the *next* test's render (null tree).
+  // Ordering it last means no subsequent render is affected.
+  it('calls resetPassword with correct args on valid submission', async () => {
+    mockResetPassword.mockResolvedValueOnce(undefined)
+
+    const screen = await render(<ResetPasswordScreen />)
+
+    fireEvent.changeText(screen.getByTestId('reset-otp'), '123456')
+    fireEvent.changeText(screen.getByTestId('reset-password'), VALID_PASSWORD)
+    // Let the controlled values commit before submitting
+    await waitFor(() => expect(screen.getByTestId('reset-password').props.value).toBe(VALID_PASSWORD))
+
+    const buttons = screen.getAllByText(t('auth.reset_password'))
+    await act(async () => {
+      fireEvent.press(buttons[buttons.length - 1]!)
+    })
+
+    // Success path also navigates to login — asserted here so a separate
+    // (duplicate) navigation test isn't needed.
+    await waitFor(() => {
+      expect(mockResetPassword).toHaveBeenCalledWith('123456', VALID_PASSWORD)
+    })
+    await waitFor(() => expect(mockReplace).toHaveBeenCalledWith('/(auth)/login'))
   })
 })

@@ -1,6 +1,9 @@
 /**
  * ForgotPasswordScreen Tests
  * Purpose: Render and interaction tests for the ForgotPasswordScreen component
+ *
+ * Assertions use i18n keys via t(...) and testIDs only — never hardcoded
+ * English strings (MAJOR-7), so tests stay locale-independent.
  */
 
 // Mock native modules before component imports
@@ -65,6 +68,7 @@ jest.mock('@modules/auth/store/auth.store', () => ({
 import React from 'react'
 import { render, fireEvent, waitFor } from '@testing-library/react-native'
 import ForgotPasswordScreen from '../ForgotPasswordScreen'
+import { t } from '@locales/index'
 
 describe('ForgotPasswordScreen', () => {
   beforeEach(() => {
@@ -82,31 +86,55 @@ describe('ForgotPasswordScreen', () => {
 
   it('renders without crashing', async () => {
     const screen = await render(<ForgotPasswordScreen />)
-    expect(screen.getByText('Forgot Password?')).toBeTruthy()
+    expect(screen.getByText(t('auth.forgot_password_title'))).toBeTruthy()
   })
 
   it('renders send OTP button', async () => {
     const screen = await render(<ForgotPasswordScreen />)
-    expect(screen.getByText('Send OTP')).toBeTruthy()
+    expect(screen.getByText(t('auth.send_otp'))).toBeTruthy()
   })
 
   it('renders description text', async () => {
     const screen = await render(<ForgotPasswordScreen />)
-    expect(screen.getByText('Enter your phone number to receive an OTP.')).toBeTruthy()
+    expect(screen.getByText(t('auth.forgot_password_desc'))).toBeTruthy()
   })
 
-  it('shows validation error when form submitted with empty phone', async () => {
+  it('shows inline per-field error when form submitted with empty phone', async () => {
     const screen = await render(<ForgotPasswordScreen />)
-    await fireEvent.press(screen.getByText('Send OTP'))
+    await fireEvent.press(screen.getByText(t('auth.send_otp')))
 
     await waitFor(() => {
-      expect(screen.getByText('Invalid phone number')).toBeTruthy()
+      // An empty phone fails the required check.
+      expect(screen.getByTestId('forgot-phone-error')).toHaveTextContent(
+        t('validation.required'),
+      )
+    })
+  })
+
+  it('live re-validates the phone once touched: error clears when valid', async () => {
+    const screen = await render(<ForgotPasswordScreen />)
+    const phoneInput = screen.getByTestId('forgot-phone')
+
+    // Type an invalid (too-short) value and let the controlled value commit
+    fireEvent.changeText(phoneInput, '12345')
+    await waitFor(() => expect(phoneInput.props.value).toBe('12345'))
+
+    // Blur the touched, invalid field -> error appears below the field
+    fireEvent(phoneInput, 'blur')
+    await waitFor(() => {
+      expect(screen.getByTestId('forgot-phone-error')).toHaveTextContent(t('validation.invalid_phone'))
+    })
+
+    // Correcting via changeText clears the error immediately (no submit needed)
+    fireEvent.changeText(phoneInput, '9876543210')
+    await waitFor(() => {
+      expect(screen.queryByTestId('forgot-phone-error')).toBeNull()
     })
   })
 
   it('does not call forgotPassword when phone is empty', async () => {
     const screen = await render(<ForgotPasswordScreen />)
-    await fireEvent.press(screen.getByText('Send OTP'))
+    await fireEvent.press(screen.getByText(t('auth.send_otp')))
 
     await waitFor(() => {
       expect(mockForgotPassword).not.toHaveBeenCalled()
@@ -126,10 +154,9 @@ describe('ForgotPasswordScreen', () => {
 
     const screen = await render(<ForgotPasswordScreen />)
     // When loading=true, AppButton shows ActivityIndicator instead of label text
-    // Verify the screen still renders without crashing
-    expect(screen.getByText('Forgot Password?')).toBeTruthy()
+    expect(screen.getByText(t('auth.forgot_password_title'))).toBeTruthy()
     // The button label text is NOT rendered during loading (replaced by spinner)
-    expect(screen.queryByText('Send OTP')).toBeNull()
+    expect(screen.queryByText(t('auth.send_otp'))).toBeNull()
   })
 
   it('shows error banner when store returns an error', async () => {
@@ -144,8 +171,10 @@ describe('ForgotPasswordScreen', () => {
     )
 
     const screen = await render(<ForgotPasswordScreen />)
-    // t() resolves the key to the English string from en.json
-    expect(screen.getByText('Invalid phone number or password')).toBeTruthy()
+    // Assert via testID + key, never a hardcoded English string
+    expect(screen.getByTestId('forgot-error-banner')).toHaveTextContent(
+      t('auth.invalid_credentials'),
+    )
   })
 
   it('calls forgotPassword with correct phone on valid submission', async () => {
@@ -153,11 +182,10 @@ describe('ForgotPasswordScreen', () => {
 
     const screen = await render(<ForgotPasswordScreen />)
 
-    // AppPhoneInput renders a TextInput with placeholder "Phone number"
-    const phoneInput = screen.getByPlaceholderText('Phone number')
+    const phoneInput = screen.getByTestId('forgot-phone')
     await fireEvent.changeText(phoneInput, '9876543210')
 
-    await fireEvent.press(screen.getByText('Send OTP'))
+    await fireEvent.press(screen.getByText(t('auth.send_otp')))
 
     await waitFor(() => {
       expect(mockForgotPassword).toHaveBeenCalledWith('+919876543210')
@@ -169,9 +197,9 @@ describe('ForgotPasswordScreen', () => {
 
     const screen = await render(<ForgotPasswordScreen />)
 
-    const phoneInput = screen.getByPlaceholderText('Phone number')
+    const phoneInput = screen.getByTestId('forgot-phone')
     await fireEvent.changeText(phoneInput, '9876543210')
-    await fireEvent.press(screen.getByText('Send OTP'))
+    await fireEvent.press(screen.getByText(t('auth.send_otp')))
 
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith('/(auth)/reset-password')
@@ -181,7 +209,7 @@ describe('ForgotPasswordScreen', () => {
   it('navigates back on back button press', async () => {
     const screen = await render(<ForgotPasswordScreen />)
     // Use findByLabelText — async variant waits for accessibilityLabel to be set
-    const backButton = await screen.findByLabelText('Go back')
+    const backButton = await screen.findByLabelText(t('auth.back'))
     fireEvent.press(backButton)
 
     await waitFor(() => {
