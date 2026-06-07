@@ -5,7 +5,7 @@
 
 import React, { useRef, useState } from 'react'
 import { KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native'
-import { XStack, YStack } from 'tamagui'
+import { XStack, YStack, styled } from 'tamagui'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
@@ -20,6 +20,13 @@ import { useAuthStore } from '../store/auth.store'
 import { useTranslation } from '@hooks/useTranslation'
 import { useNetworkStatus } from '@hooks/useNetworkStatus'
 import { colors, spacing } from '@constants/tokens'
+import { LIMITS, validatePhone } from '@utils/validation'
+
+// Token-based screen container — replaces inline-style SafeAreaView (no inline style object)
+const ScreenContainer = styled(SafeAreaView, {
+  flex: 1,
+  backgroundColor: colors.background,
+})
 
 function ForgotPasswordScreenContent() {
   const { t } = useTranslation()
@@ -36,22 +43,32 @@ function ForgotPasswordScreenContent() {
 
   const [countryCode, setCountryCode] = useState('+91')
   const [phone, setPhone] = useState('')
-  const [validationError, setValidationError] = useState<string | null>(null)
+
+  // Per-field error state holds RAW i18n keys (translated with t() only at render).
+  const [phoneError, setPhoneError] = useState<string | null>(null)
+  const [phoneTouched, setPhoneTouched] = useState(false)
 
   // Double-tap protection
   const submitting = useRef(false)
 
   const fullPhone = `${countryCode}${phone}`
 
+  const onChangePhone = (code: string, number: string) => {
+    setCountryCode(code)
+    setPhone(number)
+    if (phoneTouched) setPhoneError(validatePhone(number))
+  }
+
   const handleSendOtp = async () => {
     if (submitting.current || isLoading) return
     submitting.current = true
 
     clearError()
-    setValidationError(null)
 
-    if (!phone.trim() || phone.length < 10) {
-      setValidationError(t('validation.invalid_phone'))
+    const pError = validatePhone(phone)
+    setPhoneError(pError)
+    setPhoneTouched(true)
+    if (pError) {
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
       submitting.current = false
       return
@@ -70,10 +87,8 @@ function ForgotPasswordScreenContent() {
     }
   }
 
-  const displayError = validationError ?? error
-
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+    <ScreenContainer>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -108,15 +123,16 @@ function ForgotPasswordScreenContent() {
             {t('auth.forgot_password_desc')}
           </AppText>
 
-          {displayError ? (
+          {/* Banner only for non-field API/store errors */}
+          {error ? (
             <YStack
               backgroundColor={colors.errorBg}
               borderRadius={8}
               padding={spacing[3]}
               marginBottom={spacing[4]}
             >
-              <AppText variant="caption" color={colors.error}>
-                {t(displayError)}
+              <AppText variant="caption" color={colors.error} testID="forgot-error-banner">
+                {t(error)}
               </AppText>
             </YStack>
           ) : null}
@@ -125,10 +141,14 @@ function ForgotPasswordScreenContent() {
             label={t('auth.phone')}
             countryCode={countryCode}
             phone={phone}
-            onChange={(code, number) => {
-              setCountryCode(code)
-              setPhone(number)
+            onChange={onChangePhone}
+            onBlur={() => {
+              setPhoneTouched(true)
+              setPhoneError(validatePhone(phone))
             }}
+            maxLength={LIMITS.phone}
+            testID="forgot-phone"
+            error={phoneError ? t(phoneError) : undefined}
           />
 
           <AppButton
@@ -148,7 +168,7 @@ function ForgotPasswordScreenContent() {
           />
         </YStack>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </ScreenContainer>
   )
 }
 

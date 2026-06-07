@@ -160,6 +160,7 @@ export const AppInput: React.FC<AppInputProps> = ({
   placeholderTextColor,
   value,
   editable = true,
+  testID,
   ...props
 }) => {
   const [isFocused, setIsFocused] = useState(false)
@@ -199,6 +200,7 @@ export const AppInput: React.FC<AppInputProps> = ({
 
         <TextInput
           {...props}
+          testID={testID}
           value={value}
           editable={editable}
           style={[inputStyle, style]}
@@ -243,6 +245,7 @@ export const AppInput: React.FC<AppInputProps> = ({
       {(error || helperText) && (
         <AppText
           variant="caption"
+          testID={testID ? `${testID}-error` : undefined}
           style={styles.helperText}
           color={error ? colors.error : colors.textSecondary}
         >
@@ -252,5 +255,7 @@ export const AppInput: React.FC<AppInputProps> = ({
     </View>
   )
 }
+
+AppInput.displayName = 'AppInput'
 
 export default AppInput

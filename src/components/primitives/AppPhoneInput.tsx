@@ -243,6 +243,7 @@ export const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
   containerStyle,
   editable = true,
   placeholderTextColor,
+  testID,
   ...props
 }) => {
   const [isModalVisible, setIsModalVisible] = useState(false)
@@ -275,8 +276,11 @@ export const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
   }
 
   const handlePhoneChange = (text: string) => {
-    // Allow only numbers
-    const cleanedText = text.replace(/[^0-9]/g, '')
+    // Allow only numbers, capped at the input's maxLength when provided
+    let cleanedText = text.replace(/[^0-9]/g, '')
+    if (typeof props.maxLength === 'number') {
+      cleanedText = cleanedText.slice(0, props.maxLength)
+    }
     onChange?.(countryCode, cleanedText)
   }
 
@@ -307,6 +311,7 @@ export const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
         <View style={phoneInputFieldStyle}>
           <TextInput
             {...props}
+            testID={testID}
             value={phone}
             editable={editable}
             style={phoneInputStyle}
@@ -329,6 +334,7 @@ export const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
       {(error || helperText) && (
         <AppText
           variant="caption"
+          testID={testID ? `${testID}-error` : undefined}
           style={styles.helperText}
           color={error ? colors.error : colors.textSecondary}
         >
@@ -376,5 +382,7 @@ export const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
     </View>
   )
 }
+
+AppPhoneInput.displayName = 'AppPhoneInput'
 
 export default AppPhoneInput

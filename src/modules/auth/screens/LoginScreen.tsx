@@ -5,7 +5,7 @@
 
 import React, { useRef, useState } from 'react'
 import { KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native'
-import { ScrollView, XStack, YStack } from 'tamagui'
+import { ScrollView, XStack, YStack, styled } from 'tamagui'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
@@ -21,6 +21,13 @@ import { useAuthStore } from '../store/auth.store'
 import { useTranslation } from '@hooks/useTranslation'
 import { useNetworkStatus } from '@hooks/useNetworkStatus'
 import { colors, spacing } from '@constants/tokens'
+import { LIMITS, validateLoginPassword, validatePhone } from '@utils/validation'
+
+// Token-based screen container — replaces inline-style SafeAreaView (no inline style object)
+const ScreenContainer = styled(SafeAreaView, {
+  flex: 1,
+  backgroundColor: colors.background,
+})
 
 function LoginScreenContent() {
   const { t } = useTranslation()
@@ -39,23 +46,37 @@ function LoginScreenContent() {
   const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const [validationError, setValidationError] = useState<string | null>(null)
+
+  // Per-field error state holds RAW i18n keys (translated with t() only at render).
+  const [phoneError, setPhoneError] = useState<string | null>(null)
+  const [passwordError, setPasswordError] = useState<string | null>(null)
+  const [phoneTouched, setPhoneTouched] = useState(false)
+  const [passwordTouched, setPasswordTouched] = useState(false)
 
   // Double-tap protection — ref to avoid stale closure issues
   const submitting = useRef(false)
 
   const fullPhone = `${countryCode}${phone}`
 
-  const validate = (): boolean => {
-    if (!phone.trim() || phone.length < 10) {
-      setValidationError(t('validation.invalid_phone'))
-      return false
-    }
-    if (!password) {
-      setValidationError(t('validation.required'))
-      return false
-    }
-    return true
+  const onChangePhone = (code: string, number: string) => {
+    setCountryCode(code)
+    setPhone(number)
+    if (phoneTouched) setPhoneError(validatePhone(number))
+  }
+
+  const onChangePassword = (value: string) => {
+    setPassword(value)
+    if (passwordTouched) setPasswordError(validateLoginPassword(value))
+  }
+
+  const validateForm = (): boolean => {
+    const pError = validatePhone(phone)
+    const pwError = validateLoginPassword(password)
+    setPhoneError(pError)
+    setPasswordError(pwError)
+    setPhoneTouched(true)
+    setPasswordTouched(true)
+    return !pError && !pwError
   }
 
   const handleLogin = async () => {
@@ -63,9 +84,8 @@ function LoginScreenContent() {
     submitting.current = true
 
     clearError()
-    setValidationError(null)
 
-    if (!validate()) {
+    if (!validateForm()) {
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
       submitting.current = false
       return
@@ -84,10 +104,8 @@ function LoginScreenContent() {
     }
   }
 
-  const displayError = validationError ?? error
-
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+    <ScreenContainer>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -134,15 +152,16 @@ function LoginScreenContent() {
 
           {/* Form */}
           <YStack gap={spacing[1]}>
-            {displayError ? (
+            {/* Banner only for non-field API/store errors */}
+            {error ? (
               <YStack
                 backgroundColor={colors.errorBg}
                 borderRadius={8}
                 padding={spacing[3]}
                 marginBottom={spacing[2]}
               >
-                <AppText variant="caption" color={colors.error}>
-                  {t(displayError)}
+                <AppText variant="caption" color={colors.error} testID="login-error-banner">
+                  {t(error)}
                 </AppText>
               </YStack>
             ) : null}
@@ -151,18 +170,29 @@ function LoginScreenContent() {
               label={t('auth.phone')}
               countryCode={countryCode}
               phone={phone}
-              onChange={(code, number) => {
-                setCountryCode(code)
-                setPhone(number)
+              onChange={onChangePhone}
+              onBlur={() => {
+                setPhoneTouched(true)
+                setPhoneError(validatePhone(phone))
               }}
+              maxLength={LIMITS.phone}
+              testID="login-phone"
+              error={phoneError ? t(phoneError) : undefined}
             />
 
             <AppInput
               label={t('auth.password')}
               value={password}
-              onChangeText={setPassword}
+              onChangeText={onChangePassword}
+              onBlur={() => {
+                setPasswordTouched(true)
+                setPasswordError(validateLoginPassword(password))
+              }}
               secureTextEntry={!showPassword}
               placeholder="••••••••"
+              maxLength={LIMITS.password}
+              testID="login-password"
+              error={passwordError ? t(passwordError) : undefined}
               rightIcon={
                 <TouchableOpacity
                   onPress={() => setShowPassword((v) => !v)}
@@ -217,7 +247,7 @@ function LoginScreenContent() {
           </XStack>
         </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </ScreenContainer>
   )
 }
 

@@ -3,97 +3,43 @@
  * Purpose: OTP + new password entry to complete password reset
  */
 
-import React, { useRef, useState } from 'react'
+import React from 'react'
 import { KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native'
-import { XStack, YStack } from 'tamagui'
+import { XStack, YStack, styled } from 'tamagui'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
-import * as Haptics from 'expo-haptics'
-import { useShallow } from 'zustand/react/shallow'
 import { AppText } from '@components/primitives/AppText'
 import { AppButton } from '@components/primitives/AppButton'
 import { AppInput } from '@components/primitives/AppInput'
 import { AppAlert } from '@components/primitives/AppAlert'
 import { ScreenErrorBoundary } from '@components/composite/ScreenErrorBoundary'
-import { useAuthStore } from '../store/auth.store'
 import { useTranslation } from '@hooks/useTranslation'
-import { useNetworkStatus } from '@hooks/useNetworkStatus'
 import { colors, spacing } from '@constants/tokens'
-import { validatePassword } from '@utils/validation'
+import { LIMITS } from '@utils/validation'
+import { maskPhone } from '@utils/formatters'
+import { useResetPasswordForm } from '../hooks/useResetPasswordForm'
+
+/** Token-based root container — replaces inline-style SafeAreaView */
+const ScreenContainer = styled(SafeAreaView, {
+  flex: 1,
+  backgroundColor: colors.background,
+})
 
 function ResetPasswordScreenContent() {
   const { t } = useTranslation()
   const router = useRouter()
-  const { resetPassword, isLoading, error, clearError, pendingResetPhone } = useAuthStore(
-    useShallow((s) => ({
-      resetPassword: s.resetPassword,
-      isLoading: s.isLoading,
-      error: s.error,
-      clearError: s.clearError,
-      pendingResetPhone: s.pendingResetPhone,
-    })),
-  )
-  const { isConnected } = useNetworkStatus()
-
-  const [otp, setOtp] = useState('')
-  const [newPassword, setNewPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [validationError, setValidationError] = useState<string | null>(null)
-
-  // Double-tap protection
-  const submitting = useRef(false)
-
-  const validate = (): boolean => {
-    if (!/^[0-9]{6}$/.test(otp)) {
-      setValidationError(t('validation.otp_invalid'))
-      return false
-    }
-    const pwdError = validatePassword(newPassword)
-    if (pwdError) {
-      setValidationError(t(pwdError))
-      return false
-    }
-    return true
-  }
-
-  const handleReset = async () => {
-    if (submitting.current || isLoading) return
-    submitting.current = true
-
-    clearError()
-    setValidationError(null)
-
-    if (!validate()) {
-      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
-      submitting.current = false
-      return
-    }
-
-    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
-
-    try {
-      await resetPassword(otp, newPassword)
-      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
-      router.replace('/(auth)/login')
-    } catch {
-      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
-    } finally {
-      submitting.current = false
-    }
-  }
-
-  const displayError = validationError ?? error
+  const form = useResetPasswordForm()
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+    <ScreenContainer>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <YStack flex={1} paddingHorizontal={spacing[4]} paddingBottom={spacing[8]}>
           {/* Offline banner */}
-          {!isConnected ? (
+          {!form.isConnected ? (
             <AppAlert type="warning" title={t('auth.offline_sign_in')} />
           ) : null}
 
@@ -121,7 +67,7 @@ function ResetPasswordScreenContent() {
             {t('auth.reset_password_desc')}
           </AppText>
 
-          {pendingResetPhone ? (
+          {form.pendingResetPhone ? (
             <XStack
               alignItems="center"
               backgroundColor={colors.primaryBg}
@@ -131,7 +77,7 @@ function ResetPasswordScreenContent() {
             >
               <Ionicons name="phone-portrait-outline" size={16} color={colors.primary} />
               <AppText variant="caption" color={colors.primary} weight="semibold">
-                {' '}{t('auth.otp_sent_to')} {pendingResetPhone}
+                {' '}{t('auth.otp_sent_to_number', { phone: maskPhone(form.pendingResetPhone) })}
               </AppText>
             </XStack>
           ) : null}
@@ -150,43 +96,53 @@ function ResetPasswordScreenContent() {
             </YStack>
           ) : null}
 
-          {displayError ? (
+          {/* Banner only for non-field API/store errors */}
+          {form.error ? (
             <YStack
               backgroundColor={colors.errorBg}
               borderRadius={8}
               padding={spacing[3]}
               marginBottom={spacing[4]}
             >
-              <AppText variant="caption" color={colors.error}>
-                {t(displayError)}
+              <AppText variant="caption" color={colors.error} testID="reset-error-banner">
+                {t(form.error)}
               </AppText>
             </YStack>
           ) : null}
 
           <AppInput
             label={t('auth.otp_code')}
-            value={otp}
-            onChangeText={(text) => setOtp(text.replace(/[^0-9]/g, ''))}
+            value={form.otp}
+            onChangeText={form.onChangeOtp}
+            onBlur={form.onBlurOtp}
             placeholder={t('auth.otp_placeholder')}
             keyboardType="number-pad"
-            maxLength={6}
+            maxLength={LIMITS.otp}
+            testID="reset-otp"
+            error={form.errors.otp ? t(form.errors.otp) : undefined}
           />
 
           <AppInput
             label={t('auth.new_password')}
-            value={newPassword}
-            onChangeText={setNewPassword}
-            secureTextEntry={!showPassword}
+            value={form.newPassword}
+            onChangeText={form.onChangePassword}
+            onBlur={form.onBlurPassword}
+            secureTextEntry={!form.showPassword}
             placeholder="••••••••"
+            maxLength={LIMITS.password}
+            testID="reset-password"
             helperText={t('validation.password_complexity')}
+            error={form.errors.password ? t(form.errors.password) : undefined}
             rightIcon={
               <TouchableOpacity
-                onPress={() => setShowPassword((v) => !v)}
+                onPress={form.toggleShowPassword}
                 accessibilityRole="button"
-                accessibilityLabel={showPassword ? t('auth.hide_password') : t('auth.show_password')}
+                accessibilityLabel={
+                  form.showPassword ? t('auth.hide_password') : t('auth.show_password')
+                }
               >
                 <Ionicons
-                  name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                  name={form.showPassword ? 'eye-off-outline' : 'eye-outline'}
                   size={20}
                   color={colors.textSecondary}
                 />
@@ -196,15 +152,15 @@ function ResetPasswordScreenContent() {
 
           <AppButton
             label={t('auth.reset_password')}
-            onPress={handleReset}
+            onPress={form.submit}
             variant="primary"
             fullWidth
-            loading={isLoading}
-            disabled={isLoading || !isConnected}
+            loading={form.isLoading}
+            disabled={form.isLoading || !form.isConnected}
           />
         </YStack>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </ScreenContainer>
   )
 }
 
