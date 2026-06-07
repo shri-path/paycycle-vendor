@@ -4,6 +4,7 @@
  */
 
 import axios from 'axios'
+import { APIPath } from '@constants/apiPaths'
 import { isMockMode, simulateNetworkDelay, API_CONFIG } from '@services/config'
 import {
   mockUser,
@@ -36,7 +37,7 @@ export const authService = {
         vendorContext: { ...mockVendorContext, vendorName },
       }
     }
-    const { data } = await api.post('/v1/auth/signup', { phone, password, vendorName })
+    const { data } = await api.post(APIPath.Auth.Signup, { phone, password, vendorName })
     return data.data as SignupResponseDto
   },
 
@@ -52,7 +53,7 @@ export const authService = {
         vendorContexts: [mockVendorContext],
       }
     }
-    const { data } = await api.post('/v1/auth/login', { phone, password })
+    const { data } = await api.post(APIPath.Auth.Login, { phone, password })
     return data.data as LoginResponseDto
   },
 
@@ -62,7 +63,7 @@ export const authService = {
       return
     }
     await api.post(
-      '/v1/auth/logout',
+      APIPath.Auth.Logout,
       { refreshToken },
       { headers: { Authorization: `Bearer ${accessToken}` } },
     )
@@ -73,7 +74,7 @@ export const authService = {
       await simulateNetworkDelay()
       return mockTokens
     }
-    const { data } = await api.post('/v1/auth/refresh', { refreshToken })
+    const { data } = await api.post(APIPath.Auth.Refresh, { refreshToken })
     return data.data as RefreshResponseDto
   },
 
@@ -83,7 +84,7 @@ export const authService = {
       // In real mode the reset token is delivered via SMS; in mock we return it directly
       return MOCK_RESET_TOKEN
     }
-    await api.post('/v1/auth/forgot-password', { phone })
+    await api.post(APIPath.Auth.ForgotPassword, { phone })
     // Reset token is sent via SMS — not in response
     return ''
   },
@@ -98,7 +99,7 @@ export const authService = {
       await simulateNetworkDelay()
       return
     }
-    await api.post('/v1/auth/reset-password', { phone, resetToken, otpCode, newPassword })
+    await api.post(APIPath.Auth.ResetPassword, { phone, resetToken, otpCode, newPassword })
   },
 }
 
