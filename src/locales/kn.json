@@ -44,6 +44,8 @@
     "reset_password_title": "ಪಾಸ್‌ವರ್ಡ್ ರಿಸೆಟ್",
     "reset_password_desc": "ನಿಮ್ಮ ಫೋನ್‌ಗೆ ಕಳುಹಿಸಿದ OTP ನಮೂದಿಸಿ.",
     "otp_sent_to": "OTP ಕಳುಹಿಸಲಾಗಿದೆ",
+    "otp_sent_to_phone": "{{phone}} ಗೆ OTP ಕಳುಹಿಸಲಾಗಿದೆ",
+    "otp_sent_to_number": "{{phone}} ಗೆ OTP ಕಳುಹಿಸಲಾಗಿದೆ",
     "back_to_login": "ಸೈನ್ ಇನ್‌ಗೆ ಹಿಂತಿರುಗಿ",
     "terms_agree": "ಖಾತೆ ರಚಿಸುವ ಮೂಲಕ ನೀವು ಒಪ್ಪುತ್ತೀರಿ",
     "terms_of_service": "ಸೇವಾ ನಿಯಮಗಳು",
@@ -117,7 +119,11 @@
     "passwords_do_not_match": "ಪಾಸ್‌ವರ್ಡ್‌ಗಳು ಹೊಂದಿಕೆಯಾಗುತ್ತಿಲ್ಲ",
     "password_min_8": "ಪಾಸ್‌ವರ್ಡ್ ಕನಿಷ್ಠ 8 ಅಕ್ಷರಗಳಾಗಿರಬೇಕು",
     "password_complexity": "ಅಗತ್ಯ: ದೊಡ್ಡ ಅಕ್ಷರ, ಸಣ್ಣ ಅಕ್ಷರ, ಸಂಖ್ಯೆ ಮತ್ತು ವಿಶೇಷ ಅಕ್ಷರ",
+    "password_required": "ಪಾಸ್‌ವರ್ಡ್ ಅಗತ್ಯ",
     "otp_invalid": "ಸರಿಯಾದ 6 ಅಂಕಿಯ OTP ನಮೂದಿಸಿ",
-    "business_name_required": "ವ್ಯಾಪಾರದ ಹೆಸರು ಅಗತ್ಯ"
+    "business_name_required": "ವ್ಯಾಪಾರದ ಹೆಸರು ಅಗತ್ಯ",
+    "business_name_invalid": "ವ್ಯಾಪಾರದ ಹೆಸರಿನಲ್ಲಿ ಅಮಾನ್ಯ ಅಕ್ಷರಗಳಿವೆ",
+    "too_long": "ಇದು ತುಂಬಾ ಉದ್ದವಾಗಿದೆ",
+    "invalid_characters": "ಅಮಾನ್ಯ ಅಕ್ಷರಗಳಿವೆ"
   }
 }

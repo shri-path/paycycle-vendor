@@ -44,6 +44,8 @@
     "reset_password_title": "पासवर्ड रीसेट करें",
     "reset_password_desc": "अपने फोन पर भेजा गया OTP और नया पासवर्ड दर्ज करें।",
     "otp_sent_to": "OTP भेजा गया",
+    "otp_sent_to_phone": "{{phone}} पर OTP भेजा गया",
+    "otp_sent_to_number": "{{phone}} पर OTP भेजा गया",
     "back_to_login": "साइन इन पर वापस",
     "terms_agree": "खाता बनाकर आप हमारी",
     "terms_of_service": "सेवा शर्तें",
@@ -117,7 +119,11 @@
     "passwords_do_not_match": "पासवर्ड मेल नहीं खाते",
     "password_min_8": "पासवर्ड कम से कम 8 वर्णों का होना चाहिए",
     "password_complexity": "जरूरी: बड़े अक्षर, छोटे अक्षर, अंक और विशेष वर्ण",
+    "password_required": "पासवर्ड आवश्यक है",
     "otp_invalid": "6 अंकों का सही OTP दर्ज करें",
-    "business_name_required": "व्यवसाय का नाम आवश्यक है"
+    "business_name_required": "व्यवसाय का नाम आवश्यक है",
+    "business_name_invalid": "व्यवसाय के नाम में अमान्य वर्ण हैं",
+    "too_long": "यह बहुत लंबा है",
+    "invalid_characters": "अमान्य वर्ण मौजूद हैं"
   }
 }

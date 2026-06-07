@@ -44,6 +44,8 @@
     "reset_password_title": "கடவுச்சொல் மீட்டமைக்கவும்",
     "reset_password_desc": "உங்கள் தொலைபேசிக்கு அனுப்பப்பட்ட OTP உள்ளிடுங்கள்.",
     "otp_sent_to": "OTP அனுப்பப்பட்டது",
+    "otp_sent_to_phone": "{{phone}} க்கு OTP அனுப்பப்பட்டது",
+    "otp_sent_to_number": "{{phone}} க்கு OTP அனுப்பப்பட்டது",
     "back_to_login": "உள்நுழைவுக்கு திரும்புங்கள்",
     "terms_agree": "கணக்கு உருவாக்குவதன் மூலம் நீங்கள் ஒப்புக்கொள்கிறீர்கள்",
     "terms_of_service": "சேவை விதிமுறைகள்",
@@ -117,7 +119,11 @@
     "passwords_do_not_match": "கடவுச்சொற்கள் பொருந்தவில்லை",
     "password_min_8": "கடவுச்சொல் குறைந்தது 8 எழுத்துகள் இருக்க வேண்டும்",
     "password_complexity": "தேவை: பெரிய எழுத்து, சிறிய எழுத்து, எண் மற்றும் சிறப்பு எழுத்து",
+    "password_required": "கடவுச்சொல் தேவை",
     "otp_invalid": "சரியான 6 இலக்க OTP உள்ளிடுங்கள்",
-    "business_name_required": "வணிகப் பெயர் தேவை"
+    "business_name_required": "வணிகப் பெயர் தேவை",
+    "business_name_invalid": "வணிகப் பெயரில் தவறான எழுத்துகள் உள்ளன",
+    "too_long": "இது மிக நீளமாக உள்ளது",
+    "invalid_characters": "தவறான எழுத்துகள் உள்ளன"
   }
 }

@@ -44,6 +44,8 @@
     "reset_password_title": "പാസ്‌വേഡ് റീസെറ്റ്",
     "reset_password_desc": "നിങ്ങളുടെ ഫോണിലേക്ക് അയച്ച OTP നൽകുക.",
     "otp_sent_to": "OTP അയച്ചു",
+    "otp_sent_to_phone": "{{phone}} ലേക്ക് OTP അയച്ചു",
+    "otp_sent_to_number": "{{phone}} ലേക്ക് OTP അയച്ചു",
     "back_to_login": "സൈൻ ഇനിലേക്ക് മടങ്ങുക",
     "terms_agree": "അക്കൗണ്ട് ഉണ്ടാക്കുന്നതിലൂടെ നിങ്ങൾ സമ്മതിക്കുന്നു",
     "terms_of_service": "സേവന നിബന്ധനകൾ",
@@ -117,7 +119,11 @@
     "passwords_do_not_match": "പാസ്‌വേഡുകൾ പൊരുത്തപ്പെടുന്നില്ല",
     "password_min_8": "പാസ്‌വേഡ് കുറഞ്ഞത് 8 അക്ഷരങ്ങൾ ആയിരിക്കണം",
     "password_complexity": "ആവശ്യം: വലിയ അക്ഷരം, ചെറിയ അക്ഷരം, സംഖ്യ, പ്രത്യേക അക്ഷരം",
+    "password_required": "പാസ്‌വേഡ് ആവശ്യമാണ്",
     "otp_invalid": "ശരിയായ 6 അക്ക OTP നൽകുക",
-    "business_name_required": "ബിസിനസ്സ് പേര് ആവശ്യമാണ്"
+    "business_name_required": "ബിസിനസ്സ് പേര് ആവശ്യമാണ്",
+    "business_name_invalid": "ബിസിനസ്സ് പേരിൽ അസാധുവായ പ്രതീകങ്ങൾ ഉണ്ട്",
+    "too_long": "ഇത് വളരെ നീളമുള്ളതാണ്",
+    "invalid_characters": "അസാധുവായ പ്രതീകങ്ങൾ അടങ്ങിയിരിക്കുന്നു"
   }
 }

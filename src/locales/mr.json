@@ -44,6 +44,8 @@
     "reset_password_title": "पासवर्ड रीसेट करा",
     "reset_password_desc": "तुमच्या फोनवर आलेला OTP टाका.",
     "otp_sent_to": "OTP पाठवला",
+    "otp_sent_to_phone": "{{phone}} वर OTP पाठवला",
+    "otp_sent_to_number": "{{phone}} वर OTP पाठवला",
     "back_to_login": "साइन इनवर परत जा",
     "terms_agree": "खाते तयार केल्याने तुम्ही मान्य करता",
     "terms_of_service": "सेवा अटी",
@@ -117,7 +119,11 @@
     "passwords_do_not_match": "पासवर्ड जुळत नाहीत",
     "password_min_8": "पासवर्ड किमान 8 वर्णांचा असावा",
     "password_complexity": "आवश्यक: मोठे अक्षर, लहान अक्षर, अंक आणि विशेष वर्ण",
+    "password_required": "पासवर्ड आवश्यक आहे",
     "otp_invalid": "योग्य 6 अंकी OTP टाका",
-    "business_name_required": "व्यवसायाचे नाव आवश्यक आहे"
+    "business_name_required": "व्यवसायाचे नाव आवश्यक आहे",
+    "business_name_invalid": "व्यवसायाच्या नावात अवैध वर्ण आहेत",
+    "too_long": "हे खूप लांब आहे",
+    "invalid_characters": "अवैध वर्ण आहेत"
   }
 }

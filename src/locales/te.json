@@ -44,6 +44,8 @@
     "reset_password_title": "పాస్‌వర్డ్ రీసెట్",
     "reset_password_desc": "మీ ఫోన్‌కు పంపించిన OTP నమోదు చేయండి.",
     "otp_sent_to": "OTP పంపించబడింది",
+    "otp_sent_to_phone": "{{phone}} కు OTP పంపించబడింది",
+    "otp_sent_to_number": "{{phone}} కు OTP పంపించబడింది",
     "back_to_login": "సైన్ ఇన్‌కు తిరిగి",
     "terms_agree": "ఖాతా సృష్టించడం ద్వారా మీరు అంగీకరిస్తున్నారు",
     "terms_of_service": "సేవా నిబంధనలు",
@@ -117,7 +119,11 @@
     "passwords_do_not_match": "పాస్‌వర్డ్‌లు సరిపోలడం లేదు",
     "password_min_8": "పాస్‌వర్డ్ కనీసం 8 అక్షరాలు ఉండాలి",
     "password_complexity": "అవసరం: పెద్ద అక్షరం, చిన్న అక్షరం, సంఖ్య మరియు ప్రత్యేక అక్షరం",
+    "password_required": "పాస్‌వర్డ్ తప్పనిసరి",
     "otp_invalid": "సరైన 6 అంకెల OTP నమోదు చేయండి",
-    "business_name_required": "వ్యాపార పేరు తప్పనిసరి"
+    "business_name_required": "వ్యాపార పేరు తప్పనిసరి",
+    "business_name_invalid": "వ్యాపార పేరులో చెల్లని అక్షరాలు ఉన్నాయి",
+    "too_long": "ఇది చాలా పొడవుగా ఉంది",
+    "invalid_characters": "చెల్లని అక్షరాలు ఉన్నాయి"
   }
 }

@@ -44,6 +44,8 @@
     "reset_password_title": "পাসওয়ার্ড রিসেট করুন",
     "reset_password_desc": "আপনার ফোনে পাঠানো OTP দিন।",
     "otp_sent_to": "OTP পাঠানো হয়েছে",
+    "otp_sent_to_phone": "{{phone}} নম্বরে OTP পাঠানো হয়েছে",
+    "otp_sent_to_number": "{{phone}} নম্বরে OTP পাঠানো হয়েছে",
     "back_to_login": "সাইন ইনে ফিরুন",
     "terms_agree": "অ্যাকাউন্ট তৈরি করে আপনি সম্মত হচ্ছেন",
     "terms_of_service": "সেবার শর্তাবলী",
@@ -117,7 +119,11 @@
     "passwords_do_not_match": "পাসওয়ার্ড মিলছে না",
     "password_min_8": "পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে",
     "password_complexity": "প্রয়োজন: বড় অক্ষর, ছোট অক্ষর, সংখ্যা এবং বিশেষ অক্ষর",
+    "password_required": "পাসওয়ার্ড আবশ্যক",
     "otp_invalid": "সঠিক ৬ সংখ্যার OTP দিন",
-    "business_name_required": "ব্যবসার নাম আবশ্যক"
+    "business_name_required": "ব্যবসার নাম আবশ্যক",
+    "business_name_invalid": "ব্যবসার নামে অবৈধ অক্ষর রয়েছে",
+    "too_long": "এটি খুব দীর্ঘ",
+    "invalid_characters": "অবৈধ অক্ষর রয়েছে"
   }
 }
