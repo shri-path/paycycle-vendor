@@ -4,14 +4,8 @@
  */
 
 import React, { useRef, useState } from 'react'
-import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  TouchableOpacity,
-  StyleSheet,
-  View,
-} from 'react-native'
+import { KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native'
+import { ScrollView, XStack, YStack } from 'tamagui'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
@@ -93,13 +87,17 @@ function LoginScreenContent() {
   const displayError = validationError ?? error
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <KeyboardAvoidingView
-        style={styles.flex}
+        style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView
-          contentContainerStyle={styles.scroll}
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingHorizontal: spacing[4],
+            paddingBottom: spacing[8],
+          }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
@@ -109,26 +107,44 @@ function LoginScreenContent() {
           ) : null}
 
           {/* Logo area */}
-          <View style={styles.logoArea}>
-            <View style={styles.logoCircle}>
+          <YStack
+            alignItems="center"
+            paddingTop={spacing[10]}
+            paddingBottom={spacing[8]}
+            gap={spacing[2]}
+          >
+            <YStack
+              width={80}
+              height={80}
+              borderRadius={40}
+              backgroundColor={colors.primary}
+              justifyContent="center"
+              alignItems="center"
+              marginBottom={spacing[2]}
+            >
               <Ionicons name="bicycle-outline" size={40} color={colors.white} />
-            </View>
+            </YStack>
             <AppText variant="h3" weight="bold" align="center" color={colors.primary}>
               {t('common.app_name')}
             </AppText>
             <AppText variant="caption" align="center" color={colors.textSecondary}>
               {t('auth.tagline')}
             </AppText>
-          </View>
+          </YStack>
 
           {/* Form */}
-          <View style={styles.form}>
+          <YStack gap={spacing[1]}>
             {displayError ? (
-              <View style={styles.errorBanner}>
+              <YStack
+                backgroundColor={colors.errorBg}
+                borderRadius={8}
+                padding={spacing[3]}
+                marginBottom={spacing[2]}
+              >
                 <AppText variant="caption" color={colors.error}>
                   {t(displayError)}
                 </AppText>
-              </View>
+              </YStack>
             ) : null}
 
             <AppPhoneInput
@@ -177,15 +193,15 @@ function LoginScreenContent() {
               variant="link"
               fullWidth
             />
-          </View>
+          </YStack>
 
           {/* Divider */}
-          <View style={styles.dividerRow}>
-            <View style={styles.dividerLine} />
-          </View>
+          <YStack marginVertical={spacing[6]} alignItems="center">
+            <YStack width="100%" height={1} backgroundColor={colors.gray200} />
+          </YStack>
 
           {/* Sign up link */}
-          <View style={styles.signupRow}>
+          <XStack justifyContent="center" alignItems="center">
             <AppText variant="body" color={colors.textSecondary}>
               {t('auth.new_vendor')}{' '}
             </AppText>
@@ -198,7 +214,7 @@ function LoginScreenContent() {
                 {t('auth.sign_up')}
               </AppText>
             </TouchableOpacity>
-          </View>
+          </XStack>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -214,56 +230,3 @@ export default function LoginScreen() {
 }
 
 LoginScreen.displayName = 'LoginScreen'
-
-const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  flex: {
-    flex: 1,
-  },
-  scroll: {
-    flexGrow: 1,
-    paddingHorizontal: spacing[4],
-    paddingBottom: spacing[8],
-  },
-  logoArea: {
-    alignItems: 'center',
-    paddingTop: spacing[10],
-    paddingBottom: spacing[8],
-    gap: spacing[2],
-  },
-  logoCircle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: spacing[2],
-  },
-  form: {
-    gap: spacing[1],
-  },
-  errorBanner: {
-    backgroundColor: colors.errorBg,
-    borderRadius: 8,
-    padding: spacing[3],
-    marginBottom: spacing[2],
-  },
-  dividerRow: {
-    marginVertical: spacing[6],
-    alignItems: 'center',
-  },
-  dividerLine: {
-    width: '100%',
-    height: 1,
-    backgroundColor: colors.gray200,
-  },
-  signupRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-})

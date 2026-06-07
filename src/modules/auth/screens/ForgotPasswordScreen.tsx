@@ -4,13 +4,8 @@
  */
 
 import React, { useRef, useState } from 'react'
-import {
-  KeyboardAvoidingView,
-  Platform,
-  TouchableOpacity,
-  StyleSheet,
-  View,
-} from 'react-native'
+import { KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native'
+import { XStack, YStack } from 'tamagui'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
@@ -78,22 +73,27 @@ function ForgotPasswordScreenContent() {
   const displayError = validationError ?? error
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <KeyboardAvoidingView
-        style={styles.flex}
+        style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <View style={styles.container}>
+        <YStack flex={1} paddingHorizontal={spacing[4]} paddingBottom={spacing[8]}>
           {/* Offline banner */}
           {!isConnected ? (
             <AppAlert type="warning" title={t('auth.offline_sign_in')} />
           ) : null}
 
           {/* Header */}
-          <View style={styles.header}>
+          <XStack
+            alignItems="center"
+            gap={spacing[3]}
+            paddingTop={spacing[4]}
+            paddingBottom={spacing[4]}
+          >
             <TouchableOpacity
               onPress={() => router.back()}
-              style={styles.backButton}
+              style={{ width: 40, height: 40, justifyContent: 'center', alignItems: 'center' }}
               accessibilityRole="button"
               accessibilityLabel={t('auth.back')}
             >
@@ -102,18 +102,23 @@ function ForgotPasswordScreenContent() {
             <AppText variant="h3" weight="bold">
               {t('auth.forgot_password_title')}
             </AppText>
-          </View>
+          </XStack>
 
-          <AppText variant="body" color={colors.textSecondary} style={styles.desc}>
+          <AppText variant="body" color={colors.textSecondary} style={{ marginBottom: spacing[6] }}>
             {t('auth.forgot_password_desc')}
           </AppText>
 
           {displayError ? (
-            <View style={styles.errorBanner}>
+            <YStack
+              backgroundColor={colors.errorBg}
+              borderRadius={8}
+              padding={spacing[3]}
+              marginBottom={spacing[4]}
+            >
               <AppText variant="caption" color={colors.error}>
                 {t(displayError)}
               </AppText>
-            </View>
+            </YStack>
           ) : null}
 
           <AppPhoneInput
@@ -141,7 +146,7 @@ function ForgotPasswordScreenContent() {
             variant="link"
             fullWidth
           />
-        </View>
+        </YStack>
       </KeyboardAvoidingView>
     </SafeAreaView>
   )
@@ -156,40 +161,3 @@ export default function ForgotPasswordScreen() {
 }
 
 ForgotPasswordScreen.displayName = 'ForgotPasswordScreen'
-
-const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  flex: {
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-    paddingHorizontal: spacing[4],
-    paddingBottom: spacing[8],
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing[3],
-    paddingTop: spacing[4],
-    paddingBottom: spacing[4],
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  desc: {
-    marginBottom: spacing[6],
-  },
-  errorBanner: {
-    backgroundColor: colors.errorBg,
-    borderRadius: 8,
-    padding: spacing[3],
-    marginBottom: spacing[4],
-  },
-})

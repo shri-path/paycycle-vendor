@@ -4,14 +4,8 @@
  */
 
 import React, { useRef, useState } from 'react'
-import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  TouchableOpacity,
-  StyleSheet,
-  View,
-} from 'react-native'
+import { KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native'
+import { ScrollView, XStack, YStack } from 'tamagui'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
@@ -111,13 +105,17 @@ function SignupScreenContent() {
   const displayError = validationError ?? error
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <KeyboardAvoidingView
-        style={styles.flex}
+        style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView
-          contentContainerStyle={styles.scroll}
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingHorizontal: spacing[4],
+            paddingBottom: spacing[8],
+          }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
@@ -127,10 +125,15 @@ function SignupScreenContent() {
           ) : null}
 
           {/* Header */}
-          <View style={styles.header}>
+          <XStack
+            alignItems="center"
+            gap={spacing[3]}
+            paddingTop={spacing[4]}
+            paddingBottom={spacing[6]}
+          >
             <TouchableOpacity
               onPress={() => router.back()}
-              style={styles.backButton}
+              style={{ width: 40, height: 40, justifyContent: 'center', alignItems: 'center' }}
               accessibilityRole="button"
               accessibilityLabel={t('auth.back')}
             >
@@ -139,16 +142,21 @@ function SignupScreenContent() {
             <AppText variant="h3" weight="bold">
               {t('auth.create_account')}
             </AppText>
-          </View>
+          </XStack>
 
           {/* Form */}
-          <View style={styles.form}>
+          <YStack gap={spacing[1]}>
             {displayError ? (
-              <View style={styles.errorBanner}>
+              <YStack
+                backgroundColor={colors.errorBg}
+                borderRadius={8}
+                padding={spacing[3]}
+                marginBottom={spacing[2]}
+              >
                 <AppText variant="caption" color={colors.error}>
                   {t(displayError)}
                 </AppText>
-              </View>
+              </YStack>
             ) : null}
 
             <AppInput
@@ -208,15 +216,15 @@ function SignupScreenContent() {
               disabled={isLoading || !isConnected}
             />
 
-            <View style={styles.termsRow}>
+            <YStack paddingTop={spacing[2]} paddingHorizontal={spacing[2]}>
               <AppText variant="caption" color={colors.textSecondary} align="center">
                 {t('auth.terms_agree')}{' '}
                 <AppText variant="caption" color={colors.primary} weight="semibold">
                   {t('auth.terms_of_service')}
                 </AppText>
               </AppText>
-            </View>
-          </View>
+            </YStack>
+          </YStack>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -232,44 +240,3 @@ export default function SignupScreen() {
 }
 
 SignupScreen.displayName = 'SignupScreen'
-
-const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  flex: {
-    flex: 1,
-  },
-  scroll: {
-    flexGrow: 1,
-    paddingHorizontal: spacing[4],
-    paddingBottom: spacing[8],
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing[3],
-    paddingTop: spacing[4],
-    paddingBottom: spacing[6],
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  form: {
-    gap: spacing[1],
-  },
-  errorBanner: {
-    backgroundColor: colors.errorBg,
-    borderRadius: 8,
-    padding: spacing[3],
-    marginBottom: spacing[2],
-  },
-  termsRow: {
-    paddingTop: spacing[2],
-    paddingHorizontal: spacing[2],
-  },
-})

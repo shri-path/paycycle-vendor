@@ -4,13 +4,8 @@
  */
 
 import React, { useRef, useState } from 'react'
-import {
-  KeyboardAvoidingView,
-  Platform,
-  TouchableOpacity,
-  StyleSheet,
-  View,
-} from 'react-native'
+import { KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native'
+import { XStack, YStack } from 'tamagui'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
@@ -91,22 +86,27 @@ function ResetPasswordScreenContent() {
   const displayError = validationError ?? error
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <KeyboardAvoidingView
-        style={styles.flex}
+        style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <View style={styles.container}>
+        <YStack flex={1} paddingHorizontal={spacing[4]} paddingBottom={spacing[8]}>
           {/* Offline banner */}
           {!isConnected ? (
             <AppAlert type="warning" title={t('auth.offline_sign_in')} />
           ) : null}
 
           {/* Header */}
-          <View style={styles.header}>
+          <XStack
+            alignItems="center"
+            gap={spacing[3]}
+            paddingTop={spacing[4]}
+            paddingBottom={spacing[4]}
+          >
             <TouchableOpacity
               onPress={() => router.back()}
-              style={styles.backButton}
+              style={{ width: 40, height: 40, justifyContent: 'center', alignItems: 'center' }}
               accessibilityRole="button"
               accessibilityLabel={t('auth.back')}
             >
@@ -115,36 +115,52 @@ function ResetPasswordScreenContent() {
             <AppText variant="h3" weight="bold">
               {t('auth.reset_password_title')}
             </AppText>
-          </View>
+          </XStack>
 
-          <AppText variant="body" color={colors.textSecondary} style={styles.desc}>
+          <AppText variant="body" color={colors.textSecondary} style={{ marginBottom: spacing[4] }}>
             {t('auth.reset_password_desc')}
           </AppText>
 
           {pendingResetPhone ? (
-            <View style={styles.phoneBadge}>
+            <XStack
+              alignItems="center"
+              backgroundColor={colors.primaryBg}
+              borderRadius={8}
+              padding={spacing[3]}
+              marginBottom={spacing[4]}
+            >
               <Ionicons name="phone-portrait-outline" size={16} color={colors.primary} />
               <AppText variant="caption" color={colors.primary} weight="semibold">
                 {' '}{t('auth.otp_sent_to')} {pendingResetPhone}
               </AppText>
-            </View>
+            </XStack>
           ) : null}
 
           {/* Dev hint: only visible in development builds, tree-shaken in production */}
           {__DEV__ ? (
-            <View style={styles.devHint}>
+            <YStack
+              backgroundColor={colors.warningBg}
+              borderRadius={8}
+              padding={spacing[2]}
+              marginBottom={spacing[3]}
+            >
               <AppText variant="caption" color={colors.warning}>
                 [Dev] OTP: 123456
               </AppText>
-            </View>
+            </YStack>
           ) : null}
 
           {displayError ? (
-            <View style={styles.errorBanner}>
+            <YStack
+              backgroundColor={colors.errorBg}
+              borderRadius={8}
+              padding={spacing[3]}
+              marginBottom={spacing[4]}
+            >
               <AppText variant="caption" color={colors.error}>
                 {t(displayError)}
               </AppText>
-            </View>
+            </YStack>
           ) : null}
 
           <AppInput
@@ -186,7 +202,7 @@ function ResetPasswordScreenContent() {
             loading={isLoading}
             disabled={isLoading || !isConnected}
           />
-        </View>
+        </YStack>
       </KeyboardAvoidingView>
     </SafeAreaView>
   )
@@ -201,54 +217,3 @@ export default function ResetPasswordScreen() {
 }
 
 ResetPasswordScreen.displayName = 'ResetPasswordScreen'
-
-const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  flex: {
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-    paddingHorizontal: spacing[4],
-    paddingBottom: spacing[8],
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing[3],
-    paddingTop: spacing[4],
-    paddingBottom: spacing[4],
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  desc: {
-    marginBottom: spacing[4],
-  },
-  phoneBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.primaryBg,
-    borderRadius: 8,
-    padding: spacing[3],
-    marginBottom: spacing[4],
-  },
-  devHint: {
-    backgroundColor: colors.warningBg,
-    borderRadius: 8,
-    padding: spacing[2],
-    marginBottom: spacing[3],
-  },
-  errorBanner: {
-    backgroundColor: colors.errorBg,
-    borderRadius: 8,
-    padding: spacing[3],
-    marginBottom: spacing[4],
-  },
-})
