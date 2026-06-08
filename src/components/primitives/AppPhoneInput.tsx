@@ -16,6 +16,7 @@
 import React, { useState } from 'react'
 import {
   View,
+  Animated,
   TextInput,
   StyleSheet,
   ViewStyle,
@@ -26,6 +27,7 @@ import {
   FlatList,
 } from 'react-native'
 import { AppText } from './AppText'
+import { useFocusRing, inputOutlineReset } from '@hooks/useFocusRing'
 import { colors, spacing, borderRadius, fontSize, fontWeight, componentSizes } from '@constants/tokens'
 
 export interface CountryCode {
@@ -243,10 +245,14 @@ export const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
   containerStyle,
   editable = true,
   placeholderTextColor,
+  testID,
   ...props
 }) => {
   const [isModalVisible, setIsModalVisible] = useState(false)
-  const [isFocused, setIsFocused] = useState(false)
+  const { isFocused, onFocus, onBlur, focusRingStyle } = useFocusRing({
+    error: !!error,
+    disabled: !editable,
+  })
 
   const selectedCountry = countryCodes.find((c) => c.dial === countryCode)
 
@@ -254,18 +260,12 @@ export const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
     ...styles.countryCodeButton,
     ...(error && styles.countryCodeButtonError),
     ...(!editable && styles.countryCodeButtonDisabled),
-    borderColor: isFocused && !error ? colors.primary : (error ? colors.error : colors.gray200),
-  }
-
-  const phoneInputFieldStyle: ViewStyle = {
-    ...styles.phoneInputField,
-    ...(error && styles.phoneInputFieldError),
-    ...(!editable && styles.phoneInputFieldDisabled),
-    borderColor: isFocused && !error ? colors.primary : (error ? colors.error : colors.gray200),
+    borderColor: isFocused && !error ? colors.focusBorder : (error ? colors.error : colors.gray200),
   }
 
   const phoneInputStyle: TextStyle = {
     ...styles.phoneInput,
+    ...inputOutlineReset,
     ...(!editable && styles.phoneInputDisabled),
   }
 
@@ -275,8 +275,11 @@ export const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
   }
 
   const handlePhoneChange = (text: string) => {
-    // Allow only numbers
-    const cleanedText = text.replace(/[^0-9]/g, '')
+    // Allow only numbers, capped at the input's maxLength when provided
+    let cleanedText = text.replace(/[^0-9]/g, '')
+    if (typeof props.maxLength === 'number') {
+      cleanedText = cleanedText.slice(0, props.maxLength)
+    }
     onChange?.(countryCode, cleanedText)
   }
 
@@ -304,9 +307,17 @@ export const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
           </AppText>
         </TouchableOpacity>
 
-        <View style={phoneInputFieldStyle}>
+        <Animated.View
+          style={[
+            styles.phoneInputField,
+            error && styles.phoneInputFieldError,
+            !editable && styles.phoneInputFieldDisabled,
+            focusRingStyle,
+          ]}
+        >
           <TextInput
             {...props}
+            testID={testID}
             value={phone}
             editable={editable}
             style={phoneInputStyle}
@@ -315,20 +326,21 @@ export const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
             keyboardType="phone-pad"
             onChangeText={handlePhoneChange}
             onFocus={(e) => {
-              setIsFocused(true)
+              onFocus()
               props.onFocus?.(e)
             }}
             onBlur={(e) => {
-              setIsFocused(false)
+              onBlur()
               props.onBlur?.(e)
             }}
           />
-        </View>
+        </Animated.View>
       </View>
 
       {(error || helperText) && (
         <AppText
           variant="caption"
+          testID={testID ? `${testID}-error` : undefined}
           style={styles.helperText}
           color={error ? colors.error : colors.textSecondary}
         >
@@ -376,5 +388,7 @@ export const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
     </View>
   )
 }
+
+AppPhoneInput.displayName = 'AppPhoneInput'
 
 export default AppPhoneInput

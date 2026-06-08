@@ -5,8 +5,7 @@
  * Design tokens: colors, typography, spacing, shadows
  */
 
-import { createTamagui, createTokens } from 'tamagui'
-import { createInterFont } from '@tamagui/font-inter'
+import { createTamagui, createTokens, createFont } from 'tamagui'
 
 // Colors - Trust Green Theme
 const colors = {
@@ -50,13 +49,28 @@ const colors = {
 }
 
 // Typography
+// Screens render text via the plain-RN AppText primitive, so this font config only
+// needs to be valid for createTamagui — layout primitives (YStack/XStack) don't use it.
+const bodyFont = createFont({
+  family: 'System',
+  size: { 1: 12, 2: 14, 3: 16, 4: 18, 5: 20, 6: 24, true: 16 },
+  lineHeight: { 1: 16, 2: 20, 3: 24, 4: 28, 5: 30, 6: 36, true: 24 },
+  weight: { 1: '400', 4: '500', 6: '600', 7: '700', true: '400' },
+  letterSpacing: { 1: 0, true: 0 },
+})
+
 const fonts = {
-  body: createInterFont(),
+  body: bodyFont,
+  heading: bodyFont,
 }
 
 // Tokens
+// Tamagui v2 requires these exact group names: color, space, size, radius, zIndex.
+// Each group needs a `true` entry (the default used when a prop is passed `true`).
+// Screens pass raw values (hex colors, numeric spacing) so these are mainly to make
+// createTamagui valid; fontSize/lineHeight live on the font config, not here.
 const tokens = createTokens({
-  colors,
+  color: colors,
   space: {
     0: 0,
     1: 4,
@@ -73,8 +87,9 @@ const tokens = createTokens({
     16: 64,
     20: 80,
     24: 96,
+    true: 16,
   },
-  sizes: {
+  size: {
     0: 0,
     1: 4,
     2: 8,
@@ -91,6 +106,7 @@ const tokens = createTokens({
     20: 80,
     24: 96,
     full: '100%',
+    true: 16,
   },
   radius: {
     0: 0,
@@ -101,6 +117,7 @@ const tokens = createTokens({
     5: 20,
     6: 24,
     round: 999,
+    true: 8,
   },
   zIndex: {
     0: 0,
@@ -108,26 +125,7 @@ const tokens = createTokens({
     2: 200,
     3: 300,
     modal: 1000,
-  },
-  fontSize: {
-    xs: 12,
-    sm: 14,
-    base: 16,
-    lg: 18,
-    xl: 20,
-    '2xl': 24,
-    '3xl': 30,
-    '4xl': 36,
-  },
-  lineHeight: {
-    xs: 16,
-    sm: 20,
-    base: 24,
-    lg: 28,
-    xl: 30,
-    '2xl': 36,
-    '3xl': 42,
-    '4xl': 48,
+    true: 0,
   },
 })
 
@@ -135,6 +133,7 @@ const tokens = createTokens({
 const appConfig = createTamagui({
   tokens,
   fonts,
+  defaultFont: 'body',
   themes: {
     light: {
       background: colors.background,

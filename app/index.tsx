@@ -1,14 +1,25 @@
 /**
  * App Root Route
- * Placeholder - screens will be added during feature development
+ * Purpose: Redirect to auth or home based on authentication state
  */
 
-import { View, Text } from 'react-native'
+import { View, ActivityIndicator } from 'react-native'
+import { Redirect } from 'expo-router'
+import { useAuthStore } from '@modules/auth/store/auth.store'
+import { colors } from '@constants/tokens'
 
 export default function Index() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>PayCycle Vendor</Text>
-    </View>
-  )
+  const { isAuthenticated, isHydrated } = useAuthStore()
+
+  if (!isHydrated) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    )
+  }
+
+  return isAuthenticated
+    ? <Redirect href="/(app)/home" />
+    : <Redirect href="/(auth)/login" />
 }

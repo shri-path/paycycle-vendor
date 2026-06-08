@@ -11,3 +11,4 @@
 export { ledgerService } from './ledger.service'
 export { customerService } from './customer.service'
 export { vendorService } from './vendor.service'
+export { authService } from '../modules/auth/service/auth.service'

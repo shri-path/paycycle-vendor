@@ -13,9 +13,10 @@
  * - Error state with message
  */
 
-import React, { useState } from 'react'
+import React from 'react'
 import {
   View,
+  Animated,
   TextInput,
   StyleSheet,
   ViewStyle,
@@ -24,6 +25,7 @@ import {
   TextStyle,
 } from 'react-native'
 import { AppText } from './AppText'
+import { useFocusRing, inputOutlineReset } from '@hooks/useFocusRing'
 import { colors, spacing, borderRadius, fontSize, componentSizes } from '@constants/tokens'
 
 export interface AppInputProps extends TextInputProps {
@@ -160,19 +162,17 @@ export const AppInput: React.FC<AppInputProps> = ({
   placeholderTextColor,
   value,
   editable = true,
+  testID,
   ...props
 }) => {
-  const [isFocused, setIsFocused] = useState(false)
-
-  const inputWrapperStyle: ViewStyle = {
-    ...styles.inputWrapper,
-    ...(error && styles.inputWrapperError),
-    ...(!editable && styles.inputWrapperDisabled),
-    borderColor: isFocused && !error ? colors.primary : (error ? colors.error : colors.gray200),
-  }
+  const { onFocus, onBlur, focusRingStyle } = useFocusRing({
+    error: !!error,
+    disabled: !editable,
+  })
 
   const inputStyle: TextStyle = {
     ...styles.input,
+    ...inputOutlineReset,
     ...(!editable && styles.inputDisabled),
   }
 
@@ -184,7 +184,14 @@ export const AppInput: React.FC<AppInputProps> = ({
         </AppText>
       )}
 
-      <View style={inputWrapperStyle}>
+      <Animated.View
+        style={[
+          styles.inputWrapper,
+          error && styles.inputWrapperError,
+          !editable && styles.inputWrapperDisabled,
+          focusRingStyle,
+        ]}
+      >
         {leftIcon && (
           <View style={styles.iconWrapper}>
             {leftIcon}
@@ -199,16 +206,17 @@ export const AppInput: React.FC<AppInputProps> = ({
 
         <TextInput
           {...props}
+          testID={testID}
           value={value}
           editable={editable}
           style={[inputStyle, style]}
           placeholderTextColor={placeholderTextColor || colors.textSecondary}
           onFocus={(e) => {
-            setIsFocused(true)
+            onFocus()
             props.onFocus?.(e)
           }}
           onBlur={(e) => {
-            setIsFocused(false)
+            onBlur()
             props.onBlur?.(e)
           }}
         />
@@ -238,11 +246,12 @@ export const AppInput: React.FC<AppInputProps> = ({
             {rightIcon}
           </View>
         )}
-      </View>
+      </Animated.View>
 
       {(error || helperText) && (
         <AppText
           variant="caption"
+          testID={testID ? `${testID}-error` : undefined}
           style={styles.helperText}
           color={error ? colors.error : colors.textSecondary}
         >
@@ -252,5 +261,7 @@ export const AppInput: React.FC<AppInputProps> = ({
     </View>
   )
 }
+
+AppInput.displayName = 'AppInput'
 
 export default AppInput

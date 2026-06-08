@@ -1,3 +1,4 @@
+#!/bin/sh
 echo "🔍 [1/2] Linting all chunks..."
 if ! npm run lint; then
   echo "❌ Lint failed. Commit aborted — fix the issues above (try: npm run lint:fix)."

@@ -20,11 +20,15 @@ expo-env.d.ts
 
 # Metro
 .metro-health-check*
+.metro-log.txt
 
 # debug
 npm-debug.*
 yarn-debug.*
 yarn-error.*
+
+# runtime error logs (daily files, see CLAUDE.md "Error Logging")
+Logs/
 
 # macOS
 .DS_Store
@@ -41,3 +45,4 @@ app-example
 # generated native folders
 /ios
 /android
+.env

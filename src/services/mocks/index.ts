@@ -6,3 +6,4 @@
 export * from './ledger.mock'
 export * from './customer.mock'
 export * from './vendor.mock'
+export * from './auth.mock'

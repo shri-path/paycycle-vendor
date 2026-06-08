@@ -24,6 +24,15 @@ Each agent definition lives in `.claude/agents/` and can be invoked as a sub-age
 
 ---
 
+## User Interaction Protocol (ALL Agents)
+
+1. **Handoffs are automatic — no approval gate.** Each agent hands off to the next (Architect → Dev → Review → QA, and the fix loops) without pausing to ask the user for permission to proceed. Do NOT ask "should I continue?", "is this ready?", or "may I hand off?".
+2. **The only reason to pause for the user is a genuine open question** — a decision you cannot resolve from the product docs, the code, the backend API contracts, or sensible defaults.
+3. **When you ask an open question, present a recommended solution and the trade-offs** of each option so the user can decide quickly. Never ask bare, open-ended questions.
+4. This applies in auto/headless mode too: the Architect must still surface open questions to the user (it does not get to assume answers just because no human is prompting).
+
+---
+
 ## Agent 1: Architect
 
 **File**: `.claude/agents/architect.md`

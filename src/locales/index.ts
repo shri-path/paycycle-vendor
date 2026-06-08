@@ -3,7 +3,7 @@
  * Purpose: Setup and manage translations
  */
 
-import * as RNLocalize from 'react-native-localize'
+import * as Localization from 'expo-localization'
 
 import en from './en.json'
 import hi from './hi.json'
@@ -44,7 +44,7 @@ const translations: Record<SupportedLanguage, typeof en> = {
 }
 
 // Find device language
-const deviceLanguages = RNLocalize.getLocales()
+const deviceLanguages = Localization.getLocales()
 const deviceLanguage = deviceLanguages?.[0]?.languageTag || 'en'
 const deviceLangCode = deviceLanguage.split('-')[0] as string
 
@@ -55,10 +55,31 @@ if (supportedCodes.includes(deviceLangCode as SupportedLanguage)) {
   currentLanguage = deviceLangCode as SupportedLanguage
 }
 
+/** Interpolation params for translation strings (e.g. {{phone}}). */
+export type TranslationParams = Record<string, string | number>
+
+/** Replaces {{token}} placeholders in a resolved string with provided params. */
+function interpolate(str: string, params?: TranslationParams): string {
+  if (!params) return str
+  return str.replace(/\{\{\s*(\w+)\s*\}\}/g, (_match, token: string) =>
+    params[token] != null ? String(params[token]) : `{{${token}}}`,
+  )
+}
+
 /**
- * Get translation for key
+ * Get translation for key.
+ * @param key Dot-namespaced translation key (e.g. 'auth.sign_in').
+ * @param paramsOrDefault Interpolation params object, or a default-value string.
+ * @param defaultValue Fallback string when used together with params.
  */
-export const t = (key: string, defaultValue?: string): string => {
+export const t = (
+  key: string,
+  paramsOrDefault?: TranslationParams | string,
+  defaultValue?: string,
+): string => {
+  const params = typeof paramsOrDefault === 'object' ? paramsOrDefault : undefined
+  const fallback = typeof paramsOrDefault === 'string' ? paramsOrDefault : defaultValue
+
   try {
     const keys = key.split('.')
     let value: any = translations[currentLanguage]
@@ -68,7 +89,7 @@ export const t = (key: string, defaultValue?: string): string => {
     }
 
     if (typeof value === 'string') {
-      return value
+      return interpolate(value, params)
     }
 
     // Fallback to English
@@ -78,14 +99,14 @@ export const t = (key: string, defaultValue?: string): string => {
         enValue = enValue?.[k]
       }
       if (typeof enValue === 'string') {
-        return enValue
+        return interpolate(enValue, params)
       }
     }
 
-    return defaultValue || key
+    return fallback || key
   } catch (_error) {
     console.warn(`Translation missing for key: ${key}`)
-    return defaultValue || key
+    return fallback || key
   }
 }
 

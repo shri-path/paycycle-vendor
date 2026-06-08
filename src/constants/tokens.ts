@@ -52,6 +52,11 @@ export const colors = {
   warningBg: '#FFFBEB',
   errorBg: '#FEF2F2',
   infoBg: '#EFF6FF',
+
+  // Focus States (lighter-variant border shown on focus)
+  // Applied to inputs (via useFocusRing) and every clickable element on web.
+  focusBorder: '#128C7E',                 // lighter variant of primary (#075E54)
+  focusBorderError: '#F87171',            // lighter variant of error (#DC2626)
 } as const
 
 // ============================================================================
