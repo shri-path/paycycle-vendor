@@ -3,7 +3,7 @@
  * Purpose: Setup and manage translations
  */
 
-import * as RNLocalize from 'react-native-localize'
+import * as Localization from 'expo-localization'
 
 import en from './en.json'
 import hi from './hi.json'
@@ -44,7 +44,7 @@ const translations: Record<SupportedLanguage, typeof en> = {
 }
 
 // Find device language
-const deviceLanguages = RNLocalize.getLocales()
+const deviceLanguages = Localization.getLocales()
 const deviceLanguage = deviceLanguages?.[0]?.languageTag || 'en'
 const deviceLangCode = deviceLanguage.split('-')[0] as string
 

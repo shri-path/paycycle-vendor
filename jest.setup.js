@@ -3,20 +3,21 @@
  * Purpose: Global mocks for native modules that require native binary registration
  */
 
-// Mock react-native-localize — requires native binary; always return English defaults in tests
-jest.mock('react-native-localize', () => ({
-  getLocales: () => [{ languageTag: 'en', languageCode: 'en', isRTL: false, countryCode: 'US', scriptCode: undefined }],
-  getNumberFormatSettings: () => ({ decimalSeparator: '.', groupingSeparator: ',' }),
-  getCalendar: () => 'gregorian',
-  getCountry: () => 'US',
-  getCurrencies: () => ['USD'],
-  getTemperatureUnit: () => 'celsius',
-  getTimeZone: () => 'UTC',
-  uses24HourClock: () => true,
-  usesMetricSystem: () => true,
-  addEventListener: jest.fn(),
-  removeEventListener: jest.fn(),
-  findBestAvailableLanguage: jest.fn(() => ({ languageTag: 'en', isRTL: false })),
+// Mock expo-localization — requires native binary; always return English defaults in tests
+jest.mock('expo-localization', () => ({
+  getLocales: () => [
+    {
+      languageTag: 'en',
+      languageCode: 'en',
+      regionCode: 'US',
+      textDirection: 'ltr',
+      currencyCode: 'USD',
+      decimalSeparator: '.',
+      digitGroupingSeparator: ',',
+      measurementSystem: 'metric',
+    },
+  ],
+  getCalendars: () => [{ calendar: 'gregorian', timeZone: 'UTC', uses24hourClock: true }],
 }))
 
 // Mock tamagui layout primitives — the real components require a runtime
