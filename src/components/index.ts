@@ -118,3 +118,10 @@ export type { AppBottomSheetProps } from './composite/AppBottomSheet'
 
 export { AppConfirmDialog } from './composite/AppConfirmDialog'
 export type { AppConfirmDialogProps } from './composite/AppConfirmDialog'
+
+// Roles & Access Control (US-002) — shared gates/badges consumed across stories
+export { RoleGate } from './composite/RoleGate'
+export type { RoleGateProps } from './composite/RoleGate'
+
+export { RoleBadge } from './composite/RoleBadge'
+export type { RoleBadgeProps } from './composite/RoleBadge'
