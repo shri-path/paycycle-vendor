@@ -161,7 +161,7 @@ export const AppBottomSheet: React.FC<AppBottomSheetProps> = ({
                 {title}
               </AppText>
               <AppIconButton
-                icon="✕"
+                icon={<AppText variant="h4" weight="bold">✕</AppText>}
                 onPress={onDismiss ?? (() => {})}
                 variant="ghost"
                 size="sm"
