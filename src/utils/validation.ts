@@ -17,6 +17,8 @@ export const LIMITS = {
   businessName: 60,
   password: 64,
   otp: 6,
+  // Area / route label for staff (US-002). Free text, generous cap.
+  areaLabel: 200,
 } as const
 
 // ---------------------------------------------------------------------------
@@ -71,6 +73,33 @@ export function validateBusinessName(raw: string): string | null {
   if (v.length > LIMITS.businessName) return 'validation.business_name_invalid'
   if (hasControlChar(v) || INJECTION_RE.test(v)) return 'validation.business_name_invalid'
   if (!BUSINESS_NAME_RE.test(v)) return 'validation.business_name_invalid'
+  return null
+}
+
+/**
+ * Validates an optional staff name (US-002). Empty is allowed (name is optional);
+ * when present it must pass the name allowlist + length cap.
+ * @returns An i18n key if invalid, or null if valid/empty.
+ */
+export function validateStaffName(raw: string): string | null {
+  const v = raw.trim().replace(/\s+/g, ' ')
+  if (!v) return null // optional
+  if (v.length > LIMITS.name) return 'validation.too_long'
+  if (hasControlChar(v) || INJECTION_RE.test(v)) return 'validation.invalid_characters'
+  if (!BUSINESS_NAME_RE.test(v)) return 'validation.invalid_characters'
+  return null
+}
+
+/**
+ * Validates an optional area / route label (US-002). Empty allowed; otherwise
+ * capped and guarded against control chars / injection sequences.
+ * @returns An i18n key if invalid, or null if valid/empty.
+ */
+export function validateAreaLabel(raw: string): string | null {
+  const v = raw.trim().replace(/\s+/g, ' ')
+  if (!v) return null // optional
+  if (v.length > LIMITS.areaLabel) return 'validation.too_long'
+  if (hasControlChar(v) || INJECTION_RE.test(v)) return 'validation.invalid_characters'
   return null
 }
 

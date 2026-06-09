@@ -69,6 +69,30 @@ export const authService = {
     )
   },
 
+  async acceptInvite(
+    token: string,
+    password: string,
+    name?: string,
+  ): Promise<LoginResponseDto> {
+    if (isMockMode) {
+      await simulateNetworkDelay()
+      if (!token || token.startsWith('invalid')) {
+        throw new Error('roles.error_invite_invalid')
+      }
+      if (token.startsWith('expired')) {
+        throw new Error('roles.error_invite_expired')
+      }
+      return {
+        user: { ...mockUser, name: name ?? mockUser.name },
+        tokens: mockTokens,
+        // Staff joins land with a staff vendor context.
+        vendorContexts: [{ ...mockVendorContext, role: 'staff' }],
+      }
+    }
+    const { data } = await api.post(APIPath.Auth.AcceptInvite, { token, password, name })
+    return data.data as LoginResponseDto
+  },
+
   async refreshTokens(refreshToken: string): Promise<RefreshResponseDto> {
     if (isMockMode) {
       await simulateNetworkDelay()
