@@ -15,9 +15,14 @@ jest.mock('expo-haptics', () => ({
 
 const mockPush = jest.fn()
 const mockBack = jest.fn()
-jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: mockPush, replace: jest.fn(), back: mockBack }),
-}))
+jest.mock('expo-router', () => {
+  const ReactActual = require('react')
+  return {
+    useRouter: () => ({ push: mockPush, replace: jest.fn(), back: mockBack }),
+    // Mimic react-navigation focus: run the effect callback once on mount.
+    useFocusEffect: (cb: () => void | (() => void)) => ReactActual.useEffect(cb, [cb]),
+  }
+})
 
 jest.mock('@hooks/useNetworkStatus', () => ({
   useNetworkStatus: jest.fn().mockReturnValue({ isConnected: true, isChecking: false }),
@@ -27,6 +32,7 @@ jest.mock('@hooks/useNetworkStatus', () => ({
 jest.mock('../../hooks/useRequireOwner', () => ({ useRequireOwner: jest.fn() }))
 
 const mockFetchStaffList = jest.fn().mockResolvedValue(undefined)
+const mockFetchRole = jest.fn().mockResolvedValue(undefined)
 jest.mock('../../store/roles.store', () => ({
   useRolesStore: jest.fn(),
 }))
@@ -69,6 +75,8 @@ function mockStore(state: Record<string, unknown>) {
       isStaffLoading: false,
       staffError: null,
       fetchStaffList: mockFetchStaffList,
+      fetchRole: mockFetchRole,
+      roleContext: null,
       ...state,
     }),
   )

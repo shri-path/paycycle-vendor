@@ -110,6 +110,11 @@ const StaffCardComponent: React.FC<StaffCardProps> = ({ staff, onPress, testID }
               {staff.areaRouteLabel}
             </AppText>
           ) : null}
+          {staff.assignedListCount > 0 ? (
+            <AppText variant="caption" color={colors.textSecondary} numberOfLines={1}>
+              {t('roles.lists_count', { count: staff.assignedListCount })}
+            </AppText>
+          ) : null}
           <AppText variant="caption" color={colors.textSecondary} numberOfLines={1}>
             {todayLabel}
           </AppText>

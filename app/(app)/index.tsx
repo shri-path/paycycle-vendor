@@ -9,12 +9,13 @@
  */
 
 import { useEffect } from 'react'
-import { View, ActivityIndicator, StyleSheet } from 'react-native'
+import { View, StyleSheet } from 'react-native'
 import { Redirect } from 'expo-router'
 import { useShallow } from 'zustand/react/shallow'
 import { useAuthStore } from '@modules/auth/store/auth.store'
 import { useRolesStore } from '@modules/roles/store/roles.store'
 import { useRole } from '@modules/roles/hooks/useRole'
+import { AppLoader } from '@components/primitives/AppLoader'
 import { colors } from '@constants/tokens'
 
 const styles = StyleSheet.create({
@@ -23,7 +24,9 @@ const styles = StyleSheet.create({
 
 export default function AppRoleRouter() {
   const isHydrated = useAuthStore(useShallow((s) => s.isHydrated))
-  const fetchRole = useRolesStore(useShallow((s) => s.fetchRole))
+  const { fetchRole, isRolesHydrated } = useRolesStore(
+    useShallow((s) => ({ fetchRole: s.fetchRole, isRolesHydrated: s.isRolesHydrated })),
+  )
   const { roleContext, isOwner, isLoading } = useRole()
 
   // Refresh the role on entry (reactive detection — OQ-7). Cheap; serves cache offline.
@@ -31,11 +34,13 @@ export default function AppRoleRouter() {
     if (isHydrated) void fetchRole()
   }, [isHydrated, fetchRole])
 
-  // Wait for hydration; if we have no cached role yet and a fetch is in flight, show a loader.
-  if (!isHydrated || (!roleContext && isLoading)) {
+  // Wait for BOTH auth + roles hydration (so we never flash the least-privileged
+  // staff-home before the persisted role is read back), and for any in-flight
+  // first-load fetch when no cached role exists yet.
+  if (!isHydrated || !isRolesHydrated || (!roleContext && isLoading)) {
     return (
       <View style={styles.loader} testID="role-router-loader">
-        <ActivityIndicator size="large" color={colors.primary} />
+        <AppLoader size="large" />
       </View>
     )
   }

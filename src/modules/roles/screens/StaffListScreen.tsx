@@ -8,10 +8,10 @@
  * (deferred to US-009).
  */
 
-import React, { useCallback, useEffect, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { View, FlatList, StyleSheet, RefreshControl, Platform } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useRouter } from 'expo-router'
+import { useRouter, useFocusEffect } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import * as Haptics from 'expo-haptics'
 import { useShallow } from 'zustand/react/shallow'
@@ -67,18 +67,42 @@ function StaffListScreenContent() {
   const { isConnected } = useNetworkStatus()
   useRequireOwner()
 
-  const { staffList, isStaffLoading, staffError, fetchStaffList } = useRolesStore(
-    useShallow((s) => ({
-      staffList: s.staffList,
-      isStaffLoading: s.isStaffLoading,
-      staffError: s.staffError,
-      fetchStaffList: s.fetchStaffList,
-    })),
-  )
+  const { staffList, isStaffLoading, staffError, fetchStaffList, fetchRole, roleContext } =
+    useRolesStore(
+      useShallow((s) => ({
+        staffList: s.staffList,
+        isStaffLoading: s.isStaffLoading,
+        staffError: s.staffError,
+        fetchStaffList: s.fetchStaffList,
+        fetchRole: s.fetchRole,
+        roleContext: s.roleContext,
+      })),
+    )
+
+  // OQ-7: non-blocking "your permissions were updated" notice when a focus re-fetch
+  // detects role/permission drift.
+  const [permissionsUpdated, setPermissionsUpdated] = useState(false)
+  const prevPermissions = useRef<string | null>(null)
 
   useEffect(() => {
     void fetchStaffList(1)
   }, [fetchStaffList])
+
+  // OQ-7: snapshot permissions, re-fetch the role on focus, and flag drift.
+  useFocusEffect(
+    useCallback(() => {
+      prevPermissions.current = roleContext ? [...roleContext.permissions].sort().join(',') : null
+      void fetchRole()
+    }, [fetchRole, roleContext]),
+  )
+
+  useEffect(() => {
+    const next = roleContext ? [...roleContext.permissions].sort().join(',') : null
+    if (prevPermissions.current !== null && next !== null && next !== prevPermissions.current) {
+      setPermissionsUpdated(true)
+    }
+    prevPermissions.current = next
+  }, [roleContext])
 
   const visibleStaff = useMemo(
     () => staffList.filter((s) => s.status !== 'REMOVED'),
@@ -188,6 +212,13 @@ function StaffListScreenContent() {
     <SafeAreaView style={styles.safe} edges={['bottom']}>
       {header}
       {!isConnected ? <AppAlert type="warning" title={t('common.offline')} message={t('common.offline_message')} /> : null}
+      {permissionsUpdated ? (
+        <AppAlert
+          type="info"
+          title={t('roles.permissions_updated')}
+          onClose={() => setPermissionsUpdated(false)}
+        />
+      ) : null}
       <View style={styles.countRow}>
         <AppText variant="caption" weight="semibold" color={colors.textSecondary}>
           {t('roles.active_count', { active: activeCount })}
@@ -223,6 +254,7 @@ function StaffListScreenContent() {
         onPress={goToInvite}
         variant="primary"
         disabled={!isConnected}
+        accessibilityHint={!isConnected ? t('common.needs_connection') : undefined}
         style={styles.fab}
         testID="invite-staff-fab"
         leftIcon={<Ionicons name="add" size={componentSizes.icon.md} color={colors.white} />}

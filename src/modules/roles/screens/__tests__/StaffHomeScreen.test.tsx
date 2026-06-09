@@ -18,6 +18,14 @@ jest.mock('@hooks/useNetworkStatus', () => ({
   useNetworkStatus: jest.fn().mockReturnValue({ isConnected: true, isChecking: false }),
 }))
 
+jest.mock('expo-router', () => {
+  const ReactActual = require('react')
+  return {
+    // Mimic react-navigation focus: run the effect callback once on mount.
+    useFocusEffect: (cb: () => void | (() => void)) => ReactActual.useEffect(cb, [cb]),
+  }
+})
+
 jest.mock('../../hooks/useRole', () => ({ useRole: jest.fn() }))
 jest.mock('../../store/roles.store', () => ({ useRolesStore: jest.fn() }))
 jest.mock('@modules/auth/store/auth.store', () => ({ useAuthStore: jest.fn() }))

@@ -14,7 +14,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { View, ScrollView, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useRouter, useLocalSearchParams } from 'expo-router'
+import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import * as Haptics from 'expo-haptics'
 import { useShallow } from 'zustand/react/shallow'
@@ -25,7 +25,6 @@ import { AppInput } from '@components/primitives/AppInput'
 import { AppCard } from '@components/primitives/AppCard'
 import { AppAvatar } from '@components/primitives/AppAvatar'
 import { AppAlert } from '@components/primitives/AppAlert'
-import { AppLoader } from '@components/primitives/AppLoader'
 import { AppSection } from '@components/composite/AppSection'
 import { AppBottomSheet } from '@components/composite/AppBottomSheet'
 import { AppConfirmDialog } from '@components/composite/AppConfirmDialog'
@@ -60,13 +59,26 @@ const styles = StyleSheet.create({
   },
   actions: { gap: spacing[2], marginTop: spacing[4] },
   saveBtn: { marginTop: spacing[2] },
+  skeletonProfile: { height: 120, marginVertical: spacing[3], backgroundColor: colors.gray100 },
+  skeletonSection: { height: 80, marginBottom: spacing[3], backgroundColor: colors.gray100 },
+  skeletonStats: { height: 100, marginBottom: spacing[3], backgroundColor: colors.gray100 },
 })
 
+// Shape-matching skeleton (NOT a spinner): mirrors the populated layout — a profile
+// card, the assigned-lists section, and the month-stats card — like StaffListSkeleton.
 function StaffDetailSkeleton() {
   return (
-    <View style={styles.center} testID="staff-detail-skeleton">
-      <AppLoader />
-    </View>
+    <ScrollView contentContainerStyle={styles.scroll} testID="staff-detail-skeleton">
+      <AppCard variant="flat" style={styles.skeletonProfile}>
+        <View />
+      </AppCard>
+      <AppCard variant="flat" style={styles.skeletonSection}>
+        <View />
+      </AppCard>
+      <AppCard variant="flat" style={styles.skeletonStats}>
+        <View />
+      </AppCard>
+    </ScrollView>
   )
 }
 
@@ -83,6 +95,7 @@ function StaffDetailScreenContent() {
     staffDetail,
     isStaffLoading,
     staffError,
+    fetchRole,
     fetchStaffDetail,
     updateStaff,
     removeStaff,
@@ -97,6 +110,7 @@ function StaffDetailScreenContent() {
       staffDetail: s.staffDetail,
       isStaffLoading: s.isStaffLoading,
       staffError: s.staffError,
+      fetchRole: s.fetchRole,
       fetchStaffDetail: s.fetchStaffDetail,
       updateStaff: s.updateStaff,
       removeStaff: s.removeStaff,
@@ -127,6 +141,11 @@ function StaffDetailScreenContent() {
   useEffect(() => {
     if (staffId) void fetchStaffDetail(staffId)
   }, [staffId, fetchStaffDetail])
+
+  // OQ-7: re-fetch the role every time the screen regains focus so a mid-session
+  // owner demotion is caught (the 401/403 interceptor handles in-flight calls;
+  // this catches the case where the owner returns to this screen).
+  useFocusEffect(useCallback(() => { void fetchRole() }, [fetchRole]))
 
   // Seed editable fields whenever the server record changes.
   useEffect(() => {

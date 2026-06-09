@@ -54,6 +54,11 @@ interface RolesState {
   isRoleLoading: boolean
   roleError: string | null
 
+  // True once the persisted role context has been read back from storage. The role
+  // router waits on this so it never flashes the wrong (least-privileged) home.
+  isRolesHydrated: boolean
+  setRolesHydrated: () => void
+
   // Owner staff-management cache
   staffList: StaffResponseDto[]
   staffListMeta: StaffListMeta | null
@@ -96,7 +101,10 @@ export const useRolesStore = create<RolesState>()(
     (set, get) => ({
       roleContext: null,
       assignedListIds: [],
+      isRolesHydrated: false,
       ...initialNonPersisted,
+
+      setRolesHydrated: () => set({ isRolesHydrated: true }),
 
       clearStaffError: () => set({ staffError: null }),
 
@@ -224,7 +232,10 @@ export const useRolesStore = create<RolesState>()(
           set({ supplyListOptions: options, isSupplyListsLoading: false })
         } catch (err) {
           void logError(err, { screen: 'AssignLists', action: 'fetchSupplyListOptions', endpoint: 'GET /vendors/:id/supply-lists' })
-          set({ isSupplyListsLoading: false, staffError: mapApiError(err, 'staff') })
+          // Supply-list failure is non-blocking — the multi-select shows its own
+          // empty state. Do NOT set staffError (it owns the staff-CRUD banner and
+          // would pollute the Staff List / Invite screens). Log-only.
+          set({ isSupplyListsLoading: false })
         }
       },
 
@@ -276,6 +287,11 @@ export const useRolesStore = create<RolesState>()(
         roleContext: state.roleContext,
         assignedListIds: state.assignedListIds,
       }),
+      // Flip the hydration flag once storage has been read back (even when nothing
+      // was persisted) so the role router can wait for a definitive role state.
+      onRehydrateStorage: () => (state) => {
+        state?.setRolesHydrated()
+      },
     },
   ),
 )

@@ -12,10 +12,15 @@ jest.mock('expo-haptics', () => ({
 }))
 
 const mockBack = jest.fn()
-jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: jest.fn(), replace: jest.fn(), back: mockBack }),
-  useLocalSearchParams: () => ({ staffId: 's1' }),
-}))
+jest.mock('expo-router', () => {
+  const ReactActual = require('react')
+  return {
+    useRouter: () => ({ push: jest.fn(), replace: jest.fn(), back: mockBack }),
+    useLocalSearchParams: () => ({ staffId: 's1' }),
+    // Mimic react-navigation focus: run the effect callback once on mount.
+    useFocusEffect: (cb: () => void | (() => void)) => ReactActual.useEffect(cb, [cb]),
+  }
+})
 
 jest.mock('@hooks/useNetworkStatus', () => ({
   useNetworkStatus: jest.fn().mockReturnValue({ isConnected: true, isChecking: false }),
@@ -24,20 +29,6 @@ jest.mock('@hooks/useNetworkStatus', () => ({
 jest.mock('../../hooks/useRequireOwner', () => ({ useRequireOwner: jest.fn() }))
 
 jest.mock('../../store/roles.store', () => ({ useRolesStore: jest.fn() }))
-
-// AppBottomSheet renders its header close button via AppIconButton with a raw
-// "✕" string, which crashes ("Text strings must be rendered within <Text>") the
-// moment the sheet opens — a PRE-EXISTING shared-composite defect (reported to the
-// orchestrator). Mock it to a visible-gated passthrough so this test exercises the
-// assign flow, not the buggy primitive.
-jest.mock('@components/composite/AppBottomSheet', () => {
-  const React = require('react')
-  const { View } = require('react-native')
-  return {
-    AppBottomSheet: ({ visible, children }: { visible?: boolean; children?: React.ReactNode }) =>
-      visible ? React.createElement(View, null, children) : null,
-  }
-})
 
 import React from 'react'
 import { render, fireEvent, waitFor, act } from '@testing-library/react-native'
@@ -50,6 +41,7 @@ const { useRolesStore } = jest.requireMock('../../store/roles.store') as { useRo
 const useNetworkStatusMock = useNetworkStatus as jest.Mock
 
 const mockFetchDetail = jest.fn().mockResolvedValue(undefined)
+const mockFetchRole = jest.fn().mockResolvedValue(undefined)
 const mockUpdate = jest.fn().mockResolvedValue(undefined)
 const mockRemove = jest.fn().mockResolvedValue(undefined)
 const mockAssign = jest.fn().mockResolvedValue(undefined)
@@ -81,6 +73,7 @@ function mockStore(state: Record<string, unknown>) {
       staffDetail: { s1: staff },
       isStaffLoading: false,
       staffError: null,
+      fetchRole: mockFetchRole,
       fetchStaffDetail: mockFetchDetail,
       updateStaff: mockUpdate,
       removeStaff: mockRemove,

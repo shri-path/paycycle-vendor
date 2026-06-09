@@ -13,9 +13,10 @@
  * routed away by the role router at /(app)/index.
  */
 
-import React, { useCallback, useEffect, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { View, ScrollView, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { useFocusEffect } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import * as Haptics from 'expo-haptics'
 import { useShallow } from 'zustand/react/shallow'
@@ -44,6 +45,8 @@ const styles = StyleSheet.create({
   listCard: { marginBottom: spacing[3] },
   noteRow: { marginTop: spacing[4], flexDirection: 'row', alignItems: 'center', gap: spacing[2] },
   skeletonCard: { height: 96, marginBottom: spacing[3], backgroundColor: colors.gray100 },
+  listsSection: { marginTop: spacing[4] },
+  listItemBtn: { marginTop: spacing[2] },
 })
 
 function StaffHomeSkeleton() {
@@ -73,9 +76,30 @@ function StaffHomeScreenContent() {
     })),
   )
 
+  // OQ-7: non-blocking notice when a focus re-fetch detects permission drift.
+  const [permissionsUpdated, setPermissionsUpdated] = useState(false)
+  const prevPermissions = useRef<string | null>(null)
+
   useEffect(() => {
     void fetchSupplyListOptions()
   }, [fetchSupplyListOptions])
+
+  // OQ-7 + security: re-fetch the role on every focus (catches mid-session staff
+  // disable/permission change), snapshotting permissions to detect drift.
+  useFocusEffect(
+    useCallback(() => {
+      prevPermissions.current = roleContext ? [...roleContext.permissions].sort().join(',') : null
+      void fetchRole()
+    }, [fetchRole, roleContext]),
+  )
+
+  useEffect(() => {
+    const next = roleContext ? [...roleContext.permissions].sort().join(',') : null
+    if (prevPermissions.current !== null && next !== null && next !== prevPermissions.current) {
+      setPermissionsUpdated(true)
+    }
+    prevPermissions.current = next
+  }, [roleContext])
 
   // Resolve assigned list IDs to human labels using the cached options.
   const assignedLists = useMemo(() => {
@@ -133,6 +157,15 @@ function StaffHomeScreenContent() {
           <AppAlert type="warning" title={t('common.offline')} message={t('common.offline_message')} />
         </View>
       ) : null}
+      {permissionsUpdated ? (
+        <View style={styles.headerRow}>
+          <AppAlert
+            type="info"
+            title={t('roles.permissions_updated')}
+            onClose={() => setPermissionsUpdated(false)}
+          />
+        </View>
+      ) : null}
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {/* Today summary — placeholder values until US-006 wires real stats. */}
@@ -142,7 +175,7 @@ function StaffHomeScreenContent() {
           icon="cube-outline"
         />
 
-        <AppSection title={t('roles.your_supply_lists')} containerStyle={{ marginTop: spacing[4] }}>
+        <AppSection title={t('roles.your_supply_lists')} containerStyle={styles.listsSection}>
           {assignedLists.length === 0 ? (
             <AppEmptyState
               icon={<Ionicons name="list-outline" size={componentSizes.icon.xxl} color={colors.primary} />}
@@ -160,7 +193,7 @@ function StaffHomeScreenContent() {
                   onPress={onOpenList}
                   variant="secondary"
                   size="sm"
-                  style={{ marginTop: spacing[2] }}
+                  style={styles.listItemBtn}
                   testID={`staff-list-open-${list.listId}`}
                 />
               </AppCard>

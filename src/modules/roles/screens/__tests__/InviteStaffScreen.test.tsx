@@ -24,19 +24,6 @@ jest.mock('../../hooks/useRequireOwner', () => ({ useRequireOwner: jest.fn() }))
 
 jest.mock('../../store/roles.store', () => ({ useRolesStore: jest.fn() }))
 
-// AppBottomSheet's header close button (AppIconButton icon="✕") renders a raw
-// string into a <View> and crashes when the sheet opens — a PRE-EXISTING shared-
-// composite defect (reported to the orchestrator). Mock it to a visible-gated
-// passthrough so the success-sheet flow is testable.
-jest.mock('@components/composite/AppBottomSheet', () => {
-  const React = require('react')
-  const { View } = require('react-native')
-  return {
-    AppBottomSheet: ({ visible, children }: { visible?: boolean; children?: React.ReactNode }) =>
-      visible ? React.createElement(View, null, children) : null,
-  }
-})
-
 import React from 'react'
 import { render, fireEvent, waitFor, act } from '@testing-library/react-native'
 import InviteStaffScreen from '../InviteStaffScreen'

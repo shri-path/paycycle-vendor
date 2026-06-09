@@ -35,12 +35,13 @@ import { useRolesStore } from '../store/roles.store'
 import { useRequireOwner } from '../hooks/useRequireOwner'
 import { useTranslation } from '@hooks/useTranslation'
 import { useNetworkStatus } from '@hooks/useNetworkStatus'
-import { colors, spacing } from '@constants/tokens'
+import { colors, spacing, borderRadius } from '@constants/tokens'
 import { LIMITS, validatePhone, validateStaffName, validateAreaLabel, sanitizeText } from '@utils/validation'
 import type { PermissionKey, InviteStaffResult, InviteSendVia } from '../../../types/roles'
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
+  kav: { flex: 1 },
   scroll: { paddingHorizontal: spacing[4], paddingBottom: spacing[8] },
   footer: {
     paddingHorizontal: spacing[4],
@@ -52,7 +53,7 @@ const styles = StyleSheet.create({
   sheetUrl: {
     backgroundColor: colors.gray50,
     padding: spacing[3],
-    borderRadius: 8,
+    borderRadius: borderRadius.md,
     marginVertical: spacing[3],
   },
   sheetButtons: { gap: spacing[2] },
@@ -206,7 +207,7 @@ function InviteStaffScreenContent() {
     <SafeAreaView style={styles.safe} edges={['bottom']}>
       <AppHeader title={t('roles.invite_staff')} showBack onBackPress={() => router.back()} />
       <KeyboardAvoidingView
-        style={{ flex: 1 }}
+        style={styles.kav}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <ScrollView

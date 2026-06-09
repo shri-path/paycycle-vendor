@@ -14,7 +14,9 @@
     "offline": "Offline Mode",
     "offline_message": "You are currently offline. Data will sync when connection is restored.",
     "retry": "Retry",
-    "close": "Close"
+    "close": "Close",
+    "you": "you",
+    "needs_connection": "Needs an internet connection"
   },
   "auth": {
     "welcome": "Welcome",
@@ -205,6 +207,8 @@
     "error_staff_not_found": "Staff member not found.",
     "error_no_membership": "You're not a member of this business.",
     "error_invite_expired": "This invite has expired. Ask your owner for a new one.",
-    "error_invite_invalid": "This invite link is invalid or already used."
+    "error_invite_invalid": "This invite link is invalid or already used.",
+    "list_bullet": "• {{label}}",
+    "lists_count": "{{count}} list(s) assigned"
   }
 }

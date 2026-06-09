@@ -16,7 +16,7 @@
  */
 
 import React, { useMemo, useRef, useState } from 'react'
-import { KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native'
+import { KeyboardAvoidingView, Platform, TouchableOpacity, StyleSheet } from 'react-native'
 import { ScrollView, YStack, styled } from 'tamagui'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Animated, { FadeIn } from 'react-native-reanimated'
@@ -34,12 +34,16 @@ import { AppEmptyState } from '@components/composite/AppEmptyState'
 import { useAuthStore } from '@modules/auth/store/auth.store'
 import { useTranslation } from '@hooks/useTranslation'
 import { useNetworkStatus } from '@hooks/useNetworkStatus'
-import { colors, spacing, componentSizes } from '@constants/tokens'
+import { colors, spacing, componentSizes, borderRadius } from '@constants/tokens'
 import { LIMITS, sanitizeText, validatePassword, validateStaffName } from '@utils/validation'
 
 const ScreenContainer = styled(SafeAreaView, {
   flex: 1,
   backgroundColor: colors.background,
+})
+
+const styles = StyleSheet.create({
+  kav: { flex: 1 },
 })
 
 /** Splits the optional `lists` query param ("Morning Milk,Morning Bread") into labels. */
@@ -180,15 +184,15 @@ function StaffJoinScreenContent() {
   const logoBlock = (
     <YStack alignItems="center" paddingTop={spacing[8]} paddingBottom={spacing[6]} gap={spacing[2]}>
       <YStack
-        width={80}
-        height={80}
-        borderRadius={40}
+        width={componentSizes.avatar.lg}
+        height={componentSizes.avatar.lg}
+        borderRadius={borderRadius.full}
         backgroundColor={colors.primary}
         justifyContent="center"
         alignItems="center"
         marginBottom={spacing[2]}
       >
-        <Ionicons name="bicycle-outline" size={40} color={colors.white} />
+        <Ionicons name="bicycle-outline" size={componentSizes.icon.xl} color={colors.white} />
       </YStack>
       <AppText variant="h3" weight="bold" align="center" color={colors.primary}>
         {t('common.app_name')}
@@ -214,7 +218,7 @@ function StaffJoinScreenContent() {
             <AppCard variant="elevated">
               <YStack gap={spacing[1]}>
                 <AppText variant="h4" weight="bold">
-                  {t('roles.join_signed_in_title', { name: user?.phone ?? '' })}
+                  {t('roles.join_signed_in_title', { name: user?.name ?? t('common.you') })}
                 </AppText>
                 <AppText variant="body" color={colors.textSecondary}>
                   {t('roles.join_signed_in_body')}
@@ -246,7 +250,7 @@ function StaffJoinScreenContent() {
   return (
     <ScreenContainer>
       <KeyboardAvoidingView
-        style={{ flex: 1 }}
+        style={styles.kav}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView
@@ -280,7 +284,7 @@ function StaffJoinScreenContent() {
                     </AppText>
                     {listLabels.map((label, i) => (
                       <AppText key={`${label}-${i}`} variant="body">
-                        • {label}
+                        {t('roles.list_bullet', { label })}
                       </AppText>
                     ))}
                   </YStack>
@@ -293,7 +297,7 @@ function StaffJoinScreenContent() {
             {error ? (
               <YStack
                 backgroundColor={colors.errorBg}
-                borderRadius={8}
+                borderRadius={borderRadius.md}
                 padding={spacing[3]}
                 marginBottom={spacing[2]}
               >
@@ -307,6 +311,7 @@ function StaffJoinScreenContent() {
               label={t('roles.staff_name')}
               value={name}
               onChangeText={onChangeName}
+              onBlur={() => setNameError(validateStaffName(name))}
               placeholder={t('roles.staff_name_placeholder')}
               maxLength={LIMITS.name}
               testID="join-name"
@@ -335,7 +340,7 @@ function StaffJoinScreenContent() {
                 >
                   <Ionicons
                     name={showPassword ? 'eye-off-outline' : 'eye-outline'}
-                    size={20}
+                    size={componentSizes.icon.md}
                     color={colors.textSecondary}
                   />
                 </TouchableOpacity>
