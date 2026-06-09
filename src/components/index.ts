@@ -119,6 +119,9 @@ export type { AppBottomSheetProps } from './composite/AppBottomSheet'
 export { AppConfirmDialog } from './composite/AppConfirmDialog'
 export type { AppConfirmDialogProps } from './composite/AppConfirmDialog'
 
+// Error boundary — wraps every screen so a render error never crashes the app.
+export { ScreenErrorBoundary } from './composite/ScreenErrorBoundary'
+
 // Roles & Access Control (US-002) — shared gates/badges consumed across stories
 export { RoleGate } from './composite/RoleGate'
 export type { RoleGateProps } from './composite/RoleGate'

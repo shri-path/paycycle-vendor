@@ -28,6 +28,9 @@ export const LIMITS = {
 // Business names: letters (any script) + marks + digits + space and a few
 // common separators used in Indian business names (e.g. "Milk & More", "A-1 Dairy").
 const BUSINESS_NAME_RE = /^[\p{L}\p{M}\p{N} .,'&()/-]+$/u
+// Area / route labels: letters (any script) + marks + digits + space and common
+// separators used in Indian place names (e.g. "Sector 15, Tower A-D", "Block 2/3").
+const AREA_LABEL_RE = /^[\p{L}\p{M}\p{N} .,\-/()]+$/u
 const OTP_RE = /^\d{6}$/
 
 const PASSWORD_REGEX = {
@@ -100,6 +103,7 @@ export function validateAreaLabel(raw: string): string | null {
   if (!v) return null // optional
   if (v.length > LIMITS.areaLabel) return 'validation.too_long'
   if (hasControlChar(v) || INJECTION_RE.test(v)) return 'validation.invalid_characters'
+  if (!AREA_LABEL_RE.test(v)) return 'validation.invalid_characters'
   return null
 }
 

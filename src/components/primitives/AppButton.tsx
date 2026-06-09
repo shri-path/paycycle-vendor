@@ -60,6 +60,11 @@ export interface AppButtonProps {
   style?: ViewStyle
   /** Test ID for e2e testing */
   testID?: string
+  /**
+   * Accessibility hint read by screen readers after the label — use to explain why
+   * a button is disabled (e.g. "needs connection" on offline-disabled buttons).
+   */
+  accessibilityHint?: string
 }
 
 // ============================================================================
@@ -126,6 +131,7 @@ export const AppButton: React.FC<AppButtonProps> = ({
   fullWidth = false,
   style,
   testID,
+  accessibilityHint,
 }) => {
   let textColor: string = colors.white
   let backgroundColor: string | undefined
@@ -183,6 +189,10 @@ export const AppButton: React.FC<AppButtonProps> = ({
       style={[buttonStyle, style]}
       activeOpacity={animation.opacity.active}
       testID={testID}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      accessibilityState={{ disabled: disabled || loading }}
+      accessibilityHint={accessibilityHint}
     >
       {leftIcon && !loading && (
         <View style={{ width: componentSizes.icon.md, height: componentSizes.icon.md }}>
