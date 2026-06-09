@@ -67,6 +67,7 @@ interface AuthState {
   setHydrated: (value: boolean) => void
   login: (phone: string, password: string) => Promise<void>
   signup: (phone: string, password: string, vendorName: string) => Promise<void>
+  acceptInvite: (token: string, password: string, name?: string) => Promise<void>
   logout: () => Promise<void>
   forgotPassword: (phone: string) => Promise<void>
   resetPassword: (otpCode: string, newPassword: string) => Promise<void>
@@ -131,6 +132,31 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
+      acceptInvite: async (token, password, name) => {
+        set({ isLoading: true, error: null })
+        try {
+          const response = await authService.acceptInvite(token, password, name)
+          const vendorContext = response.vendorContexts[0] ?? null
+          // Auto-login: tokens to SecureStore exactly like login.
+          await storeTokens(response.tokens.accessToken, response.tokens.refreshToken)
+          set({
+            isAuthenticated: true,
+            user: response.user,
+            vendorContext,
+            isLoading: false,
+          })
+        } catch (err) {
+          void logError(err, {
+            screen: 'StaffJoin',
+            action: 'acceptInvite',
+            endpoint: '/auth/accept-invite',
+          })
+          const i18nKey = mapApiError(err, 'invite_accept')
+          set({ isLoading: false, error: i18nKey })
+          throw err
+        }
+      },
+
       logout: async () => {
         set({ isLoading: true })
         try {
@@ -146,6 +172,17 @@ export const useAuthStore = create<AuthState>()(
           void logError(err, { screen: 'Settings', action: 'logout', endpoint: '/auth/logout' })
         } finally {
           await clearSecureTokens()
+          // Wipe all local role/permission data on logout (data-residency).
+          // Lazy require to avoid a module cycle (auth.store <-> roles.store).
+          try {
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
+            const { useRolesStore } = require('@modules/roles/store/roles.store') as {
+              useRolesStore: { getState: () => { clearRoles: () => void } }
+            }
+            useRolesStore.getState().clearRoles()
+          } catch {
+            // roles store not loaded yet — nothing to clear.
+          }
           set({
             isAuthenticated: false,
             user: null,

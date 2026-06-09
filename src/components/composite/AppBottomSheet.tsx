@@ -23,6 +23,7 @@ import {
   DimensionValue,
   Dimensions,
 } from 'react-native'
+import { Ionicons } from '@expo/vector-icons'
 import { AppText } from '../primitives/AppText'
 import { AppIconButton } from '../primitives/AppIconButton'
 import { colors, spacing, borderRadius, componentSizes } from '@constants/tokens'
@@ -161,7 +162,7 @@ export const AppBottomSheet: React.FC<AppBottomSheetProps> = ({
                 {title}
               </AppText>
               <AppIconButton
-                icon="✕"
+                icon={<Ionicons name="close" size={componentSizes.icon.md} color={colors.textPrimary} />}
                 onPress={onDismiss ?? (() => {})}
                 variant="ghost"
                 size="sm"

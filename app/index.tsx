@@ -19,7 +19,9 @@ export default function Index() {
     )
   }
 
+  // Authenticated users go to the role router, which lands them on the
+  // role-correct home (owner → dashboard, staff → staff-home).
   return isAuthenticated
-    ? <Redirect href="/(app)/home" />
+    ? <Redirect href="/(app)" />
     : <Redirect href="/(auth)/login" />
 }

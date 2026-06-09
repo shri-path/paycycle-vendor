@@ -6,6 +6,7 @@
 import axios from 'axios'
 import { APIPath } from '@constants/apiPaths'
 import { isMockMode, simulateNetworkDelay, API_CONFIG } from '@services/config'
+import { httpClient } from '@services/http'
 import {
   mockUser,
   mockTokens,
@@ -18,7 +19,14 @@ import type {
   RefreshResponseDto,
 } from '../../../types/auth'
 
-const api = axios.create({
+/**
+ * Public (unauthenticated) client for endpoints that issue a session and must NOT
+ * attach a stale Bearer token or trip the shared 401/403 session-revocation
+ * interceptor: login, signup, forgotPassword, acceptInvite. Authenticated calls
+ * (logout, refreshTokens, resetPassword) go through the shared `httpClient` so the
+ * interceptor covers token expiry / revocation centrally (CRITICAL-4).
+ */
+const publicApiClient = axios.create({
   baseURL: API_CONFIG.baseUrl,
   timeout: API_CONFIG.timeout,
 })
@@ -37,7 +45,7 @@ export const authService = {
         vendorContext: { ...mockVendorContext, vendorName },
       }
     }
-    const { data } = await api.post(APIPath.Auth.Signup, { phone, password, vendorName })
+    const { data } = await publicApiClient.post(APIPath.Auth.Signup, { phone, password, vendorName })
     return data.data as SignupResponseDto
   },
 
@@ -53,20 +61,43 @@ export const authService = {
         vendorContexts: [mockVendorContext],
       }
     }
-    const { data } = await api.post(APIPath.Auth.Login, { phone, password })
+    const { data } = await publicApiClient.post(APIPath.Auth.Login, { phone, password })
     return data.data as LoginResponseDto
   },
 
-  async logout(refreshToken: string, accessToken: string): Promise<void> {
+  // `accessToken` is retained in the signature for call-site compatibility, but the
+  // shared httpClient attaches the Bearer token from SecureStore via its request
+  // interceptor (services never read tokens from state) — so it is unused here.
+  async logout(refreshToken: string, _accessToken: string): Promise<void> {
     if (isMockMode) {
       await simulateNetworkDelay()
       return
     }
-    await api.post(
-      APIPath.Auth.Logout,
-      { refreshToken },
-      { headers: { Authorization: `Bearer ${accessToken}` } },
-    )
+    await httpClient.post(APIPath.Auth.Logout, { refreshToken })
+  },
+
+  async acceptInvite(
+    token: string,
+    password: string,
+    name?: string,
+  ): Promise<LoginResponseDto> {
+    if (isMockMode) {
+      await simulateNetworkDelay()
+      if (!token || token.startsWith('invalid')) {
+        throw new Error('roles.error_invite_invalid')
+      }
+      if (token.startsWith('expired')) {
+        throw new Error('roles.error_invite_expired')
+      }
+      return {
+        user: { ...mockUser, name: name ?? mockUser.name },
+        tokens: mockTokens,
+        // Staff joins land with a staff vendor context.
+        vendorContexts: [{ ...mockVendorContext, role: 'staff' }],
+      }
+    }
+    const { data } = await publicApiClient.post(APIPath.Auth.AcceptInvite, { token, password, name })
+    return data.data as LoginResponseDto
   },
 
   async refreshTokens(refreshToken: string): Promise<RefreshResponseDto> {
@@ -74,7 +105,7 @@ export const authService = {
       await simulateNetworkDelay()
       return mockTokens
     }
-    const { data } = await api.post(APIPath.Auth.Refresh, { refreshToken })
+    const { data } = await httpClient.post(APIPath.Auth.Refresh, { refreshToken })
     return data.data as RefreshResponseDto
   },
 
@@ -84,7 +115,7 @@ export const authService = {
       // In real mode the reset token is delivered via SMS; in mock we return it directly
       return MOCK_RESET_TOKEN
     }
-    await api.post(APIPath.Auth.ForgotPassword, { phone })
+    await publicApiClient.post(APIPath.Auth.ForgotPassword, { phone })
     // Reset token is sent via SMS — not in response
     return ''
   },
@@ -99,7 +130,7 @@ export const authService = {
       await simulateNetworkDelay()
       return
     }
-    await api.post(APIPath.Auth.ResetPassword, { phone, resetToken, otpCode, newPassword })
+    await httpClient.post(APIPath.Auth.ResetPassword, { phone, resetToken, otpCode, newPassword })
   },
 }
 

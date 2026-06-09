@@ -125,10 +125,16 @@ export const AppCard: React.FC<AppCardProps> = ({
     </View>
   )
 
-  // If onPress is provided, wrap in TouchableOpacity for interactivity
+  // If onPress is provided, wrap in TouchableOpacity for interactivity.
+  // Forward props (accessibilityRole/Label, testID, etc.) so interactive cards
+  // are accessible to screen readers. onBlur/onFocus are dropped here because
+  // TouchableOpacity's handler types are narrower than ViewProps' (no `null`);
+  // they are not used on cards.
   if (onPress) {
+    const { onBlur: _onBlur, onFocus: _onFocus, ...touchableProps } = props
     return (
       <TouchableOpacity
+        {...touchableProps}
         onPress={onPress}
         activeOpacity={0.7}
         style={[containerStyle, style]}
