@@ -327,6 +327,7 @@
     "error_staff_not_assignable": "આ સ્ટાફ સોંપી શકાતો નથી. કદાચ તે અક્ષમ હોય.",
     "error_customer_not_in_vendor": "એક અથવા વધુ ગ્રાહકો તમારા વ્યવસાયમાં નથી.",
     "error_invalid_sub_transition": "સમાપ્ત થયેલ સબ્સ્ક્રિપ્શન માટે આ ફેરફાર મંજૂર નથી.",
-    "error_not_found": "આ સૂચિ મળી શકી નથી."
+    "error_not_found": "આ સૂચિ મળી શકી નથી.",
+    "error_load_failed": "સપ્લાય સૂચિઓ લોડ કરી શકાઈ નહીં. કૃપા કરીને ફરી પ્રયાસ કરો."
   }
 }
