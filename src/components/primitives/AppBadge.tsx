@@ -18,7 +18,7 @@
 import React from 'react'
 import { View, StyleSheet, ViewStyle } from 'react-native'
 import { AppText } from './AppText'
-import { colors, spacing } from '@constants/tokens'
+import { colors, spacing, borderRadius } from '@constants/tokens'
 
 export type BadgeVariant = 'primary' | 'success' | 'warning' | 'error' | 'gray'
 export type BadgeSize = 'sm' | 'md' | 'lg'
@@ -77,7 +77,7 @@ const sizeStyles = StyleSheet.create({
 })
 
 const badgeBaseStyle: ViewStyle = {
-  borderRadius: 16,
+  borderRadius: borderRadius.xl,
   alignSelf: 'flex-start',
   justifyContent: 'center',
   alignItems: 'center',
@@ -123,7 +123,7 @@ export const AppBadge: React.FC<AppBadgeProps> = ({
   }
 
   return (
-    <View style={[badgeStyle, style]}>
+    <View style={[badgeStyle, style]} accessibilityRole="text" accessibilityLabel={label}>
       <AppText
         variant="caption"
         color={variantStyle.color}

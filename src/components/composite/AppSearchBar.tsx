@@ -66,6 +66,10 @@ const styles = StyleSheet.create({
   clearButton: {
     marginLeft: spacing[1],
   },
+  searchIconText: {
+    width: componentSizes.icon.md,
+    height: componentSizes.icon.md,
+  },
 })
 
 // ============================================================================
@@ -123,8 +127,9 @@ export const AppSearchBar: React.FC<AppSearchBarProps> = ({
           <AppInput
             editable={false}
             value={searchIcon}
-            style={{ width: 20, height: 20 }}
+            style={styles.searchIconText}
             pointerEvents="none"
+            importantForAccessibility="no"
           />
         ) : (
           searchIcon

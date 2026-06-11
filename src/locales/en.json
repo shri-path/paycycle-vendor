@@ -16,7 +16,11 @@
     "retry": "Retry",
     "close": "Close",
     "you": "you",
-    "needs_connection": "Needs an internet connection"
+    "needs_connection": "Needs an internet connection",
+    "back": "Go back",
+    "menu": "Menu",
+    "notifications": "Notifications",
+    "notifications_badge": "{{count}} unread notifications"
   },
   "auth": {
     "welcome": "Welcome",
@@ -213,6 +217,16 @@
     "error_no_membership": "You're not a member of this business.",
     "error_invite_expired": "This invite has expired. Ask your owner for a new one.",
     "error_invite_invalid": "This invite link is invalid or already used.",
+    "staff_usage": "Staff: {{current}} / {{max}}",
+    "staff_limit_reached": "Staff limit reached",
+    "staff_limit_upgrade_hint": "You've reached your plan's staff limit. Contact support to add more.",
+    "staff_limit_hint": "Upgrade your plan to invite more staff.",
+    "edit_name": "Edit Name",
+    "save_name": "Save Name",
+    "resend_invite_section": "Pending Invite",
+    "resend_invite": "Resend Invite",
+    "resend_invite_sent": "Invite resent",
+    "error_resend_not_pending": "This invite can no longer be resent — the staff member has already joined.",
     "list_bullet": "• {{label}}",
     "lists_count": "{{count}} list(s) assigned"
   },

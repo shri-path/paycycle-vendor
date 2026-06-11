@@ -21,7 +21,7 @@ import {
   TouchableOpacity,
 } from 'react-native'
 import { AppText } from './AppText'
-import { colors, spacing, borderRadius, borderWidth } from '@constants/tokens'
+import { colors, spacing, borderRadius, borderWidth, interaction } from '@constants/tokens'
 
 export type AlertType = 'success' | 'error' | 'warning' | 'info' | 'offline'
 
@@ -36,6 +36,8 @@ export interface AppAlertProps {
   onClose?: () => void
   /** Container style override */
   containerStyle?: ViewStyle
+  /** Test identifier for the alert container */
+  testID?: string
 }
 
 // ============================================================================
@@ -76,13 +78,11 @@ const alertVariants = StyleSheet.create({
   },
 })
 
-const alertTextColors = {
-  success: colors.success,
-  error: colors.error,
-  warning: colors.warning,
-  info: colors.info,
-  offline: colors.error,
-}
+// The left border + tinted background already carry the semantic colour signal,
+// so the text itself uses high-contrast neutral tokens (≥ 4.5:1 on the tints)
+// rather than the saturated status colour, which fails contrast on its own tint.
+const TITLE_COLOR = colors.textPrimary
+const MESSAGE_COLOR = colors.textSecondary
 
 const styles = StyleSheet.create({
   content: {
@@ -123,9 +123,9 @@ export const AppAlert: React.FC<AppAlertProps> = ({
   message,
   onClose,
   containerStyle,
+  testID,
 }) => {
   const variantStyle = alertVariants[type]
-  const textColor = alertTextColors[type]
 
   const alertStyle: ViewStyle = {
     ...baseAlertStyle,
@@ -133,17 +133,22 @@ export const AppAlert: React.FC<AppAlertProps> = ({
   }
 
   return (
-    <View style={[alertStyle, containerStyle]}>
+    <View
+      style={[alertStyle, containerStyle]}
+      accessibilityRole="alert"
+      accessibilityLiveRegion="polite"
+      testID={testID}
+    >
       <View style={styles.content}>
         <AppText
           variant="label"
-          color={textColor}
+          color={TITLE_COLOR}
           weight="semibold"
         >
           {title}
         </AppText>
         {message && (
-          <AppText variant="caption" color={textColor}>
+          <AppText variant="caption" color={MESSAGE_COLOR}>
             {message}
           </AppText>
         )}
@@ -152,9 +157,10 @@ export const AppAlert: React.FC<AppAlertProps> = ({
         <TouchableOpacity
           onPress={onClose}
           style={styles.closeButton}
-          hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}
+          hitSlop={interaction.defaultHitSlop}
+          accessibilityRole="button"
         >
-          <AppText color={textColor}>✕</AppText>
+          <AppText color={TITLE_COLOR} importantForAccessibility="no">✕</AppText>
         </TouchableOpacity>
       )}
     </View>

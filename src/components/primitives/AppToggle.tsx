@@ -20,9 +20,11 @@ import {
   Animated,
   StyleSheet,
   ViewStyle,
+  I18nManager,
 } from 'react-native'
 import { AppText } from './AppText'
-import { colors, spacing, fontWeight, componentSizes, animation } from '@constants/tokens'
+import { useReducedMotion } from '@hooks/useReducedMotion'
+import { colors, spacing, fontWeight, componentSizes, animation, shadows } from '@constants/tokens'
 
 export type ToggleSize = 'sm' | 'md' | 'lg'
 
@@ -83,11 +85,7 @@ const styles = StyleSheet.create({
     height: sizeConfig.md.thumb,
     borderRadius: sizeConfig.md.thumb / 2,
     backgroundColor: colors.white,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: animation.opacity.hover,
-    shadowRadius: 2,
-    elevation: 3,
+    ...shadows.sm,
   },
 })
 
@@ -143,14 +141,21 @@ export const AppToggle: React.FC<AppToggleProps> = ({
 }) => {
   const animatedValue = useRef(new Animated.Value(value ? 1 : 0)).current
   const config = sizeConfig[size]
+  const reduceMotion = useReducedMotion()
 
   useEffect(() => {
+    const toValue = value ? 1 : 0
+    if (reduceMotion) {
+      // Respect the OS "Reduce Motion" preference — jump straight to the state.
+      animatedValue.setValue(toValue)
+      return
+    }
     Animated.timing(animatedValue, {
-      toValue: value ? 1 : 0,
-      duration: 200,
+      toValue,
+      duration: animation.duration.base,
       useNativeDriver: false,
     }).start()
-  }, [value, animatedValue])
+  }, [value, animatedValue, reduceMotion])
 
   const handlePress = () => {
     if (!disabled && onChange) {
@@ -158,12 +163,13 @@ export const AppToggle: React.FC<AppToggleProps> = ({
     }
   }
 
+  // Resting (off) and active (on) thumb positions. Mirror them for RTL so the
+  // thumb sits at the start edge when off, regardless of layout direction.
+  const offX = spacing[1]
+  const onX = config.width - config.thumb - spacing[1]
   const thumbTranslateX = animatedValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [
-      spacing[1],
-      config.width - config.thumb - spacing[1],
-    ],
+    outputRange: I18nManager.isRTL ? [onX, offX] : [offX, onX],
   })
 
   const backgroundColor = animatedValue.interpolate({
@@ -183,6 +189,9 @@ export const AppToggle: React.FC<AppToggleProps> = ({
       disabled={disabled}
       activeOpacity={1}
       style={[styles.container, containerStyle]}
+      accessibilityRole="switch"
+      accessibilityLabel={label}
+      accessibilityState={{ checked: value, disabled }}
     >
       {(label || description) && (
         <View style={styles.labelContainer}>

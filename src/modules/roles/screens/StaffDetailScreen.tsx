@@ -1,21 +1,23 @@
 /**
  * StaffDetailScreen — Owner-only (US-002, wireframe 2.15).
  * Purpose: View + manage one staff member — profile, assigned supply lists
- * (READ-ONLY display; assignment is managed from the supply-list detail screen per
- * US-005/OQ-2), month stats (placeholder until US-006), area-label inline edit,
- * permission edit, temporarily disable/enable, and remove (with confirms).
+ * (READ-ONLY; assignment is managed from the supply-list detail screen per
+ * US-005 OQ-2), month stats (placeholder until US-006), area-label inline edit,
+ * permission edit, resend invite (US-004), temporarily disable/enable, and remove
+ * (with confirms).
  *
  * Reads `staffId` from the route params (so the WS-3 route file is a thin wrapper).
  * 5 states: Loading skeleton, Error (404 → "no longer exists"), Content, Offline
  * (all mutations disabled). Owner-self actions are never rendered.
  *
- * Security mutations (update/remove) are online-only.
+ * Security mutations (update/remove/permissions/resend) are online-only.
  */
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { View, ScrollView, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router'
+import { Ionicons } from '@expo/vector-icons'
 import * as Haptics from 'expo-haptics'
 import { useShallow } from 'zustand/react/shallow'
 import { AppHeader } from '@components/layout/AppHeader'
@@ -26,22 +28,33 @@ import { AppCard } from '@components/primitives/AppCard'
 import { AppAvatar } from '@components/primitives/AppAvatar'
 import { AppAlert } from '@components/primitives/AppAlert'
 import { AppSection } from '@components/composite/AppSection'
+import { AppEmptyState } from '@components/composite/AppEmptyState'
 import { AppConfirmDialog } from '@components/composite/AppConfirmDialog'
+import { AppSegmentedControl } from '@components/composite/AppSegmentedControl'
 import { ScreenErrorBoundary } from '@components/composite/ScreenErrorBoundary'
 import { RoleBadge } from '@components/composite/RoleBadge'
-import { PermissionToggleList } from '../components/PermissionToggleList'
+import { PermissionToggleList, InviteShareSheet } from '../components'
 import { useRolesStore } from '../store/roles.store'
 import { useRequireOwner } from '../hooks/useRequireOwner'
 import { useTranslation } from '@hooks/useTranslation'
 import { useNetworkStatus } from '@hooks/useNetworkStatus'
-import { colors, spacing } from '@constants/tokens'
-import { LIMITS, validateAreaLabel, sanitizeText } from '@utils/validation'
-import type { PermissionKey, StaffResponseDto, SupplyListOptionDto } from '../../../types/roles'
+import { colors, spacing, componentSizes } from '@constants/tokens'
+import { LIMITS, validateAreaLabel, validateStaffName, sanitizeText } from '@utils/validation'
+import { formatLocaleDate } from '@utils/formatDate'
+import { ALL_PERMISSION_KEYS } from '../../../types/roles'
+import type {
+  PermissionKey,
+  StaffResponseDto,
+  SupplyListOptionDto,
+  InviteSendVia,
+  ResendInviteResponseDto,
+} from '../../../types/roles'
+
+const SEND_VIA: InviteSendVia[] = ['whatsapp', 'sms']
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
   scroll: { paddingHorizontal: spacing[4], paddingBottom: spacing[10] },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   profileCard: { marginVertical: spacing[3], alignItems: 'center', gap: spacing[1] },
   profileMeta: { alignItems: 'center', gap: spacing[1], marginTop: spacing[2] },
   listRow: {
@@ -50,7 +63,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: spacing[2],
   },
-  assignHint: { marginTop: spacing[1] },
   statRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -97,6 +109,8 @@ function StaffDetailScreenContent() {
     fetchRole,
     fetchStaffDetail,
     updateStaff,
+    updatePermissions,
+    resendInvite,
     removeStaff,
     supplyListOptions,
     fetchSupplyListOptions,
@@ -109,6 +123,8 @@ function StaffDetailScreenContent() {
       fetchRole: s.fetchRole,
       fetchStaffDetail: s.fetchStaffDetail,
       updateStaff: s.updateStaff,
+      updatePermissions: s.updatePermissions,
+      resendInvite: s.resendInvite,
       removeStaff: s.removeStaff,
       supplyListOptions: s.supplyListOptions,
       fetchSupplyListOptions: s.fetchSupplyListOptions,
@@ -122,9 +138,15 @@ function StaffDetailScreenContent() {
   const [permissions, setPermissions] = useState<PermissionKey[]>([])
   const [areaLabel, setAreaLabel] = useState('')
   const [areaError, setAreaError] = useState<string | null>(null)
+  const [name, setName] = useState('')
+  const [nameError, setNameError] = useState<string | null>(null)
 
   const [confirmRemove, setConfirmRemove] = useState(false)
   const [confirmDisable, setConfirmDisable] = useState(false)
+
+  // Resend invite (US-004) — channel + the freshly-issued link surfaced via the sheet.
+  const [resendViaIndex, setResendViaIndex] = useState(0)
+  const [resendResult, setResendResult] = useState<ResendInviteResponseDto | null>(null)
 
   const busy = useRef(false)
 
@@ -132,9 +154,9 @@ function StaffDetailScreenContent() {
     if (staffId) void fetchStaffDetail(staffId)
   }, [staffId, fetchStaffDetail])
 
-  // Resolve assigned list ids → names via the supply-list options. Assignment is
-  // now managed from the supply-list detail screen (US-005, OQ-2); here it is
-  // read-only, so we only fetch the options to display the names.
+  // Load supply-list options to resolve assigned list ids → names for the
+  // read-only assigned-lists section (assignment itself lives in US-005's
+  // supply-list detail screen, OQ-2).
   useEffect(() => {
     void fetchSupplyListOptions()
   }, [fetchSupplyListOptions])
@@ -149,13 +171,14 @@ function StaffDetailScreenContent() {
     if (staff) {
       setPermissions(staff.permissions)
       setAreaLabel(staff.areaRouteLabel ?? '')
+      setName(staff.name ?? '')
     }
   }, [staff])
 
   const isOwnerRow = staff?.role === 'owner'
 
   const mutate = useCallback(
-    async (fn: () => Promise<void>, onDone?: () => void) => {
+    async (fn: () => Promise<void>, onDone?: () => void, onError?: () => void) => {
       if (busy.current || !isConnected) return
       busy.current = true
       clearStaffError()
@@ -166,6 +189,7 @@ function StaffDetailScreenContent() {
         onDone?.()
       } catch {
         void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+        onError?.()
       } finally {
         busy.current = false
       }
@@ -175,8 +199,43 @@ function StaffDetailScreenContent() {
 
   const handleSavePermissions = useCallback(() => {
     if (!staffId) return
-    void mutate(() => updateStaff(staffId, { permissions }))
-  }, [staffId, permissions, mutate, updateStaff])
+    // US-004: hit the dedicated /permissions endpoint with the FULL 3-key grant map
+    // (every key stated ⇒ MERGE is deterministic). The store seeds toggles from the
+    // returned server state.
+    const grants = ALL_PERMISSION_KEYS.map((key) => ({
+      key,
+      granted: permissions.includes(key),
+    }))
+    void mutate(() => updatePermissions(staffId, grants))
+  }, [staffId, permissions, mutate, updatePermissions])
+
+  const handleSaveName = useCallback(() => {
+    if (!staffId) return
+    const err = validateStaffName(name)
+    setNameError(err)
+    if (err) {
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+      return
+    }
+    void mutate(() => updateStaff(staffId, { name: name.trim() }))
+  }, [staffId, name, mutate, updateStaff])
+
+  const handleResend = useCallback(() => {
+    if (!staffId) return
+    void mutate(
+      async () => {
+        // Surface the freshly-issued invite link via the share sheet on success.
+        const result = await resendInvite(staffId, SEND_VIA[resendViaIndex])
+        setResendResult(result)
+      },
+      undefined,
+      // 422 race: the member may have joined between list load and this tap.
+      // Re-fetch detail so the resend section disappears if no longer INVITED.
+      () => void fetchStaffDetail(staffId),
+    )
+  }, [staffId, mutate, resendInvite, resendViaIndex, fetchStaffDetail])
+
+  const handleResendViaChange = useCallback((i: number) => setResendViaIndex(i), [])
 
   const handleSaveArea = useCallback(() => {
     if (!staffId) return
@@ -216,7 +275,8 @@ function StaffDetailScreenContent() {
     )
   }, [staffId, mutate, removeStaff, router])
 
-  // Resolve assigned list ids → names via the supply-list options.
+  // Resolve assigned list ids → names via the (stub-backed) options for the
+  // read-only display. Assignment is managed elsewhere (US-005 OQ-2).
   const assignedListNames = useMemo(() => {
     if (!staff) return [] as { listId: string; name: string }[]
     return staff.assignedListIds.map((listId) => {
@@ -248,13 +308,12 @@ function StaffDetailScreenContent() {
     return (
       <SafeAreaView style={styles.safe} edges={['bottom']}>
         {header}
-        <View style={styles.center}>
-          <AppText variant="h3" weight="bold">
-            {t('roles.error_staff_not_found')}
-          </AppText>
-          <AppButton label={t('common.retry')} variant="link" onPress={() => staffId && void fetchStaffDetail(staffId)} />
-          <AppButton label={t('common.close')} variant="ghost" onPress={() => router.back()} />
-        </View>
+        <AppEmptyState
+          icon={<Ionicons name="alert-circle-outline" size={componentSizes.icon.xxxl} color={colors.error} />}
+          title={t('roles.error_staff_not_found')}
+          actionLabel={t('common.retry')}
+          onActionPress={() => staffId && void fetchStaffDetail(staffId)}
+        />
       </SafeAreaView>
     )
   }
@@ -287,14 +346,14 @@ function StaffDetailScreenContent() {
             <RoleBadge role={staff.role} areaLabel={staff.areaRouteLabel} testID="detail-role-badge" />
             {staff.joinedAt ? (
               <AppText variant="caption" color={colors.textSecondary}>
-                {t('roles.joined_on', { date: staff.joinedAt })}
+                {t('roles.joined_on', { date: formatLocaleDate(staff.joinedAt) })}
               </AppText>
             ) : null}
           </View>
         </AppCard>
 
-        {/* Assigned Supply Lists — READ-ONLY (US-005, OQ-2). List assignment is
-            managed from the supply-list detail screen; no editing here. */}
+        {/* Assigned Supply Lists — READ-ONLY (US-005 OQ-2: assignment is managed
+            from the supply-list detail screen, the single source of truth). */}
         <AppSection title={t('roles.assigned_lists')}>
           {assignedListNames.length === 0 ? (
             <AppText variant="caption" color={colors.textSecondary}>
@@ -309,11 +368,9 @@ function StaffDetailScreenContent() {
               </View>
             ))
           )}
-          {!isOwnerRow ? (
-            <AppText variant="caption" color={colors.textSecondary} style={styles.assignHint}>
-              {t('roles.assign_lists_managed_elsewhere')}
-            </AppText>
-          ) : null}
+          <AppText variant="caption" color={colors.textSecondary}>
+            {t('roles.assign_lists_managed_elsewhere')}
+          </AppText>
         </AppSection>
 
         {/* Month stats (placeholder until US-006) */}
@@ -333,6 +390,54 @@ function StaffDetailScreenContent() {
             </View>
           </AppCard>
         </AppSection>
+
+        {/* Resend invite — pending (INVITED) staff only (US-004) */}
+        {!isOwnerRow && staff.status === 'INVITED' ? (
+          <AppSection title={t('roles.resend_invite_section')}>
+            <AppSegmentedControl
+              segments={[t('roles.send_whatsapp'), t('roles.send_sms')]}
+              selectedIndex={resendViaIndex}
+              onChange={handleResendViaChange}
+            />
+            <AppButton
+              label={t('roles.resend_invite')}
+              variant="secondary"
+              onPress={handleResend}
+              disabled={mutationsDisabled}
+              accessibilityHint={!isConnected ? t('common.needs_connection') : undefined}
+              style={styles.saveBtn}
+              testID="detail-resend-invite"
+              leftIcon={<Ionicons name="paper-plane-outline" size={componentSizes.icon.md} color={colors.primary} />}
+            />
+          </AppSection>
+        ) : null}
+
+        {/* Inline name edit (US-004) */}
+        {!isOwnerRow ? (
+          <AppSection title={t('roles.staff_name')}>
+            <AppInput
+              value={name}
+              onChangeText={(v) => {
+                const clean = sanitizeText(v)
+                setName(clean)
+                setNameError(validateStaffName(clean))
+              }}
+              placeholder={t('roles.staff_name_placeholder')}
+              maxLength={LIMITS.name}
+              editable={!mutationsDisabled}
+              testID="detail-name"
+              error={nameError ? t(nameError) : undefined}
+            />
+            <AppButton
+              label={t('roles.save_name')}
+              variant="secondary"
+              onPress={handleSaveName}
+              disabled={mutationsDisabled}
+              style={styles.saveBtn}
+              testID="detail-save-name"
+            />
+          </AppSection>
+        ) : null}
 
         {/* Area / route label inline edit */}
         {!isOwnerRow ? (
@@ -401,6 +506,16 @@ function StaffDetailScreenContent() {
           </View>
         ) : null}
       </ScrollView>
+
+      {/* Resend invite share sheet (US-004) — opens with the fresh invite link */}
+      <InviteShareSheet
+        visible={resendResult !== null}
+        inviteUrl={resendResult?.inviteUrl ?? null}
+        expiresAt={resendResult?.expiresAt ?? null}
+        onDismiss={() => setResendResult(null)}
+        title={t('roles.resend_invite_sent')}
+        testID="resend-share-sheet"
+      />
 
       <AppConfirmDialog
         visible={confirmDisable}

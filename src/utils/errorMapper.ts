@@ -12,7 +12,7 @@
 import axios from 'axios'
 
 /** Surface that produced the error — lets the mapper resolve ambiguous codes. */
-export type ApiErrorContext = 'invite_accept' | 'role' | 'staff' | 'invite' | 'supply'
+export type ApiErrorContext = 'invite_accept' | 'role' | 'staff' | 'invite' | 'resend' | 'supply'
 
 /**
  * Sub-action within the `'supply'` context (US-005). Several supply endpoints share
@@ -72,6 +72,12 @@ export function mapApiError(
       if (status === 403) return 'roles.error_forbidden'
     }
     if (context === 'staff') {
+      if (status === 404) return 'roles.error_staff_not_found'
+      if (status === 403) return 'roles.error_forbidden'
+    }
+    // Resend invitation (US-004): 422 = the invite is no longer pending (member joined).
+    if (context === 'resend') {
+      if (status === 422) return 'roles.error_resend_not_pending'
       if (status === 404) return 'roles.error_staff_not_found'
       if (status === 403) return 'roles.error_forbidden'
     }

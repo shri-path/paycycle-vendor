@@ -3,40 +3,38 @@
  * Purpose: Invite a delivery staff member — phone (required), optional name/area,
  * permission toggles, and a WhatsApp/SMS send channel. On success shows a bottom
  * sheet with the shareable invite link (paycyclevendor://join/<token> scheme,
- * embedded by the backend). Supply-list assignment is NOT done here — an invited
- * staff has no lists yet; assignment is managed from the supply-list detail screen
- * (US-005, OQ-2).
+ * embedded by the backend). List assignment is NOT offered at invite time — an
+ * invited staff has no lists yet; assignment is managed from the supply-list
+ * detail screen (US-005 OQ-2).
  *
- * 5 states: Loading (submit spinner), Empty (n/a), Error (inline field errors +
- * API banner), Content, Offline (submit disabled).
+ * 5 states: Loading, Error (inline field errors + API banner), Content,
+ * Offline (submit disabled).
  *
  * OQ-5: 451 maps to a generic "staff limit reached" alert (no in-app upgrade).
  * Security mutation: online-only — submit is disabled offline.
  */
 
 import React, { useCallback, useRef, useState } from 'react'
-import { KeyboardAvoidingView, Platform, Share, Linking, View, StyleSheet } from 'react-native'
+import { KeyboardAvoidingView, Platform, View, StyleSheet } from 'react-native'
 import { ScrollView } from 'tamagui'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
 import * as Haptics from 'expo-haptics'
 import { useShallow } from 'zustand/react/shallow'
 import { AppHeader } from '@components/layout/AppHeader'
-import { AppText } from '@components/primitives/AppText'
 import { AppButton } from '@components/primitives/AppButton'
 import { AppInput } from '@components/primitives/AppInput'
 import { AppPhoneInput } from '@components/primitives/AppPhoneInput'
 import { AppAlert } from '@components/primitives/AppAlert'
 import { AppSegmentedControl } from '@components/composite/AppSegmentedControl'
 import { AppSection } from '@components/composite/AppSection'
-import { AppBottomSheet } from '@components/composite/AppBottomSheet'
 import { ScreenErrorBoundary } from '@components/composite/ScreenErrorBoundary'
-import { PermissionToggleList } from '../components/PermissionToggleList'
+import { PermissionToggleList, InviteShareSheet } from '../components'
 import { useRolesStore } from '../store/roles.store'
 import { useRequireOwner } from '../hooks/useRequireOwner'
 import { useTranslation } from '@hooks/useTranslation'
 import { useNetworkStatus } from '@hooks/useNetworkStatus'
-import { colors, spacing, borderRadius } from '@constants/tokens'
+import { colors, spacing } from '@constants/tokens'
 import { LIMITS, validatePhone, validateStaffName, validateAreaLabel, sanitizeText } from '@utils/validation'
 import type { PermissionKey, InviteStaffResult, InviteSendVia } from '../../../types/roles'
 
@@ -51,13 +49,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: colors.gray200,
   },
-  sheetUrl: {
-    backgroundColor: colors.gray50,
-    padding: spacing[3],
-    borderRadius: borderRadius.md,
-    marginVertical: spacing[3],
-  },
-  sheetButtons: { gap: spacing[2] },
 })
 
 const SEND_VIA: InviteSendVia[] = ['whatsapp', 'sms']
@@ -157,31 +148,6 @@ function InviteStaffScreenContent() {
       submitting.current = false
     }
   }
-
-  const handleShare = useCallback(async () => {
-    if (!result) return
-    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-    try {
-      await Share.share({ message: result.inviteUrl })
-    } catch {
-      // user dismissed the share sheet — no-op
-    }
-  }, [result])
-
-  const handleShareVia = useCallback(
-    async (via: InviteSendVia) => {
-      if (!result) return
-      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-      const text = encodeURIComponent(result.inviteUrl)
-      const url = via === 'whatsapp' ? `whatsapp://send?text=${text}` : `sms:?body=${text}`
-      try {
-        await Linking.openURL(url)
-      } catch {
-        await Share.share({ message: result.inviteUrl })
-      }
-    },
-    [result],
-  )
 
   // On dismiss return to Staff List, which refetches on focus/mount.
   const handleSheetDismiss = useCallback(() => {
@@ -288,44 +254,12 @@ function InviteStaffScreenContent() {
         </View>
       </KeyboardAvoidingView>
 
-      <AppBottomSheet
+      <InviteShareSheet
         visible={result !== null}
+        inviteUrl={result?.inviteUrl ?? null}
+        expiresAt={result?.expiresAt ?? null}
         onDismiss={handleSheetDismiss}
-        title={t('roles.invite_created_title')}
-      >
-        {result ? (
-          <View>
-            <View style={styles.sheetUrl}>
-              <AppText variant="caption" color={colors.textSecondary} testID="invite-url">
-                {result.inviteUrl}
-              </AppText>
-            </View>
-            <View style={styles.sheetButtons}>
-              <AppButton
-                label={t('roles.invite_share_whatsapp')}
-                onPress={() => void handleShareVia('whatsapp')}
-                variant="primary"
-                fullWidth
-                testID="share-whatsapp"
-              />
-              <AppButton
-                label={t('roles.invite_share_sms')}
-                onPress={() => void handleShareVia('sms')}
-                variant="secondary"
-                fullWidth
-                testID="share-sms"
-              />
-              <AppButton
-                label={t('roles.invite_share')}
-                onPress={() => void handleShare()}
-                variant="ghost"
-                fullWidth
-                testID="share-generic"
-              />
-            </View>
-          </View>
-        ) : null}
-      </AppBottomSheet>
+      />
     </SafeAreaView>
   )
 }

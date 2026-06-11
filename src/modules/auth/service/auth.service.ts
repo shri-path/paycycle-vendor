@@ -11,7 +11,6 @@ import {
   mockUser,
   mockTokens,
   mockVendorContext,
-  MOCK_RESET_TOKEN,
 } from '@services/mocks'
 import type {
   SignupResponseDto,
@@ -109,20 +108,24 @@ export const authService = {
     return data.data as RefreshResponseDto
   },
 
-  async forgotPassword(phone: string): Promise<string> {
+  /**
+   * Requests an OTP for password reset. In production the OTP is delivered
+   * out-of-band via SMS and the response carries no secret. In non-production
+   * environments the API echoes the generated OTP as `devOtp` so QA / dev clients
+   * can complete the flow without real SMS delivery — returned here for the
+   * dev-only on-screen hint. Returns `undefined` when no dev OTP is available.
+   */
+  async forgotPassword(phone: string): Promise<string | undefined> {
     if (isMockMode) {
       await simulateNetworkDelay()
-      // In real mode the reset token is delivered via SMS; in mock we return it directly
-      return MOCK_RESET_TOKEN
+      return '123456'
     }
-    await publicApiClient.post(APIPath.Auth.ForgotPassword, { phone })
-    // Reset token is sent via SMS — not in response
-    return ''
+    const { data } = await publicApiClient.post(APIPath.Auth.ForgotPassword, { phone })
+    return (data?.data as { devOtp?: string } | undefined)?.devOtp
   },
 
   async resetPassword(
     phone: string,
-    resetToken: string,
     otpCode: string,
     newPassword: string,
   ): Promise<void> {
@@ -130,7 +133,7 @@ export const authService = {
       await simulateNetworkDelay()
       return
     }
-    await httpClient.post(APIPath.Auth.ResetPassword, { phone, resetToken, otpCode, newPassword })
+    await httpClient.post(APIPath.Auth.ResetPassword, { phone, otpCode, newPassword })
   },
 }
 

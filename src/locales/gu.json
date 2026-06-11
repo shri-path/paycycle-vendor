@@ -16,7 +16,11 @@
     "retry": "ફરી પ્રયાસ કરો",
     "close": "બંધ કરો",
     "you": "તમે",
-    "needs_connection": "ઇન્ટરનેટ કનેક્શન જરૂરી છે"
+    "needs_connection": "ઇન્ટરનેટ કનેક્શન જરૂરી છે",
+    "back": "પાછા જાઓ",
+    "menu": "મેનુ",
+    "notifications": "સૂચનાઓ",
+    "notifications_badge": "{{count}} વાંચ્યા વગરની સૂચનાઓ"
   },
   "auth": {
     "welcome": "સ્વાગત છે",
@@ -213,6 +217,16 @@
     "error_no_membership": "તમે આ વ્યવસાયના સભ્ય નથી.",
     "error_invite_expired": "આ આમંત્રણ સમાપ્ત થઈ ગયું છે. તમારા માલિક પાસેથી નવું માગો.",
     "error_invite_invalid": "આ આમંત્રણ લિંક અમાન્ય છે અથવા પહેલેથી વપરાઈ ગઈ છે.",
+    "staff_usage": "સ્ટાફ: {{current}} / {{max}}",
+    "staff_limit_reached": "સ્ટાફ મર્યાદા પૂર્ણ થઈ",
+    "staff_limit_upgrade_hint": "તમે તમારા પ્લાનની સ્ટાફ મર્યાદાએ પહોંચી ગયા છો. વધુ ઉમેરવા માટે સહાયનો સંપર્ક કરો.",
+    "staff_limit_hint": "વધુ સ્ટાફને આમંત્રિત કરવા માટે તમારો પ્લાન અપગ્રેડ કરો.",
+    "edit_name": "નામ સંપાદિત કરો",
+    "save_name": "નામ સાચવો",
+    "resend_invite_section": "બાકી આમંત્રણ",
+    "resend_invite": "આમંત્રણ ફરી મોકલો",
+    "resend_invite_sent": "આમંત્રણ ફરી મોકલ્યું",
+    "error_resend_not_pending": "આ આમંત્રણ હવે ફરી મોકલી શકાશે નહીં — સ્ટાફ સભ્ય પહેલેથી જોડાઈ ગયા છે.",
     "list_bullet": "• {{label}}",
     "lists_count": "{{count}} સૂચિ સોંપાઈ"
   },

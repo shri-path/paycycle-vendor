@@ -10,6 +10,7 @@
 import type {
   RoleContextDto,
   StaffResponseDto,
+  StaffLimitsDto,
   SupplyListOptionDto,
 } from '../../types/roles'
 
@@ -118,4 +119,26 @@ export const mockStaffList: StaffResponseDto[] = [
 /** Resolve a supply-list id to its display name (mock helper). */
 export function mockSupplyListName(listId: string): string {
   return mockSupplyListOptions.find((o) => o.listId === listId)?.name ?? listId
+}
+
+/**
+ * Staff-limit snapshot attached to the mock GET /staff (US-004).
+ * Default is the unlimited stub (maxStaff null) so the usage line/gate stay hidden
+ * until US-009 sends a real cap; `currentActive` counts truly-ACTIVE fixtures.
+ */
+export const mockStaffLimits: StaffLimitsDto = {
+  maxStaff: null,
+  currentActive: mockStaffList.filter((s) => s.status === 'ACTIVE').length,
+  canAddMore: true,
+}
+
+/**
+ * QA fixture variant — an at-cap snapshot that exercises the Invite gating UI
+ * (FAB disabled + upgrade alert). Swap into the service/store in tests; not used
+ * by the default mock flow.
+ */
+export const mockStaffLimitsAtCap: StaffLimitsDto = {
+  maxStaff: 4,
+  currentActive: 4,
+  canAddMore: false,
 }

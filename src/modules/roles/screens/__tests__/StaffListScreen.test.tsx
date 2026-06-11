@@ -72,6 +72,7 @@ function mockStore(state: Record<string, unknown>) {
   useRolesStore.mockImplementation((selector: (s: unknown) => unknown) =>
     selector({
       staffList: [],
+      staffLimits: null,
       isStaffLoading: false,
       staffError: null,
       fetchStaffList: mockFetchStaffList,
@@ -135,5 +136,49 @@ describe('StaffListScreen', () => {
     expect(screen.getByText(t('common.offline'))).toBeTruthy()
     fireEvent.press(screen.getByTestId('invite-staff-fab'))
     expect(mockPush).not.toHaveBeenCalledWith('/(app)/staff/invite')
+  })
+
+  // US-004 — plan limits
+  it('hides the usage line for the unlimited stub (maxStaff null)', async () => {
+    mockStore({
+      staffList: [makeStaff({ staffId: 's1' })],
+      staffLimits: { maxStaff: null, currentActive: 1, canAddMore: true },
+    })
+    const screen = await render(<StaffListScreen />)
+    expect(screen.queryByTestId('staff-usage')).toBeNull()
+    fireEvent.press(screen.getByTestId('invite-staff-fab'))
+    expect(mockPush).toHaveBeenCalledWith('/(app)/staff/invite')
+  })
+
+  it('shows the usage line under a real cap (US-004)', async () => {
+    mockStore({
+      staffList: [makeStaff({ staffId: 's1' })],
+      staffLimits: { maxStaff: 5, currentActive: 3, canAddMore: true },
+    })
+    const screen = await render(<StaffListScreen />)
+    expect(screen.getByTestId('staff-usage')).toHaveTextContent(
+      t('roles.staff_usage', { current: 3, max: 5 }),
+    )
+  })
+
+  it('gates the Invite FAB and shows the upgrade alert when at cap', async () => {
+    mockStore({
+      staffList: [makeStaff({ staffId: 's1' })],
+      staffLimits: { maxStaff: 4, currentActive: 4, canAddMore: false },
+    })
+    const screen = await render(<StaffListScreen />)
+    expect(screen.getByTestId('staff-limit-alert')).toBeTruthy()
+    fireEvent.press(screen.getByTestId('invite-staff-fab'))
+    expect(mockPush).not.toHaveBeenCalledWith('/(app)/staff/invite')
+  })
+
+  it('hides the empty-state CTA when at cap', async () => {
+    mockStore({
+      staffList: [],
+      staffLimits: { maxStaff: 4, currentActive: 4, canAddMore: false },
+    })
+    const screen = await render(<StaffListScreen />)
+    expect(screen.getByText(t('roles.no_staff'))).toBeTruthy()
+    expect(screen.queryByText(t('roles.invite_staff'))).toBeNull()
   })
 })

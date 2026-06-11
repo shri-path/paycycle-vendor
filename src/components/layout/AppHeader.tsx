@@ -13,9 +13,11 @@ import {
   StyleSheet,
   ViewStyle,
   SafeAreaView,
+  I18nManager,
 } from 'react-native'
 import { AppText } from '../primitives/AppText'
-import { colors, spacing, componentSizes } from '@constants/tokens'
+import { useTranslation } from '@hooks/useTranslation'
+import { colors, spacing, componentSizes, borderRadius, interaction } from '@constants/tokens'
 
 export interface AppHeaderProps {
   /** Header title text */
@@ -36,6 +38,12 @@ export interface AppHeaderProps {
   notificationBadge?: number
   /** Custom right action element */
   rightAction?: React.ReactNode
+  /** Accessibility label for the back button (defaults to translated "Go back") */
+  backLabel?: string
+  /** Accessibility label for the menu button (defaults to translated "Menu") */
+  menuLabel?: string
+  /** Accessibility label for the notification button (defaults to translated "Notifications") */
+  notificationLabel?: string
   /** Container style override */
   containerStyle?: ViewStyle
 }
@@ -73,7 +81,7 @@ const styles = StyleSheet.create({
   },
   iconButton: {
     padding: spacing[1],
-    borderRadius: spacing[2],
+    borderRadius: borderRadius.md,
   },
   notificationBadge: {
     position: 'absolute',
@@ -122,8 +130,24 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   showNotification = false,
   notificationBadge = 0,
   rightAction,
+  backLabel,
+  menuLabel,
+  notificationLabel,
   containerStyle,
 }) => {
+  const { t } = useTranslation()
+
+  // Mirror the directional back chevron for RTL layouts.
+  const backGlyph = I18nManager.isRTL ? '›' : '‹'
+
+  const resolvedBackLabel = backLabel ?? t('common.back')
+  const resolvedMenuLabel = menuLabel ?? t('common.menu')
+  const resolvedNotificationLabel =
+    notificationLabel ??
+    (notificationBadge > 0
+      ? t('common.notifications_badge', { count: notificationBadge })
+      : t('common.notifications'))
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={[styles.container, containerStyle]}>
@@ -132,10 +156,12 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
             <TouchableOpacity
               onPress={onBackPress}
               style={styles.iconButton}
-              hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
+              hitSlop={interaction.defaultHitSlop}
+              accessibilityRole="button"
+              accessibilityLabel={resolvedBackLabel}
             >
-              <AppText color={colors.white} variant="h2">
-                ‹
+              <AppText color={colors.white} variant="h2" importantForAccessibility="no">
+                {backGlyph}
               </AppText>
             </TouchableOpacity>
           )}
@@ -143,9 +169,11 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
             <TouchableOpacity
               onPress={onMenuPress}
               style={styles.iconButton}
-              hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
+              hitSlop={interaction.defaultHitSlop}
+              accessibilityRole="button"
+              accessibilityLabel={resolvedMenuLabel}
             >
-              <AppText color={colors.white} variant="h2">
+              <AppText color={colors.white} variant="h2" importantForAccessibility="no">
                 ☰
               </AppText>
             </TouchableOpacity>
@@ -165,9 +193,11 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
             <TouchableOpacity
               onPress={onNotificationPress}
               style={styles.iconButton}
-              hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
+              hitSlop={interaction.defaultHitSlop}
+              accessibilityRole="button"
+              accessibilityLabel={resolvedNotificationLabel}
             >
-              <AppText color={colors.white} variant="h2">
+              <AppText color={colors.white} variant="h2" importantForAccessibility="no">
                 🔔
               </AppText>
               {notificationBadge > 0 && (

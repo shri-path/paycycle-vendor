@@ -27,9 +27,13 @@ import type {
   RoleContextDto,
   StaffResponseDto,
   StaffListMeta,
+  StaffLimitsDto,
   InviteStaffInput,
   InviteStaffResult,
+  InviteSendVia,
+  ResendInviteResponseDto,
   UpdateStaffInput,
+  PermissionGrantDto,
   SupplyListOptionDto,
 } from '../../../types/roles'
 
@@ -62,6 +66,8 @@ interface RolesState {
   // Owner staff-management cache
   staffList: StaffResponseDto[]
   staffListMeta: StaffListMeta | null
+  // Subscription staff-limit snapshot (US-004); null ⇒ treat as unlimited.
+  staffLimits: StaffLimitsDto | null
   isStaffLoading: boolean
   staffError: string | null
   staffDetail: Record<string, StaffResponseDto>
@@ -76,6 +82,8 @@ interface RolesState {
   fetchStaffDetail: (staffId: string) => Promise<void>
   inviteStaff: (input: InviteStaffInput) => Promise<InviteStaffResult>
   updateStaff: (staffId: string, patch: UpdateStaffInput) => Promise<void>
+  resendInvite: (staffId: string, sendVia?: InviteSendVia) => Promise<ResendInviteResponseDto>
+  updatePermissions: (staffId: string, grants: PermissionGrantDto[]) => Promise<void>
   removeStaff: (staffId: string) => Promise<void>
   fetchSupplyListOptions: () => Promise<void>
   assignLists: (staffId: string, listIds: string[]) => Promise<void>
@@ -89,6 +97,8 @@ const initialNonPersisted = {
   roleError: null,
   staffList: [] as StaffResponseDto[],
   staffListMeta: null,
+  // Non-persisted: a usage snapshot that must not go stale across sessions (US-004).
+  staffLimits: null as StaffLimitsDto | null,
   isStaffLoading: false,
   staffError: null as string | null,
   staffDetail: {} as Record<string, StaffResponseDto>,
@@ -137,10 +147,12 @@ export const useRolesStore = create<RolesState>()(
         if (!vendorId) return
         set({ isStaffLoading: true, staffError: null })
         try {
-          const { staff, meta } = await rolesService.listStaff(vendorId, page)
+          const { staff, meta, limits } = await rolesService.listStaff(vendorId, page)
           set((s) => ({
             staffList: page > 1 ? [...s.staffList, ...staff] : staff,
             staffListMeta: meta,
+            // Keep the prior snapshot if this page didn't carry one (null-safe).
+            staffLimits: limits ?? s.staffLimits,
             isStaffLoading: false,
           }))
         } catch (err) {
@@ -196,6 +208,49 @@ export const useRolesStore = create<RolesState>()(
           }))
         } catch (err) {
           void logError(err, { screen: 'StaffDetail', action: 'updateStaff', endpoint: 'PATCH /vendors/:id/staff/:staffId' })
+          set({ isStaffLoading: false, staffError: mapApiError(err, 'staff') })
+          throw err
+        }
+      },
+
+      resendInvite: async (staffId, sendVia) => {
+        const vendorId = getActiveVendorId()
+        if (!vendorId) throw new Error('roles.error_no_membership')
+        set({ isStaffLoading: true, staffError: null })
+        try {
+          const result = await rolesService.resendInvite(vendorId, staffId, sendVia)
+          set({ isStaffLoading: false })
+          return result
+        } catch (err) {
+          void logError(err, { screen: 'StaffDetail', action: 'resendInvite', endpoint: 'POST /vendors/:id/staff/:staffId/resend-invitation' })
+          set({ isStaffLoading: false, staffError: mapApiError(err, 'resend') })
+          throw err
+        }
+      },
+
+      updatePermissions: async (staffId, grants) => {
+        const vendorId = getActiveVendorId()
+        if (!vendorId) throw new Error('roles.error_no_membership')
+        set({ isStaffLoading: true, staffError: null })
+        try {
+          const { permissions } = await rolesService.updatePermissions(vendorId, staffId, grants)
+          // Write the server's full grant state back so toggles reflect server truth.
+          const granted = permissions.filter((p) => p.granted).map((p) => p.key)
+          set((s) => {
+            const existing = s.staffDetail[staffId]
+            const nextDetail = existing
+              ? { ...s.staffDetail, [staffId]: { ...existing, permissions: granted } }
+              : s.staffDetail
+            return {
+              staffDetail: nextDetail,
+              staffList: s.staffList.map((m) =>
+                m.staffId === staffId ? { ...m, permissions: granted } : m,
+              ),
+              isStaffLoading: false,
+            }
+          })
+        } catch (err) {
+          void logError(err, { screen: 'StaffDetail', action: 'updatePermissions', endpoint: 'PATCH /vendors/:id/staff/:staffId/permissions' })
           set({ isStaffLoading: false, staffError: mapApiError(err, 'staff') })
           throw err
         }

@@ -21,7 +21,7 @@ import {
   ViewStyle,
 } from 'react-native'
 import { AppText } from './AppText'
-import { colors, spacing, borderRadius, componentSizes, borderWidth } from '@constants/tokens'
+import { colors, spacing, borderRadius, componentSizes, borderWidth, interaction } from '@constants/tokens'
 
 export interface RadioOption {
   label: string
@@ -219,7 +219,10 @@ export const AppRadioGroup: React.FC<AppRadioGroupProps> = ({
                 styles.radioItem,
                 isHorizontal && styles.radioItemHorizontal,
               ]}
-              activeOpacity={isDisabled ? 1 : 0.7}
+              activeOpacity={isDisabled ? 1 : interaction.activeOpacity}
+              accessibilityRole="radio"
+              accessibilityLabel={option.label}
+              accessibilityState={{ selected: isSelected, disabled: !!isDisabled }}
             >
               <View style={radioButtonStyle}>
                 {isSelected && <View style={styles.radioDot} />}

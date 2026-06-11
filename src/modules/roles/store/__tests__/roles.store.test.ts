@@ -38,6 +38,8 @@ jest.mock('../../service/roles.service', () => ({
     getStaff: jest.fn(),
     inviteStaff: jest.fn(),
     updateStaff: jest.fn(),
+    updatePermissions: jest.fn(),
+    resendInvite: jest.fn(),
     removeStaff: jest.fn(),
     listSupplyLists: jest.fn(),
     assignLists: jest.fn(),
@@ -52,6 +54,7 @@ import type {
   RoleContextDto,
   StaffResponseDto,
   StaffListMeta,
+  StaffLimitsDto,
 } from '../../../../types/roles'
 
 const mockedService = rolesService as jest.Mocked<typeof rolesService>
@@ -134,23 +137,44 @@ describe('useRolesStore', () => {
 
   describe('fetchStaffList', () => {
     const meta: StaffListMeta = { page: 1, limit: 20, total: 1, totalPages: 1 }
+    const limits: StaffLimitsDto = { maxStaff: null, currentActive: 1, canAddMore: true }
 
     it('replaces the list on page 1', async () => {
-      mockedService.listStaff.mockResolvedValueOnce({ staff: [makeStaff()], meta })
+      mockedService.listStaff.mockResolvedValueOnce({ staff: [makeStaff()], meta, limits })
       await useRolesStore.getState().fetchStaffList(1)
       expect(useRolesStore.getState().staffList).toHaveLength(1)
       expect(useRolesStore.getState().staffListMeta).toEqual(meta)
     })
 
     it('appends on page > 1 (infinite scroll)', async () => {
-      mockedService.listStaff.mockResolvedValueOnce({ staff: [makeStaff()], meta })
+      mockedService.listStaff.mockResolvedValueOnce({ staff: [makeStaff()], meta, limits })
       await useRolesStore.getState().fetchStaffList(1)
       mockedService.listStaff.mockResolvedValueOnce({
         staff: [makeStaff({ staffId: 'staff-2' })],
         meta: { ...meta, page: 2 },
+        limits,
       })
       await useRolesStore.getState().fetchStaffList(2)
       expect(useRolesStore.getState().staffList).toHaveLength(2)
+    })
+
+    it('hydrates staffLimits from the service result (US-004)', async () => {
+      const atCap: StaffLimitsDto = { maxStaff: 4, currentActive: 4, canAddMore: false }
+      mockedService.listStaff.mockResolvedValueOnce({ staff: [makeStaff()], meta, limits: atCap })
+      await useRolesStore.getState().fetchStaffList(1)
+      expect(useRolesStore.getState().staffLimits).toEqual(atCap)
+    })
+
+    it('keeps the prior limits snapshot when a page omits it', async () => {
+      mockedService.listStaff.mockResolvedValueOnce({ staff: [makeStaff()], meta, limits })
+      await useRolesStore.getState().fetchStaffList(1)
+      mockedService.listStaff.mockResolvedValueOnce({
+        staff: [makeStaff({ staffId: 'staff-2' })],
+        meta: { ...meta, page: 2 },
+        limits: null,
+      })
+      await useRolesStore.getState().fetchStaffList(2)
+      expect(useRolesStore.getState().staffLimits).toEqual(limits)
     })
 
     it('maps a 403 to roles.error_forbidden', async () => {
@@ -204,6 +228,66 @@ describe('useRolesStore', () => {
       await useRolesStore.getState().updateStaff('staff-1', { status: 'DISABLED' })
       expect(useRolesStore.getState().staffDetail['staff-1']?.status).toBe('DISABLED')
       expect(useRolesStore.getState().staffList[0]?.status).toBe('DISABLED')
+    })
+  })
+
+  describe('resendInvite (US-004)', () => {
+    it('returns the DTO without mutating the staff list', async () => {
+      useRolesStore.setState({ staffList: [makeStaff({ status: 'INVITED' })] })
+      mockedService.resendInvite.mockResolvedValueOnce({
+        inviteUrl: 'paycyclevendor://join/fresh',
+        expiresAt: '2026-07-01T00:00:00Z',
+        sentVia: 'whatsapp',
+      })
+      const result = await useRolesStore.getState().resendInvite('staff-1', 'whatsapp')
+      expect(result.inviteUrl).toContain('paycyclevendor://join/')
+      expect(mockedService.resendInvite).toHaveBeenCalledWith(VENDOR_ID, 'staff-1', 'whatsapp')
+      expect(useRolesStore.getState().staffList).toHaveLength(1)
+      expect(useRolesStore.getState().isStaffLoading).toBe(false)
+    })
+
+    it('maps a 422 to roles.error_resend_not_pending and rethrows', async () => {
+      mockedService.resendInvite.mockRejectedValueOnce(buildAxiosError(422))
+      await expect(useRolesStore.getState().resendInvite('staff-1')).rejects.toBeDefined()
+      expect(useRolesStore.getState().staffError).toBe('roles.error_resend_not_pending')
+    })
+  })
+
+  describe('updatePermissions (US-004)', () => {
+    it('writes the returned grant state back to detail + list', async () => {
+      useRolesStore.setState({
+        staffList: [makeStaff()],
+        staffDetail: { 'staff-1': makeStaff() },
+      })
+      mockedService.updatePermissions.mockResolvedValueOnce({
+        permissions: [
+          { key: 'mark_deliveries', granted: true },
+          { key: 'mark_leaves', granted: true },
+          { key: 'add_extra_charges', granted: false },
+        ],
+      })
+      await useRolesStore.getState().updatePermissions('staff-1', [
+        { key: 'mark_deliveries', granted: true },
+        { key: 'mark_leaves', granted: true },
+        { key: 'add_extra_charges', granted: false },
+      ])
+      expect(useRolesStore.getState().staffDetail['staff-1']?.permissions).toEqual([
+        'mark_deliveries',
+        'mark_leaves',
+      ])
+      expect(useRolesStore.getState().staffList[0]?.permissions).toEqual([
+        'mark_deliveries',
+        'mark_leaves',
+      ])
+    })
+
+    it('maps an error and rethrows', async () => {
+      useRolesStore.setState({ staffDetail: { 'staff-1': makeStaff() } })
+      mockedService.updatePermissions.mockRejectedValueOnce(buildAxiosError(403))
+      await expect(
+        useRolesStore.getState().updatePermissions('staff-1', []),
+      ).rejects.toBeDefined()
+      expect(useRolesStore.getState().staffError).toBe('roles.error_forbidden')
     })
   })
 
@@ -270,6 +354,7 @@ describe('useRolesStore', () => {
         },
         assignedListIds: ['list-1'],
         staffList: [makeStaff()],
+        staffLimits: { maxStaff: 4, currentActive: 4, canAddMore: false },
         supplyListOptions: [{ listId: 'list-1', name: 'X' }],
       })
       useRolesStore.getState().clearRoles()
@@ -277,6 +362,7 @@ describe('useRolesStore', () => {
       expect(state.roleContext).toBeNull()
       expect(state.assignedListIds).toEqual([])
       expect(state.staffList).toEqual([])
+      expect(state.staffLimits).toBeNull()
       expect(state.supplyListOptions).toEqual([])
     })
   })
