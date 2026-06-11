@@ -18,6 +18,7 @@ import { httpClient } from '@services/http'
 import {
   mockOwnerRoleContext,
   mockStaffList,
+  mockStaffLimits,
   mockSupplyListOptions,
   mockSupplyListName,
   mockVendorDisplayName,
@@ -26,18 +27,32 @@ import type {
   RoleContextDto,
   StaffResponseDto,
   StaffListMeta,
+  StaffLimitsDto,
   InviteStaffInput,
   InviteStaffResponseDto,
+  InviteSendVia,
+  ResendInviteResponseDto,
   RemoveStaffResponseDto,
   UpdateStaffInput,
+  PermissionKey,
+  PermissionGrantDto,
+  UpdatePermissionsResponseDto,
   SupplyListOptionDto,
 } from '../../../types/roles'
 
-/** Result of a paginated staff list fetch. */
+/** Result of a paginated staff list fetch (US-004: now carries the limits block). */
 export interface ListStaffResult {
   staff: StaffResponseDto[]
   meta: StaffListMeta
+  limits: StaffLimitsDto | null
 }
+
+/** The three grantable permission keys — sent in full to the MERGE endpoint (US-004). */
+const ALL_PERMISSION_KEYS: PermissionKey[] = [
+  'mark_deliveries',
+  'mark_leaves',
+  'add_extra_charges',
+]
 
 const DEFAULT_LIMIT = 20
 
@@ -69,14 +84,18 @@ export const rolesService = {
       return {
         staff: [...mockStaffList],
         meta: { page, limit, total: mockStaffList.length, totalPages: 1 },
+        limits: { ...mockStaffLimits },
       }
     }
     const { data } = await httpClient.get(APIPath.Staff.List(vendorId), {
       params: { page, limit },
     })
+    const meta = data.meta as StaffListMeta & { limits?: StaffLimitsDto }
+    // The backend attaches `limits` onto the list meta (sendListResponse merge).
     return {
       staff: data.data as StaffResponseDto[],
-      meta: data.meta as StaffListMeta,
+      meta,
+      limits: meta.limits ?? null,
     }
   },
 
@@ -144,6 +163,7 @@ export const rolesService = {
     if (isMockMode) {
       await simulateNetworkDelay()
       const staff = findMockStaff(staffId)
+      if (patch.name !== undefined) staff.name = patch.name
       if (patch.status !== undefined) staff.status = patch.status
       if (patch.areaRouteLabel !== undefined) staff.areaRouteLabel = patch.areaRouteLabel
       if (patch.permissions !== undefined) staff.permissions = patch.permissions
@@ -169,6 +189,73 @@ export const rolesService = {
     }
     const { data } = await httpClient.delete(APIPath.Staff.Detail(vendorId, staffId))
     return data.data as RemoveStaffResponseDto
+  },
+
+  /**
+   * POST /vendors/:vendorId/staff/:staffId/resend-invitation (US-004).
+   * Valid only while the member is INVITED; the backend returns 422 otherwise.
+   */
+  async resendInvite(
+    vendorId: string,
+    staffId: string,
+    sendVia?: InviteSendVia,
+  ): Promise<ResendInviteResponseDto> {
+    if (isMockMode) {
+      await simulateNetworkDelay()
+      const staff = findMockStaff(staffId)
+      // Mirror the backend 422: only pending invites can be resent.
+      if (staff.status !== 'INVITED') throw new Error('roles.error_resend_not_pending')
+      const now = new Date()
+      const expires = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
+      const params = [`vendor=${encodeURIComponent(mockVendorDisplayName)}`]
+      const labels = staff.assignedListIds.map(mockSupplyListName)
+      if (labels.length > 0) params.push(`lists=${encodeURIComponent(labels.join(','))}`)
+      return {
+        inviteUrl: `paycyclevendor://join/mock-token-${now.getTime()}?${params.join('&')}`,
+        expiresAt: expires.toISOString(),
+        sentVia: sendVia ?? null,
+      }
+    }
+    const { data } = await httpClient.post(
+      APIPath.Staff.ResendInvitation(vendorId, staffId),
+      sendVia ? { sendVia } : {},
+    )
+    return data.data as ResendInviteResponseDto
+  },
+
+  /**
+   * PATCH /vendors/:vendorId/staff/:staffId/permissions (US-004).
+   * Sends the full 3-key grant map; the backend MERGEs and returns the full state.
+   * Owner targets are an idempotent all-allow no-op server-side.
+   */
+  async updatePermissions(
+    vendorId: string,
+    staffId: string,
+    grants: PermissionGrantDto[],
+  ): Promise<UpdatePermissionsResponseDto> {
+    if (isMockMode) {
+      await simulateNetworkDelay()
+      const staff = findMockStaff(staffId)
+      if (staff.role === 'owner') {
+        // Owner is all-allow regardless of input (defensive — UI never sends this).
+        return { permissions: ALL_PERMISSION_KEYS.map((key) => ({ key, granted: true })) }
+      }
+      // MERGE: apply each grant onto the current set (true ⇒ add, false ⇒ remove).
+      const next = new Set<PermissionKey>(staff.permissions)
+      for (const { key, granted } of grants) {
+        if (granted) next.add(key)
+        else next.delete(key)
+      }
+      staff.permissions = ALL_PERMISSION_KEYS.filter((k) => next.has(k))
+      staff.updatedAt = new Date().toISOString()
+      return {
+        permissions: ALL_PERMISSION_KEYS.map((key) => ({ key, granted: next.has(key) })),
+      }
+    }
+    const { data } = await httpClient.patch(APIPath.Staff.Permissions(vendorId, staffId), {
+      permissions: grants,
+    })
+    return data.data as UpdatePermissionsResponseDto
   },
 
   /** GET /vendors/:vendorId/supply-lists (OQ-6 stub until US-005). */

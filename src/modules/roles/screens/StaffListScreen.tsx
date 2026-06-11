@@ -28,12 +28,12 @@ import { useRolesStore } from '../store/roles.store'
 import { useRequireOwner } from '../hooks/useRequireOwner'
 import { useTranslation } from '@hooks/useTranslation'
 import { useNetworkStatus } from '@hooks/useNetworkStatus'
-import { colors, spacing, componentSizes } from '@constants/tokens'
+import { colors, spacing, componentSizes, shadows } from '@constants/tokens'
 import type { StaffResponseDto } from '../../../types/roles'
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
-  countRow: { paddingHorizontal: spacing[4], paddingVertical: spacing[3] },
+  countRow: { paddingHorizontal: spacing[4], paddingVertical: spacing[3], gap: spacing[1] },
   sectionTitle: { marginBottom: spacing[3] },
   listContent: { paddingHorizontal: spacing[4], paddingBottom: spacing[20] },
   skeletonCard: { height: 84, marginBottom: spacing[2], backgroundColor: colors.gray100 },
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     minHeight: componentSizes.button.lg,
     paddingHorizontal: spacing[5],
     borderRadius: componentSizes.button.lg,
-    elevation: 4,
+    ...shadows.md,
   },
 })
 
@@ -67,10 +67,11 @@ function StaffListScreenContent() {
   const { isConnected } = useNetworkStatus()
   useRequireOwner()
 
-  const { staffList, isStaffLoading, staffError, fetchStaffList, fetchRole, roleContext } =
+  const { staffList, staffLimits, isStaffLoading, staffError, fetchStaffList, fetchRole, roleContext } =
     useRolesStore(
       useShallow((s) => ({
         staffList: s.staffList,
+        staffLimits: s.staffLimits,
         isStaffLoading: s.isStaffLoading,
         staffError: s.staffError,
         fetchStaffList: s.fetchStaffList,
@@ -78,6 +79,13 @@ function StaffListScreenContent() {
         roleContext: s.roleContext,
       })),
     )
+
+  // US-004 plan-usage gating. `null` limits (not yet loaded / mock unlimited stub)
+  // ⇒ treat as unlimited so the FAB never wrongly locks before data arrives.
+  const canAddMore = staffLimits?.canAddMore ?? true
+  // Usage line shows ONLY when a real cap exists (maxStaff !== null); the unlimited
+  // stub keeps the OQ-5 behaviour of omitting the plan line.
+  const showUsage = staffLimits != null && staffLimits.maxStaff != null
 
   // OQ-7: non-blocking "your permissions were updated" notice when a focus re-fetch
   // detects role/permission drift.
@@ -200,8 +208,8 @@ function StaffListScreenContent() {
           icon={<Ionicons name="people-outline" size={componentSizes.icon.xxxl} color={colors.primary} />}
           title={t('roles.no_staff')}
           description={t('roles.no_staff_desc')}
-          actionLabel={isConnected ? t('roles.invite_staff') : undefined}
-          onActionPress={isConnected ? goToInvite : undefined}
+          actionLabel={isConnected && canAddMore ? t('roles.invite_staff') : undefined}
+          onActionPress={isConnected && canAddMore ? goToInvite : undefined}
         />
       </SafeAreaView>
     )
@@ -219,10 +227,25 @@ function StaffListScreenContent() {
           onClose={() => setPermissionsUpdated(false)}
         />
       ) : null}
+      {!canAddMore ? (
+        <AppAlert
+          type="info"
+          title={t('roles.staff_limit_reached')}
+          message={t('roles.staff_limit_upgrade_hint')}
+        />
+      ) : null}
       <View style={styles.countRow}>
         <AppText variant="caption" weight="semibold" color={colors.textSecondary}>
           {t('roles.active_count', { active: activeCount })}
         </AppText>
+        {showUsage && staffLimits?.maxStaff != null ? (
+          <AppText variant="caption" color={colors.textSecondary} testID="staff-usage">
+            {t('roles.staff_usage', {
+              current: staffLimits.currentActive,
+              max: staffLimits.maxStaff,
+            })}
+          </AppText>
+        ) : null}
       </View>
       <FlatList
         data={activeStaff}
@@ -253,8 +276,14 @@ function StaffListScreenContent() {
         label={t('roles.invite_staff')}
         onPress={goToInvite}
         variant="primary"
-        disabled={!isConnected}
-        accessibilityHint={!isConnected ? t('common.needs_connection') : undefined}
+        disabled={!isConnected || !canAddMore}
+        accessibilityHint={
+          !isConnected
+            ? t('common.needs_connection')
+            : !canAddMore
+              ? t('roles.staff_limit_hint')
+              : undefined
+        }
         style={styles.fab}
         testID="invite-staff-fab"
         leftIcon={<Ionicons name="add" size={componentSizes.icon.md} color={colors.white} />}
