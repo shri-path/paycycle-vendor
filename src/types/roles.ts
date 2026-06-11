@@ -18,6 +18,17 @@
 /** Staff-grantable permission capabilities (owner is all-allow and ignores these). */
 export type PermissionKey = 'mark_deliveries' | 'mark_leaves' | 'add_extra_charges'
 
+/**
+ * All grantable permission keys, in canonical order. Single source of truth for
+ * the full grant map sent to the MERGE permissions endpoint (US-004). Service
+ * mock-merge logic and the StaffDetail grant builder both import this.
+ */
+export const ALL_PERMISSION_KEYS: PermissionKey[] = [
+  'mark_deliveries',
+  'mark_leaves',
+  'add_extra_charges',
+]
+
 /** Caller-facing role label (mapped from role slug on the server). */
 export type StaffRoleLabel = 'owner' | 'staff'
 

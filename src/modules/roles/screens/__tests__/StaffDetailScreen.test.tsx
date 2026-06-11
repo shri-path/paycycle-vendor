@@ -145,10 +145,26 @@ describe('StaffDetailScreen', () => {
     useNetworkStatusMock.mockReturnValue({ isConnected: false, isChecking: false })
     const screen = await render(<StaffDetailScreen />)
     expect(screen.getByText(t('common.offline'))).toBeTruthy()
+    // US-004 actions are disabled offline (network-dependent writes).
+    expect(screen.getByTestId('detail-save-name').props.accessibilityState.disabled).toBe(true)
     // The remove button is disabled offline; tapping it does not open the dialog
     // and confirming is unreachable, so no mutation fires.
     fireEvent.press(screen.getByTestId('detail-remove'))
     expect(mockRemove).not.toHaveBeenCalled()
+    // Tapping the disabled name-save offline must not fire updateStaff.
+    fireEvent.press(screen.getByTestId('detail-save-name'))
+    expect(mockUpdate).not.toHaveBeenCalled()
+  })
+
+  it('disables the resend action for an INVITED member when offline (US-004)', async () => {
+    useNetworkStatusMock.mockReturnValue({ isConnected: false, isChecking: false })
+    const invited: StaffResponseDto = { ...staff, status: 'INVITED', userId: null, joinedAt: null }
+    mockStore({ staffDetail: { s1: invited } })
+    const screen = await render(<StaffDetailScreen />)
+    const resendBtn = screen.getByTestId('detail-resend-invite')
+    expect(resendBtn.props.accessibilityState.disabled).toBe(true)
+    fireEvent.press(resendBtn)
+    expect(mockResend).not.toHaveBeenCalled()
   })
 
   // NOTE: mutation-success tests are ordered LAST and each fully settles its async

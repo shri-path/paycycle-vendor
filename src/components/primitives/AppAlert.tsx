@@ -36,6 +36,8 @@ export interface AppAlertProps {
   onClose?: () => void
   /** Container style override */
   containerStyle?: ViewStyle
+  /** Test identifier for the alert container */
+  testID?: string
 }
 
 // ============================================================================
@@ -123,6 +125,7 @@ export const AppAlert: React.FC<AppAlertProps> = ({
   message,
   onClose,
   containerStyle,
+  testID,
 }) => {
   const variantStyle = alertVariants[type]
   const textColor = alertTextColors[type]
@@ -133,7 +136,7 @@ export const AppAlert: React.FC<AppAlertProps> = ({
   }
 
   return (
-    <View style={[alertStyle, containerStyle]}>
+    <View style={[alertStyle, containerStyle]} testID={testID}>
       <View style={styles.content}>
         <AppText
           variant="label"

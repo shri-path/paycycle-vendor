@@ -23,7 +23,7 @@ import { AppAlert } from '@components/primitives/AppAlert'
 import { AppEmptyState } from '@components/composite/AppEmptyState'
 import { AppSection } from '@components/composite/AppSection'
 import { ScreenErrorBoundary } from '@components/composite/ScreenErrorBoundary'
-import { StaffCard } from '../components/StaffCard'
+import { StaffCard } from '../components'
 import { useRolesStore } from '../store/roles.store'
 import { useRequireOwner } from '../hooks/useRequireOwner'
 import { useTranslation } from '@hooks/useTranslation'
@@ -232,6 +232,7 @@ function StaffListScreenContent() {
           type="info"
           title={t('roles.staff_limit_reached')}
           message={t('roles.staff_limit_upgrade_hint')}
+          testID="staff-limit-alert"
         />
       ) : null}
       <View style={styles.countRow}>

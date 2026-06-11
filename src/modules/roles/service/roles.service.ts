@@ -23,6 +23,7 @@ import {
   mockSupplyListName,
   mockVendorDisplayName,
 } from '@services/mocks'
+import { ALL_PERMISSION_KEYS } from '../../../types/roles'
 import type {
   RoleContextDto,
   StaffResponseDto,
@@ -46,13 +47,6 @@ export interface ListStaffResult {
   meta: StaffListMeta
   limits: StaffLimitsDto | null
 }
-
-/** The three grantable permission keys — sent in full to the MERGE endpoint (US-004). */
-const ALL_PERMISSION_KEYS: PermissionKey[] = [
-  'mark_deliveries',
-  'mark_leaves',
-  'add_extra_charges',
-]
 
 const DEFAULT_LIMIT = 20
 

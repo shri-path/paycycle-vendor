@@ -167,7 +167,7 @@ describe('StaffListScreen', () => {
       staffLimits: { maxStaff: 4, currentActive: 4, canAddMore: false },
     })
     const screen = await render(<StaffListScreen />)
-    expect(screen.getByText(t('roles.staff_limit_reached'))).toBeTruthy()
+    expect(screen.getByTestId('staff-limit-alert')).toBeTruthy()
     fireEvent.press(screen.getByTestId('invite-staff-fab'))
     expect(mockPush).not.toHaveBeenCalledWith('/(app)/staff/invite')
   })

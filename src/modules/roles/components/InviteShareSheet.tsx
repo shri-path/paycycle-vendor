@@ -17,7 +17,7 @@ import { AppText } from '@components/primitives/AppText'
 import { AppButton } from '@components/primitives/AppButton'
 import { AppBottomSheet } from '@components/composite/AppBottomSheet'
 import { useTranslation } from '@hooks/useTranslation'
-import { getCurrentLanguage } from '@locales/index'
+import { formatLocaleDate } from '@utils/formatDate'
 import { colors, spacing, borderRadius } from '@constants/tokens'
 import type { InviteSendVia } from '../../../types/roles'
 
@@ -39,21 +39,6 @@ export interface InviteShareSheetProps {
   onDismiss: () => void
   title?: string
   testID?: string
-}
-
-/** Locale-aware date format for an ISO timestamp; falls back to the raw value. */
-function formatExpiry(iso: string): string {
-  const date = new Date(iso)
-  if (Number.isNaN(date.getTime())) return iso
-  try {
-    return date.toLocaleDateString(getCurrentLanguage(), {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    })
-  } catch {
-    return date.toLocaleDateString()
-  }
 }
 
 export function InviteShareSheet({
@@ -111,7 +96,7 @@ export function InviteShareSheet({
               style={styles.expires}
               testID="invite-expires"
             >
-              {t('roles.invite_expires', { date: formatExpiry(expiresAt) })}
+              {t('roles.invite_expires', { date: formatLocaleDate(expiresAt) })}
             </AppText>
           ) : null}
           <View style={styles.buttons}>

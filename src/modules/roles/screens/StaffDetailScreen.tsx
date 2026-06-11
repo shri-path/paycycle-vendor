@@ -32,16 +32,15 @@ import { AppConfirmDialog } from '@components/composite/AppConfirmDialog'
 import { AppSegmentedControl } from '@components/composite/AppSegmentedControl'
 import { ScreenErrorBoundary } from '@components/composite/ScreenErrorBoundary'
 import { RoleBadge } from '@components/composite/RoleBadge'
-import { PermissionToggleList } from '../components/PermissionToggleList'
-import { SupplyListMultiSelect } from '../components/SupplyListMultiSelect'
-import { InviteShareSheet } from '../components/InviteShareSheet'
+import { PermissionToggleList, SupplyListMultiSelect, InviteShareSheet } from '../components'
 import { useRolesStore } from '../store/roles.store'
 import { useRequireOwner } from '../hooks/useRequireOwner'
 import { useTranslation } from '@hooks/useTranslation'
-import { getCurrentLanguage } from '@locales/index'
 import { useNetworkStatus } from '@hooks/useNetworkStatus'
 import { colors, spacing, componentSizes } from '@constants/tokens'
 import { LIMITS, validateAreaLabel, validateStaffName, sanitizeText } from '@utils/validation'
+import { formatLocaleDate } from '@utils/formatDate'
+import { ALL_PERMISSION_KEYS } from '../../../types/roles'
 import type {
   PermissionKey,
   StaffResponseDto,
@@ -50,12 +49,6 @@ import type {
   ResendInviteResponseDto,
 } from '../../../types/roles'
 
-/** The three grantable permission keys — sent in full to the MERGE endpoint (US-004). */
-const ALL_PERMISSION_KEYS: PermissionKey[] = [
-  'mark_deliveries',
-  'mark_leaves',
-  'add_extra_charges',
-]
 const SEND_VIA: InviteSendVia[] = ['whatsapp', 'sms']
 
 const styles = StyleSheet.create({
@@ -80,21 +73,6 @@ const styles = StyleSheet.create({
   skeletonSection: { height: 80, marginBottom: spacing[3], backgroundColor: colors.gray100 },
   skeletonStats: { height: 100, marginBottom: spacing[3], backgroundColor: colors.gray100 },
 })
-
-/** Locale-aware date format for an ISO timestamp; falls back to the raw value. */
-function formatJoinedDate(iso: string): string {
-  const date = new Date(iso)
-  if (Number.isNaN(date.getTime())) return iso
-  try {
-    return date.toLocaleDateString(getCurrentLanguage(), {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    })
-  } catch {
-    return date.toLocaleDateString()
-  }
-}
 
 // Shape-matching skeleton (NOT a spinner): mirrors the populated layout — a profile
 // card, the assigned-lists section, and the month-stats card — like StaffListSkeleton.
@@ -201,7 +179,7 @@ function StaffDetailScreenContent() {
   const isOwnerRow = staff?.role === 'owner'
 
   const mutate = useCallback(
-    async (fn: () => Promise<void>, onDone?: () => void) => {
+    async (fn: () => Promise<void>, onDone?: () => void, onError?: () => void) => {
       if (busy.current || !isConnected) return
       busy.current = true
       clearStaffError()
@@ -212,6 +190,7 @@ function StaffDetailScreenContent() {
         onDone?.()
       } catch {
         void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+        onError?.()
       } finally {
         busy.current = false
       }
@@ -243,25 +222,21 @@ function StaffDetailScreenContent() {
   }, [staffId, name, mutate, updateStaff])
 
   const handleResend = useCallback(() => {
-    if (!staffId || busy.current || !isConnected) return
-    busy.current = true
-    clearStaffError()
-    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
-    void (async () => {
-      try {
+    if (!staffId) return
+    void mutate(
+      async () => {
+        // Surface the freshly-issued invite link via the share sheet on success.
         const result = await resendInvite(staffId, SEND_VIA[resendViaIndex])
-        void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
         setResendResult(result)
-      } catch {
-        void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
-        // 422 race: the member may have joined between list load and this tap.
-        // Re-fetch detail so the resend section disappears if no longer INVITED.
-        void fetchStaffDetail(staffId)
-      } finally {
-        busy.current = false
-      }
-    })()
-  }, [staffId, isConnected, clearStaffError, resendInvite, resendViaIndex, fetchStaffDetail])
+      },
+      undefined,
+      // 422 race: the member may have joined between list load and this tap.
+      // Re-fetch detail so the resend section disappears if no longer INVITED.
+      () => void fetchStaffDetail(staffId),
+    )
+  }, [staffId, mutate, resendInvite, resendViaIndex, fetchStaffDetail])
+
+  const handleResendViaChange = useCallback((i: number) => setResendViaIndex(i), [])
 
   const handleSaveArea = useCallback(() => {
     if (!staffId) return
@@ -394,7 +369,7 @@ function StaffDetailScreenContent() {
             <RoleBadge role={staff.role} areaLabel={staff.areaRouteLabel} testID="detail-role-badge" />
             {staff.joinedAt ? (
               <AppText variant="caption" color={colors.textSecondary}>
-                {t('roles.joined_on', { date: formatJoinedDate(staff.joinedAt) })}
+                {t('roles.joined_on', { date: formatLocaleDate(staff.joinedAt) })}
               </AppText>
             ) : null}
           </View>
@@ -458,7 +433,7 @@ function StaffDetailScreenContent() {
             <AppSegmentedControl
               segments={[t('roles.send_whatsapp'), t('roles.send_sms')]}
               selectedIndex={resendViaIndex}
-              onChange={(i) => setResendViaIndex(i)}
+              onChange={handleResendViaChange}
             />
             <AppButton
               label={t('roles.resend_invite')}
