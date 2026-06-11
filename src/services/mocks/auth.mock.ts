@@ -29,4 +29,3 @@ export const mockVendorContext: VendorContextDto = {
 }
 
 export const MOCK_OTP = '123456'
-export const MOCK_RESET_TOKEN = 'mock-reset-token-uuid-1234'

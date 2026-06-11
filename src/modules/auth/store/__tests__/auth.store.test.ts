@@ -210,24 +210,27 @@ describe('useAuthStore', () => {
   })
 
   describe('forgotPassword', () => {
-    it('stores pendingResetPhone and saves token to SecureStore', async () => {
-      mockedAuthService.forgotPassword.mockResolvedValueOnce('mock-reset-token')
+    it('stores pendingResetPhone (OTP is delivered via SMS, no client token)', async () => {
+      mockedAuthService.forgotPassword.mockResolvedValueOnce(undefined)
 
       await useAuthStore.getState().forgotPassword('+919876543210')
 
       expect(useAuthStore.getState().pendingResetPhone).toBe('+919876543210')
-      expect(SecureStore.setItemAsync).toHaveBeenCalledWith('auth.pendingResetToken', 'mock-reset-token')
     })
   })
 
   describe('resetPassword', () => {
     it('clears pendingResetPhone on success', async () => {
       useAuthStore.setState({ pendingResetPhone: '+919876543210' })
-      ;(SecureStore.getItemAsync as jest.Mock).mockResolvedValueOnce('mock-reset-token')
       mockedAuthService.resetPassword.mockResolvedValueOnce(undefined)
 
       await useAuthStore.getState().resetPassword('123456', 'NewPass@1')
 
+      expect(mockedAuthService.resetPassword).toHaveBeenCalledWith(
+        '+919876543210',
+        '123456',
+        'NewPass@1',
+      )
       expect(useAuthStore.getState().pendingResetPhone).toBeNull()
       expect(useAuthStore.getState().isLoading).toBe(false)
     })

@@ -5,7 +5,7 @@
  * Security notes:
  * - JWT tokens (accessToken, refreshToken) are stored ONLY in expo-secure-store
  *   (Keychain on iOS, EncryptedSharedPreferences on Android). Never in AsyncStorage.
- * - pendingResetToken is stored in SecureStore, not in Zustand state.
+ * - Password reset uses an OTP delivered via SMS; no reset token is held client-side.
  * - Only non-sensitive fields (isAuthenticated, user, vendorContext) are persisted
  *   via AsyncStorage (native) / localStorage (web) through the Zustand persist middleware.
  */
@@ -32,7 +32,6 @@ function buildStorage(): StateStorage {
 // SecureStore key constants
 const SECURE_KEY_ACCESS_TOKEN = 'auth.accessToken'
 const SECURE_KEY_REFRESH_TOKEN = 'auth.refreshToken'
-const SECURE_KEY_PENDING_RESET_TOKEN = 'auth.pendingResetToken'
 
 // Helper to persist tokens securely
 async function storeTokens(accessToken: string, refreshToken: string): Promise<void> {
@@ -47,7 +46,6 @@ async function clearSecureTokens(): Promise<void> {
   await Promise.all([
     SecureStore.deleteItemAsync(SECURE_KEY_ACCESS_TOKEN).catch(() => undefined),
     SecureStore.deleteItemAsync(SECURE_KEY_REFRESH_TOKEN).catch(() => undefined),
-    SecureStore.deleteItemAsync(SECURE_KEY_PENDING_RESET_TOKEN).catch(() => undefined),
   ])
 }
 
@@ -62,6 +60,12 @@ interface AuthState {
   error: string | null
   isHydrated: boolean
   pendingResetPhone: string | null
+  /**
+   * OTP echoed by the API in non-production environments only (never set in
+   * production, where the OTP arrives via SMS). Used solely for the dev-only
+   * on-screen hint on ResetPasswordScreen. In-memory, never persisted.
+   */
+  pendingResetOtp: string | null
 
   // Actions
   setHydrated: (value: boolean) => void
@@ -86,6 +90,7 @@ export const useAuthStore = create<AuthState>()(
       error: null,
       isHydrated: false,
       pendingResetPhone: null,
+      pendingResetOtp: null,
 
       setHydrated: (value) => set({ isHydrated: value }),
 
@@ -190,6 +195,7 @@ export const useAuthStore = create<AuthState>()(
             isLoading: false,
             error: null,
             pendingResetPhone: null,
+            pendingResetOtp: null,
           })
         }
       },
@@ -197,14 +203,14 @@ export const useAuthStore = create<AuthState>()(
       forgotPassword: async (phone) => {
         set({ isLoading: true, error: null })
         try {
-          const resetToken = await authService.forgotPassword(phone)
-          // Store the reset token in SecureStore — never in Zustand state
-          if (resetToken) {
-            await SecureStore.setItemAsync(SECURE_KEY_PENDING_RESET_TOKEN, resetToken)
-          }
+          const devOtp = await authService.forgotPassword(phone)
+          // The OTP is delivered via SMS; only the target phone is retained in memory
+          // to scope the subsequent reset-password call. `devOtp` is populated only in
+          // non-production environments (for the dev-only on-screen hint).
           set({
             isLoading: false,
             pendingResetPhone: phone,
+            pendingResetOtp: devOtp ?? null,
           })
         } catch (err) {
           void logError(err, {
@@ -226,20 +232,12 @@ export const useAuthStore = create<AuthState>()(
 
         set({ isLoading: true, error: null })
 
-        const resetToken = await SecureStore.getItemAsync(SECURE_KEY_PENDING_RESET_TOKEN)
-        if (!resetToken) {
-          const err = new Error('No pending reset token in secure storage')
-          void logError(err, { screen: 'ResetPassword', action: 'resetPassword' })
-          set({ isLoading: false, error: 'common.error' })
-          throw err
-        }
-
         try {
-          await authService.resetPassword(pendingResetPhone, resetToken, otpCode, newPassword)
-          await SecureStore.deleteItemAsync(SECURE_KEY_PENDING_RESET_TOKEN).catch(() => undefined)
+          await authService.resetPassword(pendingResetPhone, otpCode, newPassword)
           set({
             isLoading: false,
             pendingResetPhone: null,
+            pendingResetOtp: null,
           })
         } catch (err) {
           void logError(err, {

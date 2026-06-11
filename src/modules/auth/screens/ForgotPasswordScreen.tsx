@@ -151,6 +151,9 @@ function ForgotPasswordScreenContent() {
             error={phoneError ? t(phoneError) : undefined}
           />
 
+          {/* Spacer pushes the primary CTA to the bottom of the screen (thumb reach) */}
+          <YStack flex={1} minHeight={spacing[6]} />
+
           <AppButton
             label={t('auth.send_otp')}
             onPress={handleSendOtp}

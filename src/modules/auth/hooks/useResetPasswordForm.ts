@@ -26,6 +26,11 @@ export interface UseResetPasswordForm {
   showPassword: boolean
   /** The phone awaiting reset (raw, unmasked) — screen masks for display */
   pendingResetPhone: string | null
+  /**
+   * OTP echoed by the API in non-production environments only — drives the
+   * dev-only on-screen hint. Null in production (OTP arrives via SMS).
+   */
+  devOtp: string | null
   errors: ResetPasswordFormErrors
   /** Store-level error as a raw i18n key, or null */
   error: string | null
@@ -43,15 +48,17 @@ export interface UseResetPasswordForm {
 
 export function useResetPasswordForm(): UseResetPasswordForm {
   const router = useRouter()
-  const { resetPassword, isLoading, error, clearError, pendingResetPhone } = useAuthStore(
-    useShallow((s) => ({
-      resetPassword: s.resetPassword,
-      isLoading: s.isLoading,
-      error: s.error,
-      clearError: s.clearError,
-      pendingResetPhone: s.pendingResetPhone,
-    })),
-  )
+  const { resetPassword, isLoading, error, clearError, pendingResetPhone, pendingResetOtp } =
+    useAuthStore(
+      useShallow((s) => ({
+        resetPassword: s.resetPassword,
+        isLoading: s.isLoading,
+        error: s.error,
+        clearError: s.clearError,
+        pendingResetPhone: s.pendingResetPhone,
+        pendingResetOtp: s.pendingResetOtp,
+      })),
+    )
   const { isConnected } = useNetworkStatus()
 
   const [otp, setOtp] = useState('')
@@ -132,6 +139,7 @@ export function useResetPasswordForm(): UseResetPasswordForm {
     newPassword,
     showPassword,
     pendingResetPhone,
+    devOtp: pendingResetOtp,
     errors: {
       otp: otpError,
       password: passwordError,
