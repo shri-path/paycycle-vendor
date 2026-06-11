@@ -147,6 +147,7 @@ describe('StaffDetailScreen', () => {
     expect(screen.getByText(t('common.offline'))).toBeTruthy()
     // US-004 actions are disabled offline (network-dependent writes).
     expect(screen.getByTestId('detail-save-name').props.accessibilityState.disabled).toBe(true)
+    expect(screen.getByTestId('detail-save-perms').props.accessibilityState.disabled).toBe(true)
     // The remove button is disabled offline; tapping it does not open the dialog
     // and confirming is unreachable, so no mutation fires.
     fireEvent.press(screen.getByTestId('detail-remove'))
@@ -154,6 +155,9 @@ describe('StaffDetailScreen', () => {
     // Tapping the disabled name-save offline must not fire updateStaff.
     fireEvent.press(screen.getByTestId('detail-save-name'))
     expect(mockUpdate).not.toHaveBeenCalled()
+    // Tapping the disabled perms-save offline must not fire updatePermissions.
+    fireEvent.press(screen.getByTestId('detail-save-perms'))
+    expect(mockUpdatePermissions).not.toHaveBeenCalled()
   })
 
   it('disables the resend action for an INVITED member when offline (US-004)', async () => {
