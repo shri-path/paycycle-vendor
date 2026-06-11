@@ -30,6 +30,12 @@ export interface SupplyListMultiSelectProps {
   onChange: (next: string[]) => void
   /** Show a loading skeleton while options load. */
   isLoading?: boolean
+  /**
+   * Render the selected lists as a non-interactive display (no toggling).
+   * Staff-side list assignment is now managed from the supply-list detail screen
+   * (US-005, OQ-2), so the roles module shows this read-only.
+   */
+  readOnly?: boolean
   /** Test ID prefix. */
   testID?: string
 }
@@ -53,6 +59,7 @@ export const SupplyListMultiSelect: React.FC<SupplyListMultiSelectProps> = ({
   value,
   onChange,
   isLoading = false,
+  readOnly = false,
   testID,
 }) => {
   const { t } = useTranslation()
@@ -72,6 +79,36 @@ export const SupplyListMultiSelect: React.FC<SupplyListMultiSelectProps> = ({
     return (
       <View style={styles.container} testID={testID ? `${testID}-loading` : undefined}>
         <AppLoader />
+      </View>
+    )
+  }
+
+  // Read-only display (US-005, OQ-2): show only the assigned lists, non-interactive.
+  if (readOnly) {
+    const selected = options.filter((opt) => value.includes(opt.listId))
+    if (selected.length === 0) {
+      return (
+        <View style={styles.empty} testID={testID ? `${testID}-empty` : undefined}>
+          <AppText variant="caption" color={colors.textSecondary}>
+            {t('roles.no_lists_assigned')}
+          </AppText>
+        </View>
+      )
+    }
+    return (
+      <View style={styles.container}>
+        {selected.map((opt) => (
+          <View
+            key={opt.listId}
+            style={styles.row}
+            accessibilityRole="text"
+            accessibilityState={{ disabled: true }}
+            accessibilityLabel={opt.name}
+            testID={testID ? `${testID}-${opt.listId}` : undefined}
+          >
+            <AppCheckbox label={opt.name} checked disabled />
+          </View>
+        ))}
       </View>
     )
   }

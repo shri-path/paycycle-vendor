@@ -1,18 +1,20 @@
 /**
  * InviteStaffScreen — Owner-only (US-002, wireframe 2.14).
  * Purpose: Invite a delivery staff member — phone (required), optional name/area,
- * supply-list assignment (OQ-6 full multi-select), permission toggles, and a
- * WhatsApp/SMS send channel. On success shows a bottom sheet with the shareable
- * invite link (paycyclevendor://join/<token> scheme, embedded by the backend).
+ * permission toggles, and a WhatsApp/SMS send channel. On success shows a bottom
+ * sheet with the shareable invite link (paycyclevendor://join/<token> scheme,
+ * embedded by the backend). Supply-list assignment is NOT done here — an invited
+ * staff has no lists yet; assignment is managed from the supply-list detail screen
+ * (US-005, OQ-2).
  *
- * 5 states: Loading (multi-select skeleton), Empty (no supply lists → note),
- * Error (inline field errors + API banner), Content, Offline (submit disabled).
+ * 5 states: Loading (submit spinner), Empty (n/a), Error (inline field errors +
+ * API banner), Content, Offline (submit disabled).
  *
  * OQ-5: 451 maps to a generic "staff limit reached" alert (no in-app upgrade).
  * Security mutation: online-only — submit is disabled offline.
  */
 
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import { KeyboardAvoidingView, Platform, Share, Linking, View, StyleSheet } from 'react-native'
 import { ScrollView } from 'tamagui'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -30,7 +32,6 @@ import { AppSection } from '@components/composite/AppSection'
 import { AppBottomSheet } from '@components/composite/AppBottomSheet'
 import { ScreenErrorBoundary } from '@components/composite/ScreenErrorBoundary'
 import { PermissionToggleList } from '../components/PermissionToggleList'
-import { SupplyListMultiSelect } from '../components/SupplyListMultiSelect'
 import { useRolesStore } from '../store/roles.store'
 import { useRequireOwner } from '../hooks/useRequireOwner'
 import { useTranslation } from '@hooks/useTranslation'
@@ -73,18 +74,12 @@ function InviteStaffScreenContent() {
     staffError,
     isStaffLoading,
     clearStaffError,
-    supplyListOptions,
-    isSupplyListsLoading,
-    fetchSupplyListOptions,
   } = useRolesStore(
     useShallow((s) => ({
       inviteStaff: s.inviteStaff,
       staffError: s.staffError,
       isStaffLoading: s.isStaffLoading,
       clearStaffError: s.clearStaffError,
-      supplyListOptions: s.supplyListOptions,
-      isSupplyListsLoading: s.isSupplyListsLoading,
-      fetchSupplyListOptions: s.fetchSupplyListOptions,
     })),
   )
 
@@ -93,7 +88,6 @@ function InviteStaffScreenContent() {
   const [name, setName] = useState('')
   const [areaLabel, setAreaLabel] = useState('')
   const [permissions, setPermissions] = useState<PermissionKey[]>(DEFAULT_PERMISSIONS)
-  const [assignedListIds, setAssignedListIds] = useState<string[]>([])
   const [sendViaIndex, setSendViaIndex] = useState(0)
 
   const [phoneError, setPhoneError] = useState<string | null>(null)
@@ -104,10 +98,6 @@ function InviteStaffScreenContent() {
   const [result, setResult] = useState<InviteStaffResult | null>(null)
 
   const submitting = useRef(false)
-
-  useEffect(() => {
-    void fetchSupplyListOptions()
-  }, [fetchSupplyListOptions])
 
   const onChangePhone = (code: string, number: string) => {
     setCountryCode(code)
@@ -157,7 +147,6 @@ function InviteStaffScreenContent() {
         name: name.trim() || undefined,
         areaRouteLabel: areaLabel.trim() || undefined,
         permissions,
-        assignedListIds: assignedListIds.length > 0 ? assignedListIds : undefined,
         sendVia: SEND_VIA[sendViaIndex],
       })
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
@@ -267,16 +256,6 @@ function InviteStaffScreenContent() {
             testID="invite-area"
             error={areaError ? t(areaError) : undefined}
           />
-
-          <AppSection title={t('roles.assign_lists')}>
-            <SupplyListMultiSelect
-              options={supplyListOptions}
-              value={assignedListIds}
-              onChange={setAssignedListIds}
-              isLoading={isSupplyListsLoading}
-              testID="invite-lists"
-            />
-          </AppSection>
 
           <AppSection title={t('roles.permissions')}>
             <PermissionToggleList

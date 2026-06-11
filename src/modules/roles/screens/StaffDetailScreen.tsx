@@ -1,21 +1,21 @@
 /**
  * StaffDetailScreen — Owner-only (US-002, wireframe 2.15).
- * Purpose: View + manage one staff member — profile, assigned supply lists (full
- * OQ-6 assign/unassign), month stats (placeholder until US-006), area-label inline
- * edit, permission edit, temporarily disable/enable, and remove (with confirms).
+ * Purpose: View + manage one staff member — profile, assigned supply lists
+ * (READ-ONLY display; assignment is managed from the supply-list detail screen per
+ * US-005/OQ-2), month stats (placeholder until US-006), area-label inline edit,
+ * permission edit, temporarily disable/enable, and remove (with confirms).
  *
  * Reads `staffId` from the route params (so the WS-3 route file is a thin wrapper).
  * 5 states: Loading skeleton, Error (404 → "no longer exists"), Content, Offline
  * (all mutations disabled). Owner-self actions are never rendered.
  *
- * Security mutations (update/remove/assign/unassign) are online-only.
+ * Security mutations (update/remove) are online-only.
  */
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { View, ScrollView, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router'
-import { Ionicons } from '@expo/vector-icons'
 import * as Haptics from 'expo-haptics'
 import { useShallow } from 'zustand/react/shallow'
 import { AppHeader } from '@components/layout/AppHeader'
@@ -26,17 +26,15 @@ import { AppCard } from '@components/primitives/AppCard'
 import { AppAvatar } from '@components/primitives/AppAvatar'
 import { AppAlert } from '@components/primitives/AppAlert'
 import { AppSection } from '@components/composite/AppSection'
-import { AppBottomSheet } from '@components/composite/AppBottomSheet'
 import { AppConfirmDialog } from '@components/composite/AppConfirmDialog'
 import { ScreenErrorBoundary } from '@components/composite/ScreenErrorBoundary'
 import { RoleBadge } from '@components/composite/RoleBadge'
 import { PermissionToggleList } from '../components/PermissionToggleList'
-import { SupplyListMultiSelect } from '../components/SupplyListMultiSelect'
 import { useRolesStore } from '../store/roles.store'
 import { useRequireOwner } from '../hooks/useRequireOwner'
 import { useTranslation } from '@hooks/useTranslation'
 import { useNetworkStatus } from '@hooks/useNetworkStatus'
-import { colors, spacing, componentSizes } from '@constants/tokens'
+import { colors, spacing } from '@constants/tokens'
 import { LIMITS, validateAreaLabel, sanitizeText } from '@utils/validation'
 import type { PermissionKey, StaffResponseDto, SupplyListOptionDto } from '../../../types/roles'
 
@@ -52,6 +50,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: spacing[2],
   },
+  assignHint: { marginTop: spacing[1] },
   statRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -99,10 +98,7 @@ function StaffDetailScreenContent() {
     fetchStaffDetail,
     updateStaff,
     removeStaff,
-    assignLists,
-    unassignList,
     supplyListOptions,
-    isSupplyListsLoading,
     fetchSupplyListOptions,
     clearStaffError,
   } = useRolesStore(
@@ -114,10 +110,7 @@ function StaffDetailScreenContent() {
       fetchStaffDetail: s.fetchStaffDetail,
       updateStaff: s.updateStaff,
       removeStaff: s.removeStaff,
-      assignLists: s.assignLists,
-      unassignList: s.unassignList,
       supplyListOptions: s.supplyListOptions,
-      isSupplyListsLoading: s.isSupplyListsLoading,
       fetchSupplyListOptions: s.fetchSupplyListOptions,
       clearStaffError: s.clearStaffError,
     })),
@@ -130,17 +123,21 @@ function StaffDetailScreenContent() {
   const [areaLabel, setAreaLabel] = useState('')
   const [areaError, setAreaError] = useState<string | null>(null)
 
-  const [assignSheetOpen, setAssignSheetOpen] = useState(false)
-  const [pendingAssign, setPendingAssign] = useState<string[]>([])
   const [confirmRemove, setConfirmRemove] = useState(false)
   const [confirmDisable, setConfirmDisable] = useState(false)
-  const [unassignTarget, setUnassignTarget] = useState<string | null>(null)
 
   const busy = useRef(false)
 
   useEffect(() => {
     if (staffId) void fetchStaffDetail(staffId)
   }, [staffId, fetchStaffDetail])
+
+  // Resolve assigned list ids → names via the supply-list options. Assignment is
+  // now managed from the supply-list detail screen (US-005, OQ-2); here it is
+  // read-only, so we only fetch the options to display the names.
+  useEffect(() => {
+    void fetchSupplyListOptions()
+  }, [fetchSupplyListOptions])
 
   // OQ-7: re-fetch the role every time the screen regains focus so a mid-session
   // owner demotion is caught (the 401/403 interceptor handles in-flight calls;
@@ -219,30 +216,7 @@ function StaffDetailScreenContent() {
     )
   }, [staffId, mutate, removeStaff, router])
 
-  const openAssignSheet = useCallback(() => {
-    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-    setPendingAssign(staff?.assignedListIds ?? [])
-    setAssignSheetOpen(true)
-    void fetchSupplyListOptions()
-  }, [staff, fetchSupplyListOptions])
-
-  const handleSaveAssignments = useCallback(() => {
-    if (!staffId) return
-    void mutate(
-      () => assignLists(staffId, pendingAssign),
-      () => setAssignSheetOpen(false),
-    )
-  }, [staffId, pendingAssign, mutate, assignLists])
-
-  const confirmUnassignNow = useCallback(() => {
-    const listId = unassignTarget
-    setUnassignTarget(null)
-    if (!staffId || !listId) return
-    void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning)
-    void mutate(() => unassignList(staffId, listId))
-  }, [staffId, unassignTarget, mutate, unassignList])
-
-  // Resolve assigned list ids → names via the (stub-backed) options, OQ-6.
+  // Resolve assigned list ids → names via the supply-list options.
   const assignedListNames = useMemo(() => {
     if (!staff) return [] as { listId: string; name: string }[]
     return staff.assignedListIds.map((listId) => {
@@ -319,7 +293,8 @@ function StaffDetailScreenContent() {
           </View>
         </AppCard>
 
-        {/* Assigned Supply Lists (OQ-6) */}
+        {/* Assigned Supply Lists — READ-ONLY (US-005, OQ-2). List assignment is
+            managed from the supply-list detail screen; no editing here. */}
         <AppSection title={t('roles.assigned_lists')}>
           {assignedListNames.length === 0 ? (
             <AppText variant="caption" color={colors.textSecondary}>
@@ -328,28 +303,16 @@ function StaffDetailScreenContent() {
           ) : (
             assignedListNames.map(({ listId, name }) => (
               <View key={listId} style={styles.listRow}>
-                <AppText variant="body" numberOfLines={1}>
+                <AppText variant="body" numberOfLines={1} testID={`assigned-list-${listId}`}>
                   {name}
                 </AppText>
-                <AppButton
-                  label={t('roles.unassign')}
-                  variant="link"
-                  onPress={() => setUnassignTarget(listId)}
-                  disabled={mutationsDisabled}
-                  testID={`unassign-${listId}`}
-                />
               </View>
             ))
           )}
           {!isOwnerRow ? (
-            <AppButton
-              label={t('roles.assign_another')}
-              variant="secondary"
-              onPress={openAssignSheet}
-              disabled={mutationsDisabled}
-              testID="assign-another"
-              leftIcon={<Ionicons name="add" size={componentSizes.icon.md} color={colors.primary} />}
-            />
+            <AppText variant="caption" color={colors.textSecondary} style={styles.assignHint}>
+              {t('roles.assign_lists_managed_elsewhere')}
+            </AppText>
           ) : null}
         </AppSection>
 
@@ -439,30 +402,6 @@ function StaffDetailScreenContent() {
         ) : null}
       </ScrollView>
 
-      {/* Assign-lists bottom sheet (OQ-6) */}
-      <AppBottomSheet
-        visible={assignSheetOpen}
-        onDismiss={() => setAssignSheetOpen(false)}
-        title={t('roles.select_lists')}
-      >
-        <SupplyListMultiSelect
-          options={supplyListOptions}
-          value={pendingAssign}
-          onChange={setPendingAssign}
-          isLoading={isSupplyListsLoading}
-          testID="assign-sheet-lists"
-        />
-        <AppButton
-          label={t('roles.save_assignments')}
-          variant="primary"
-          fullWidth
-          onPress={handleSaveAssignments}
-          disabled={mutationsDisabled}
-          style={styles.saveBtn}
-          testID="assign-sheet-save"
-        />
-      </AppBottomSheet>
-
       <AppConfirmDialog
         visible={confirmDisable}
         title={t('roles.disable_confirm_title')}
@@ -483,17 +422,6 @@ function StaffDetailScreenContent() {
         confirmVariant="danger"
         onConfirm={confirmRemoveNow}
         onCancel={() => setConfirmRemove(false)}
-      />
-
-      <AppConfirmDialog
-        visible={unassignTarget !== null}
-        title={t('roles.unassign_confirm_title')}
-        description={t('roles.unassign_confirm_body', { name: staff.name ?? '' })}
-        confirmLabel={t('roles.unassign')}
-        cancelLabel={t('common.cancel')}
-        confirmVariant="danger"
-        onConfirm={confirmUnassignNow}
-        onCancel={() => setUnassignTarget(null)}
       />
     </SafeAreaView>
   )

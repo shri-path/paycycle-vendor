@@ -115,6 +115,16 @@ describe('StaffDetailScreen', () => {
     expect(screen.getByTestId('detail-toggle-status')).toBeTruthy()
   })
 
+  it('shows assigned lists read-only — no edit/unassign affordances, with a helper hint', async () => {
+    const screen = await render(<StaffDetailScreen />)
+    // The assigned list is shown as a plain name row...
+    expect(screen.getByTestId('assigned-list-l1')).toBeTruthy()
+    // ...with no unassign or assign-another controls (managed from the list screen).
+    expect(screen.queryByTestId('unassign-l1')).toBeNull()
+    expect(screen.queryByTestId('assign-another')).toBeNull()
+    expect(screen.getByText(t('roles.assign_lists_managed_elsewhere'))).toBeTruthy()
+  })
+
   it('opens a confirm dialog before removing', async () => {
     const screen = await render(<StaffDetailScreen />)
     fireEvent.press(screen.getByTestId('detail-remove'))
@@ -125,12 +135,6 @@ describe('StaffDetailScreen', () => {
     const screen = await render(<StaffDetailScreen />)
     fireEvent.press(screen.getByTestId('detail-toggle-status'))
     expect(await screen.findByText(t('roles.disable_confirm_title'))).toBeTruthy()
-  })
-
-  it('opens a confirm dialog before unassigning a list', async () => {
-    const screen = await render(<StaffDetailScreen />)
-    fireEvent.press(screen.getByTestId('unassign-l1'))
-    expect(await screen.findByText(t('roles.unassign_confirm_title'))).toBeTruthy()
   })
 
   it('disables mutations and shows the offline banner when offline', async () => {
@@ -146,25 +150,6 @@ describe('StaffDetailScreen', () => {
   // NOTE: mutation-success tests are ordered LAST and each fully settles its async
   // submit inside an act() scope (testing-strategy "Async submit & act() hygiene").
   // A leaked async submit would commit a null tree into the NEXT test's render.
-  it('assigns lists from the bottom sheet', async () => {
-    const screen = await render(<StaffDetailScreen />)
-    fireEvent.press(screen.getByTestId('assign-another'))
-    // The multi-select rows live in the sheet Modal — wait for it to mount.
-    const l2Row = await screen.findByTestId('assign-sheet-lists-l2')
-    fireEvent.press(l2Row)
-    // Wait for the selection re-render to flush before saving (otherwise the save
-    // closure reads the pre-toggle pendingAssign).
-    await waitFor(() =>
-      expect(screen.getByTestId('assign-sheet-lists-l2').props.accessibilityState.checked).toBe(true),
-    )
-    await act(async () => {
-      fireEvent.press(screen.getByTestId('assign-sheet-save'))
-    })
-    await waitFor(() => {
-      expect(mockAssign).toHaveBeenCalledWith('s1', ['l1', 'l2'])
-    })
-  })
-
   it('saves permissions via updateStaff', async () => {
     const screen = await render(<StaffDetailScreen />)
     // Toggle mark_leaves on, waiting for the local-state re-render to flush before save.
