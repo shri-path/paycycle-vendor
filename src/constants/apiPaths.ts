@@ -53,6 +53,32 @@ export const APIPath = {
     ListDetail: (vendorId: string, staffId: string, listId: string) =>
       `/vendors/${vendorId}/staff/${staffId}/lists/${listId}`,
   },
+  // Supply Lists (US-005). Mounted at /api/v1/vendors. vendorId is JWT-derived on
+  // the server — present in the path only for routing, never as user-controlled
+  // tenant data. OQ-4 RESOLVED: no `/v1` in the path strings (identical convention
+  // to the existing auth/staff routes); the base URL must end `/api/v1`.
+  SupplyLists: {
+    /** GET (list) + POST(create). */
+    List: (vendorId: string) => `/vendors/${vendorId}/supply-lists`,
+    /** GET/PATCH/DELETE a single supply list. */
+    Detail: (vendorId: string, listId: string) =>
+      `/vendors/${vendorId}/supply-lists/${listId}`,
+    /** POST — assign a staff member to the list. */
+    Staff: (vendorId: string, listId: string) =>
+      `/vendors/${vendorId}/supply-lists/${listId}/staff`,
+    /** DELETE — unassign a staff member (membership-id `staffId`). */
+    StaffDetail: (vendorId: string, listId: string, staffId: string) =>
+      `/vendors/${vendorId}/supply-lists/${listId}/staff/${staffId}`,
+    /** GET (subscriptions) + POST (add customers). */
+    Customers: (vendorId: string, listId: string) =>
+      `/vendors/${vendorId}/supply-lists/${listId}/customers`,
+    /** GET — vendor customers eligible to add to this list (paginated). */
+    Available: (vendorId: string, listId: string) =>
+      `/vendors/${vendorId}/supply-lists/${listId}/available-customers`,
+    /** PATCH/DELETE a single subscription. */
+    Subscription: (vendorId: string, listId: string, subscriptionId: string) =>
+      `/vendors/${vendorId}/supply-lists/${listId}/customers/${subscriptionId}`,
+  },
 } as const;
 
 export default APIPath;

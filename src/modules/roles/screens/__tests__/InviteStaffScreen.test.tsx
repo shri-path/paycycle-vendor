@@ -60,14 +60,10 @@ describe('InviteStaffScreen', () => {
     mockStore({})
   })
 
-  it('fetches supply-list options on mount', async () => {
-    await render(<InviteStaffScreen />)
-    expect(mockFetchOptions).toHaveBeenCalled()
-  })
-
-  it('renders the multi-select option and the send-via segments', async () => {
+  it('renders the send-via segments and does not offer list assignment at invite time', async () => {
     const screen = await render(<InviteStaffScreen />)
-    expect(screen.getByTestId('invite-lists-l1')).toBeTruthy()
+    // List assignment is managed from the supply-list detail screen (US-005, OQ-2).
+    expect(screen.queryByTestId('invite-lists-l1')).toBeNull()
     expect(screen.getByText(t('roles.send_whatsapp'))).toBeTruthy()
     expect(screen.getByText(t('roles.send_sms'))).toBeTruthy()
   })

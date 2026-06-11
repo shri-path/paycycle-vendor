@@ -23,6 +23,7 @@ jest.mock('expo-router', () => {
   return {
     // Mimic react-navigation focus: run the effect callback once on mount.
     useFocusEffect: (cb: () => void | (() => void)) => ReactActual.useEffect(cb, [cb]),
+    useRouter: () => ({ push: jest.fn(), replace: jest.fn(), back: jest.fn() }),
   }
 })
 

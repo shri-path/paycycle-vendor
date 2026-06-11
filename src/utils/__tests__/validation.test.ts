@@ -8,10 +8,16 @@ import {
   LIMITS,
   sanitizeText,
   validateBusinessName,
+  validateFrequencyDays,
   validateLoginPassword,
+  validateOptionalNonNegativeNumber,
   validateOtp,
   validatePassword,
   validatePhone,
+  validatePrimaryStaffId,
+  validateStartTime,
+  validateSupplyListName,
+  validateSupplyUnit,
 } from '../validation'
 
 // Control characters are built by code point to keep raw bytes out of source.
@@ -166,5 +172,93 @@ describe('validatePassword', () => {
 
   it('returns complexity error without a digit', () => {
     expect(validatePassword('TestPass@@')).toBe('validation.password_complexity')
+  })
+})
+
+describe('validateSupplyListName', () => {
+  it('returns null for a valid name', () => {
+    expect(validateSupplyListName('Morning Milk')).toBeNull()
+  })
+
+  it('returns required key when empty / whitespace', () => {
+    expect(validateSupplyListName('')).toBe('validation.required')
+    expect(validateSupplyListName('   ')).toBe('validation.required')
+  })
+
+  it('returns too_long beyond the 100-char cap (boundary)', () => {
+    expect(validateSupplyListName('a'.repeat(LIMITS.supplyListName))).toBeNull()
+    expect(validateSupplyListName('a'.repeat(LIMITS.supplyListName + 1))).toBe(
+      'validation.too_long',
+    )
+  })
+
+  it('returns invalid_input for injection / markup', () => {
+    expect(validateSupplyListName('<script>x</script>')).toBe('validation.invalid_input')
+    expect(validateSupplyListName("Milk' OR 1=1")).toBe('validation.invalid_input')
+  })
+
+  it('returns invalid_input for control characters', () => {
+    expect(validateSupplyListName(`Mi${CONTROL_CHAR}lk`)).toBe('validation.invalid_input')
+  })
+})
+
+describe('validateSupplyUnit', () => {
+  it('requires a unit selection', () => {
+    expect(validateSupplyUnit('')).toBe('validation.required')
+    expect(validateSupplyUnit('ltr')).toBeNull()
+  })
+})
+
+describe('validateOptionalNonNegativeNumber', () => {
+  it('allows empty (optional) and zero', () => {
+    expect(validateOptionalNonNegativeNumber('')).toBeNull()
+    expect(validateOptionalNonNegativeNumber('   ')).toBeNull()
+    expect(validateOptionalNonNegativeNumber('0')).toBeNull()
+  })
+
+  it('rejects negatives and non-numeric with invalid_number', () => {
+    expect(validateOptionalNonNegativeNumber('-1')).toBe('validation.invalid_number')
+    expect(validateOptionalNonNegativeNumber('abc')).toBe('validation.invalid_number')
+  })
+})
+
+describe('validateStartTime', () => {
+  it('allows empty (optional) and valid HH:mm', () => {
+    expect(validateStartTime('')).toBeNull()
+    expect(validateStartTime('06:30')).toBeNull()
+    expect(validateStartTime('23:59')).toBeNull()
+  })
+
+  it('rejects malformed times with invalid_time', () => {
+    expect(validateStartTime('25:99')).toBe('validation.invalid_time')
+    expect(validateStartTime('6:30')).toBe('validation.invalid_time')
+  })
+})
+
+describe('validateFrequencyDays', () => {
+  it('DAILY needs no days', () => {
+    expect(validateFrequencyDays('DAILY', [])).toBeNull()
+  })
+
+  it('WEEKLY requires 1..7 days, rejects empty / out of range', () => {
+    expect(validateFrequencyDays('WEEKLY', [1, 7])).toBeNull()
+    expect(validateFrequencyDays('WEEKLY', [])).toBe('validation.invalid_days')
+    expect(validateFrequencyDays('WEEKLY', [8])).toBe('validation.invalid_days')
+  })
+
+  it('MONTHLY accepts 1..31, rejects 32', () => {
+    expect(validateFrequencyDays('MONTHLY', [1, 31])).toBeNull()
+    expect(validateFrequencyDays('MONTHLY', [32])).toBe('validation.invalid_days')
+  })
+})
+
+describe('validatePrimaryStaffId', () => {
+  it('allows empty (optional)', () => {
+    expect(validatePrimaryStaffId('', ['s1'])).toBeNull()
+  })
+
+  it('requires the primary to be a member of staffIds', () => {
+    expect(validatePrimaryStaffId('s2', ['s1', 's2'])).toBeNull()
+    expect(validatePrimaryStaffId('s3', ['s1', 's2'])).toBe('validation.required')
   })
 })

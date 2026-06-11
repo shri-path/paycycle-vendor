@@ -188,6 +188,16 @@ export const useAuthStore = create<AuthState>()(
           } catch {
             // roles store not loaded yet — nothing to clear.
           }
+          // Wipe all local supply-list data on logout (data-residency).
+          try {
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
+            const { useSupplyListsStore } = require('@modules/supply-lists/store/supplyLists.store') as {
+              useSupplyListsStore: { getState: () => { clearSupplyLists: () => void } }
+            }
+            useSupplyListsStore.getState().clearSupplyLists()
+          } catch {
+            // supply-lists store not loaded yet — nothing to clear.
+          }
           set({
             isAuthenticated: false,
             user: null,

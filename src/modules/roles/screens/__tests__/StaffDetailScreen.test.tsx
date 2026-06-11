@@ -1,7 +1,8 @@
 /**
- * StaffDetailScreen tests — loading, 404 (no record), content, permission
- * toggle+save, assign sheet, unassign confirm, disable confirm, remove confirm,
- * and offline-disabled mutations. Mutation-success tests act-wrapped + last.
+ * StaffDetailScreen tests — loading, 404 (no record), content, read-only assigned
+ * lists (US-005 OQ-2: assignment managed elsewhere), permission toggle+save,
+ * resend invite (US-004), disable confirm, remove confirm, and offline-disabled
+ * mutations. Mutation-success tests act-wrapped + last.
  */
 
 jest.mock('expo-haptics', () => ({
@@ -123,6 +124,19 @@ describe('StaffDetailScreen', () => {
     expect(screen.getByTestId('detail-toggle-status')).toBeTruthy()
   })
 
+  it('renders assigned lists READ-ONLY with the managed-elsewhere helper (US-005 OQ-2)', async () => {
+    const screen = await render(<StaffDetailScreen />)
+    // Assigned list shown as a plain read-only name row...
+    expect(screen.getByTestId('assigned-list-l1')).toBeTruthy()
+    expect(screen.getByText('Morning Milk')).toBeTruthy()
+    // ...with a helper caption pointing to where assignment is managed.
+    expect(screen.getByText(t('roles.assign_lists_managed_elsewhere'))).toBeTruthy()
+    // The editable assign/unassign flow is gone.
+    expect(screen.queryByTestId('assign-another')).toBeNull()
+    expect(screen.queryByTestId('unassign-l1')).toBeNull()
+    expect(screen.queryByTestId('assign-sheet-save')).toBeNull()
+  })
+
   it('opens a confirm dialog before removing', async () => {
     const screen = await render(<StaffDetailScreen />)
     fireEvent.press(screen.getByTestId('detail-remove'))
@@ -133,12 +147,6 @@ describe('StaffDetailScreen', () => {
     const screen = await render(<StaffDetailScreen />)
     fireEvent.press(screen.getByTestId('detail-toggle-status'))
     expect(await screen.findByText(t('roles.disable_confirm_title'))).toBeTruthy()
-  })
-
-  it('opens a confirm dialog before unassigning a list', async () => {
-    const screen = await render(<StaffDetailScreen />)
-    fireEvent.press(screen.getByTestId('unassign-l1'))
-    expect(await screen.findByText(t('roles.unassign_confirm_title'))).toBeTruthy()
   })
 
   it('disables mutations and shows the offline banner when offline', async () => {
@@ -174,25 +182,6 @@ describe('StaffDetailScreen', () => {
   // NOTE: mutation-success tests are ordered LAST and each fully settles its async
   // submit inside an act() scope (testing-strategy "Async submit & act() hygiene").
   // A leaked async submit would commit a null tree into the NEXT test's render.
-  it('assigns lists from the bottom sheet', async () => {
-    const screen = await render(<StaffDetailScreen />)
-    fireEvent.press(screen.getByTestId('assign-another'))
-    // The multi-select rows live in the sheet Modal — wait for it to mount.
-    const l2Row = await screen.findByTestId('assign-sheet-lists-l2')
-    fireEvent.press(l2Row)
-    // Wait for the selection re-render to flush before saving (otherwise the save
-    // closure reads the pre-toggle pendingAssign).
-    await waitFor(() =>
-      expect(screen.getByTestId('assign-sheet-lists-l2').props.accessibilityState.checked).toBe(true),
-    )
-    await act(async () => {
-      fireEvent.press(screen.getByTestId('assign-sheet-save'))
-    })
-    await waitFor(() => {
-      expect(mockAssign).toHaveBeenCalledWith('s1', ['l1', 'l2'])
-    })
-  })
-
   it('saves permissions via the dedicated /permissions endpoint with the full grant map', async () => {
     const screen = await render(<StaffDetailScreen />)
     // Toggle mark_leaves on, waiting for the local-state re-render to flush before save.

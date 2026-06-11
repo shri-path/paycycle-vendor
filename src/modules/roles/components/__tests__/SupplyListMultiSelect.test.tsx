@@ -61,4 +61,34 @@ describe('SupplyListMultiSelect', () => {
     fireEvent.press(screen.getByTestId('ms-l1'))
     expect(onChange).toHaveBeenCalledWith(['l2'])
   })
+
+  describe('readOnly mode', () => {
+    it('renders only the selected lists, non-interactively', async () => {
+      const screen = await render(
+        <SupplyListMultiSelect options={options} value={['l1']} onChange={jest.fn()} readOnly testID="ms" />,
+      )
+      // Selected list is shown; unselected list is not rendered.
+      expect(screen.getByText('Morning Milk')).toBeTruthy()
+      expect(screen.queryByText('Morning Bread')).toBeNull()
+    })
+
+    it('marks the read-only row as disabled and does not toggle on press', async () => {
+      const onChange = jest.fn()
+      const screen = await render(
+        <SupplyListMultiSelect options={options} value={['l1']} onChange={onChange} readOnly testID="ms" />,
+      )
+      const row = screen.getByTestId('ms-l1')
+      expect(row.props.accessibilityState).toEqual({ disabled: true })
+      fireEvent.press(row)
+      expect(onChange).not.toHaveBeenCalled()
+      expect(Haptics.impactAsync).not.toHaveBeenCalled()
+    })
+
+    it('shows the no-lists-assigned note when nothing is selected', async () => {
+      const screen = await render(
+        <SupplyListMultiSelect options={options} value={[]} onChange={jest.fn()} readOnly testID="ms" />,
+      )
+      expect(screen.getByText(t('roles.no_lists_assigned'))).toBeTruthy()
+    })
+  })
 })
