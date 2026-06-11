@@ -12,13 +12,33 @@
 import axios from 'axios'
 
 /** Surface that produced the error — lets the mapper resolve ambiguous codes. */
-export type ApiErrorContext = 'invite_accept' | 'role' | 'staff' | 'invite'
+export type ApiErrorContext = 'invite_accept' | 'role' | 'staff' | 'invite' | 'supply'
+
+/**
+ * Sub-action within the `'supply'` context (US-005). Several supply endpoints share
+ * a status code but mean different things (409 duplicate-name vs all-subscribed; the
+ * three distinct 422s). The store passes the action it invoked so the mapper resolves
+ * to the right i18n key. Omitted → generic supply mappings.
+ */
+export type SupplyErrorAction =
+  | 'create'
+  | 'update'
+  | 'add_customers'
+  | 'assign_staff'
+  | 'update_subscription'
 
 /**
  * Maps an unknown API error to an i18n translation key.
  * Screens should call t(mapApiError(err)) to display a translated error message.
+ *
+ * @param context Calling surface — disambiguates shared status codes.
+ * @param action  Sub-action within the `'supply'` context (ignored otherwise).
  */
-export function mapApiError(err: unknown, context?: ApiErrorContext): string {
+export function mapApiError(
+  err: unknown,
+  context?: ApiErrorContext,
+  action?: SupplyErrorAction,
+): string {
   if (axios.isAxiosError(err)) {
     // Network error (no response) = offline
     if (!err.response) return 'common.offline_message'
@@ -56,6 +76,23 @@ export function mapApiError(err: unknown, context?: ApiErrorContext): string {
       if (status === 403) return 'roles.error_forbidden'
     }
 
+    // Supply Lists surfaces (US-005) — resolve shared status codes by sub-action.
+    if (context === 'supply') {
+      if (status === 404) return 'supply.error_not_found'
+      if (status === 403) return 'roles.error_forbidden'
+      if (status === 409) {
+        return action === 'add_customers'
+          ? 'supply.error_all_already_subscribed'
+          : 'supply.error_duplicate_name'
+      }
+      if (status === 422) {
+        if (action === 'assign_staff') return 'supply.error_staff_not_assignable'
+        if (action === 'add_customers') return 'supply.error_customer_not_in_vendor'
+        if (action === 'update_subscription') return 'supply.error_invalid_sub_transition'
+        return 'validation.required'
+      }
+    }
+
     if (status === 401) return 'auth.invalid_credentials'
     if (status === 403) return 'roles.error_forbidden'
     if (status === 409) return 'auth.phone_already_registered'
@@ -72,6 +109,7 @@ export function mapApiError(err: unknown, context?: ApiErrorContext): string {
     (err.message.startsWith('auth.') ||
       err.message.startsWith('validation.') ||
       err.message.startsWith('roles.') ||
+      err.message.startsWith('supply.') ||
       err.message.startsWith('common.'))
   ) {
     return err.message

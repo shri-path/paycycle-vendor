@@ -16,7 +16,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { View, ScrollView, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useFocusEffect } from 'expo-router'
+import { useFocusEffect, useRouter, type Href } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import * as Haptics from 'expo-haptics'
 import { useShallow } from 'zustand/react/shallow'
@@ -63,6 +63,7 @@ function StaffHomeSkeleton() {
 
 function StaffHomeScreenContent() {
   const { t } = useTranslation()
+  const router = useRouter()
   const { isConnected } = useNetworkStatus()
   const { roleContext, isLoading, error } = useRole()
   const vendorName = useAuthStore(useShallow((s) => s.vendorContext?.vendorName ?? null))
@@ -183,7 +184,16 @@ function StaffHomeScreenContent() {
               description={t('roles.contact_owner')}
             />
           ) : (
-            assignedLists.map((list) => (
+            <>
+            <AppButton
+              label={t('supply.my_lists_title')}
+              onPress={() => router.push('/(app)/my-lists' as Href)}
+              variant="primary"
+              fullWidth
+              style={styles.listItemBtn}
+              testID="staff-home-my-lists"
+            />
+            {assignedLists.map((list) => (
               <AppCard key={list.listId} variant="elevated" style={styles.listCard} testID={`staff-list-${list.listId}`}>
                 <AppText variant="h4" weight="semibold">
                   {list.name}
@@ -197,7 +207,8 @@ function StaffHomeScreenContent() {
                   testID={`staff-list-open-${list.listId}`}
                 />
               </AppCard>
-            ))
+            ))}
+            </>
           )}
         </AppSection>
 

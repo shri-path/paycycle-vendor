@@ -5,7 +5,7 @@
 
 import { View, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useRouter } from 'expo-router'
+import { useRouter, type Href } from 'expo-router'
 import { useShallow } from 'zustand/react/shallow'
 import { AppText } from '@components/primitives/AppText'
 import { AppButton } from '@components/primitives/AppButton'
@@ -42,6 +42,12 @@ export default function HomeScreen() {
           </AppText>
         ) : null}
         <View style={styles.spacer} />
+        <AppButton
+          label={t('supply.title')}
+          onPress={() => router.push('/(app)/supply-lists' as Href)}
+          variant="primary"
+          fullWidth
+        />
         <AppButton
           label={t('auth.logout')}
           onPress={handleLogout}
