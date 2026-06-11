@@ -24,7 +24,7 @@ import {
 } from 'react-native'
 import { AppText } from '../primitives/AppText'
 import { AppButton } from '../primitives/AppButton'
-import { colors, spacing, borderRadius, componentSizes } from '@constants/tokens'
+import { colors, spacing, borderRadius, componentSizes, shadows, semanticColors } from '@constants/tokens'
 
 export interface AppConfirmDialogProps {
   /** Whether dialog is visible */
@@ -56,7 +56,7 @@ export interface AppConfirmDialogProps {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    backgroundColor: semanticColors.background.overlay,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: spacing[4],
@@ -68,6 +68,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing[4],
     width: '100%',
     maxWidth: 320,
+    ...shadows.lg,
   },
   iconContainer: {
     marginBottom: spacing[3],
@@ -148,7 +149,7 @@ export const AppConfirmDialog: React.FC<AppConfirmDialogProps> = ({
           style={[styles.dialog, dialogStyle]}
         >
           {icon && (
-            <View style={styles.iconContainer}>
+            <View style={styles.iconContainer} importantForAccessibility="no">
               {typeof icon === 'string' ? (
                 <AppText style={styles.iconContainer}>
                   {icon}

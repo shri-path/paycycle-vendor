@@ -25,7 +25,7 @@ import {
 } from 'react-native'
 import { AppText } from './AppText'
 import { useFocusRing, inputOutlineReset } from '@hooks/useFocusRing'
-import { colors, spacing, borderRadius, fontSize, componentSizes } from '@constants/tokens'
+import { colors, spacing, borderRadius, fontSize, componentSizes, borderWidth } from '@constants/tokens'
 
 export interface AppTextAreaProps extends TextInputProps {
   /** Label text displayed above textarea */
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing[1],
   },
   textAreaWrapper: {
-    borderWidth: 1,
+    borderWidth: borderWidth.thin,
     borderColor: colors.gray200,
     borderRadius: borderRadius.md,
     paddingHorizontal: spacing[3],

@@ -16,7 +16,11 @@
     "retry": "पुनः प्रयास करें",
     "close": "बंद करें",
     "you": "आप",
-    "needs_connection": "इंटरनेट कनेक्शन की आवश्यकता है"
+    "needs_connection": "इंटरनेट कनेक्शन की आवश्यकता है",
+    "back": "वापस जाएं",
+    "menu": "मेनू",
+    "notifications": "सूचनाएं",
+    "notifications_badge": "{{count}} अपठित सूचनाएं"
   },
   "auth": {
     "welcome": "स्वागत है",

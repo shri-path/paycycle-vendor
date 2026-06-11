@@ -16,7 +16,11 @@
     "retry": "Retry",
     "close": "Close",
     "you": "you",
-    "needs_connection": "Needs an internet connection"
+    "needs_connection": "Needs an internet connection",
+    "back": "Go back",
+    "menu": "Menu",
+    "notifications": "Notifications",
+    "notifications_badge": "{{count}} unread notifications"
   },
   "auth": {
     "welcome": "Welcome",

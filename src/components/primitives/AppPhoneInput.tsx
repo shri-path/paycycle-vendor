@@ -28,7 +28,7 @@ import {
 } from 'react-native'
 import { AppText } from './AppText'
 import { useFocusRing, inputOutlineReset } from '@hooks/useFocusRing'
-import { colors, spacing, borderRadius, fontSize, fontWeight, componentSizes } from '@constants/tokens'
+import { colors, spacing, borderRadius, fontSize, fontWeight, componentSizes, borderWidth, semanticColors } from '@constants/tokens'
 
 export interface CountryCode {
   name: string
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     gap: spacing[2],
   },
   countryCodeButton: {
-    borderWidth: 1,
+    borderWidth: borderWidth.thin,
     borderColor: colors.gray200,
     borderRadius: borderRadius.md,
     paddingHorizontal: spacing[2],
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     minHeight: componentSizes.input.md,
     justifyContent: 'center',
     alignItems: 'center',
-    minWidth: 70,
+    minWidth: spacing[20],
   },
   countryCodeButtonError: {
     borderColor: colors.error,
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
   },
   phoneInputField: {
     flex: 1,
-    borderWidth: 1,
+    borderWidth: borderWidth.thin,
     borderColor: colors.gray200,
     borderRadius: borderRadius.md,
     paddingHorizontal: spacing[3],
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: semanticColors.background.overlay,
     justifyContent: 'flex-end',
   },
   modalContent: {
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
   modalHeader: {
     paddingHorizontal: spacing[4],
     paddingVertical: spacing[3],
-    borderBottomWidth: 1,
+    borderBottomWidth: borderWidth.thin,
     borderBottomColor: colors.gray200,
   },
   modalHeaderText: {
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
   countryItem: {
     paddingHorizontal: spacing[4],
     paddingVertical: spacing[3],
-    borderBottomWidth: 1,
+    borderBottomWidth: borderWidth.thin,
     borderBottomColor: colors.gray100,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -296,6 +296,8 @@ export const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
           onPress={() => !disabled && setIsModalVisible(true)}
           disabled={disabled}
           style={countryCodeButtonStyle}
+          accessibilityRole="button"
+          accessibilityState={{ disabled }}
         >
           <AppText
             style={[
@@ -370,6 +372,8 @@ export const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
                     item.dial === countryCode && styles.countryItemSelected,
                   ]}
                   onPress={() => handleSelectCountry(item.dial)}
+                  accessibilityRole="menuitem"
+                  accessibilityState={{ selected: item.dial === countryCode }}
                 >
                   <View>
                     <AppText style={styles.countryLabel}>{item.name}</AppText>

@@ -52,7 +52,7 @@ export interface AppTimelineProps {
 const getStatusColor = (status?: string): string => {
   switch (status) {
     case 'completed':
-      return colors.success || '#10B981'
+      return colors.success
     case 'error':
       return colors.error
     case 'pending':
@@ -83,6 +83,11 @@ const styles = StyleSheet.create({
   timelineIcon: {
     fontSize: fontSize.xs,
     fontWeight: fontWeight.bold,
+  },
+  statusDot: {
+    width: componentSizes.timeline.statusDot,
+    height: componentSizes.timeline.statusDot,
+    borderRadius: componentSizes.timeline.statusDot / 2,
   },
   timelineConnector: {
     position: 'absolute',
@@ -161,16 +166,7 @@ export const AppTimeline: React.FC<AppTimelineProps> = ({
           {!isLast && (
             <View style={styles.timelineConnector} />
           )}
-          <View
-            style={[
-              {
-                width: 14,
-                height: 14,
-                borderRadius: 7,
-                backgroundColor: statusColor,
-              },
-            ]}
-          >
+          <View style={[styles.statusDot, { backgroundColor: statusColor }]}>
             {item.icon && (
               <AppText style={[styles.timelineIcon, { color: colors.white }]}>
                 {item.icon}

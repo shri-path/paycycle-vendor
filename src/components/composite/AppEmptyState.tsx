@@ -115,7 +115,7 @@ export const AppEmptyState: React.FC<AppEmptyStateProps> = ({
   return (
     <View style={[styles.container, containerStyle]}>
       {icon && (
-        <View style={styles.iconContainer}>
+        <View style={styles.iconContainer} importantForAccessibility="no">
           {typeof icon === 'string' ? (
             <AppText style={styles.icon}>{icon}</AppText>
           ) : (

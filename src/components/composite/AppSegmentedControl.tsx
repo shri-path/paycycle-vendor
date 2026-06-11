@@ -22,7 +22,7 @@ import {
   ScrollView,
 } from 'react-native'
 import { AppText } from '../primitives/AppText'
-import { colors, spacing, borderRadius, componentSizes, fontSize, fontWeight, animation } from '@constants/tokens'
+import { colors, spacing, borderRadius, componentSizes, fontSize, fontWeight, animation, shadows, interaction } from '@constants/tokens'
 
 export interface Segment {
   label: string
@@ -63,16 +63,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: borderRadius.sm,
-    minWidth: 80,
+    minWidth: spacing[20],
     marginHorizontal: spacing[1],
   },
   segmentActive: {
     backgroundColor: colors.white,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    ...shadows.sm,
   },
   segmentDisabled: {
     opacity: animation.opacity.disabled,
@@ -170,7 +166,10 @@ export const AppSegmentedControl: React.FC<AppSegmentedControlProps> = ({
                 isSelected && styles.segmentActive,
                 disabled && styles.segmentDisabled,
               ]}
-              activeOpacity={disabled ? 1 : 0.7}
+              activeOpacity={disabled ? 1 : interaction.activeOpacity}
+              accessibilityRole="button"
+              accessibilityLabel={segment.label}
+              accessibilityState={{ selected: isSelected, disabled }}
             >
               <View style={styles.segmentContent}>
                 {segment.icon && (

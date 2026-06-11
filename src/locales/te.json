@@ -16,7 +16,11 @@
     "retry": "మళ్ళీ ప్రయత్నించండి",
     "close": "మూసివేయండి",
     "you": "మీరు",
-    "needs_connection": "ఇంటర్నెట్ కనెక్షన్ అవసరం"
+    "needs_connection": "ఇంటర్నెట్ కనెక్షన్ అవసరం",
+    "back": "వెనుకకు",
+    "menu": "మెను",
+    "notifications": "నోటిఫికేషన్లు",
+    "notifications_badge": "{{count}} చదవని నోటిఫికేషన్లు"
   },
   "auth": {
     "welcome": "స్వాగతం",

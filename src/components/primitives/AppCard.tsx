@@ -23,7 +23,7 @@ import {
   TouchableOpacity,
   GestureResponderEvent,
 } from 'react-native'
-import { colors, spacing, borderRadius, shadows } from '@constants/tokens'
+import { colors, spacing, borderRadius, shadows, borderWidth, interaction } from '@constants/tokens'
 
 export type CardVariant = 'default' | 'elevated' | 'outlined' | 'flat' | 'interactive'
 
@@ -52,7 +52,7 @@ const variantStyles = StyleSheet.create({
   default: {
     backgroundColor: colors.white,
     borderRadius: borderRadius.lg,
-    borderWidth: 1,
+    borderWidth: borderWidth.thin,
     borderColor: colors.gray200,
   },
   elevated: {
@@ -63,7 +63,7 @@ const variantStyles = StyleSheet.create({
   outlined: {
     backgroundColor: 'transparent',
     borderRadius: borderRadius.lg,
-    borderWidth: 1,
+    borderWidth: borderWidth.thin,
     borderColor: colors.gray300,
   },
   flat: {
@@ -74,7 +74,7 @@ const variantStyles = StyleSheet.create({
   interactive: {
     backgroundColor: colors.white,
     borderRadius: borderRadius.lg,
-    borderWidth: 1,
+    borderWidth: borderWidth.thin,
     borderColor: colors.gray200,
   },
 })
@@ -136,7 +136,8 @@ export const AppCard: React.FC<AppCardProps> = ({
       <TouchableOpacity
         {...touchableProps}
         onPress={onPress}
-        activeOpacity={0.7}
+        activeOpacity={interaction.activeOpacity}
+        accessibilityRole={props.accessibilityRole ?? 'button'}
         style={[containerStyle, style]}
       >
         {children}

@@ -11,7 +11,7 @@ import React from 'react'
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
-import { colors, spacing } from '@constants/tokens'
+import { colors, spacing, fontSize, fontWeight, lineHeight, borderRadius, componentSizes, interaction } from '@constants/tokens'
 
 interface Props {
   children: React.ReactNode
@@ -65,7 +65,11 @@ export class ScreenErrorBoundary extends React.Component<Props, State> {
     return (
       <SafeAreaView style={styles.safe}>
         <View style={styles.container}>
-          <Ionicons name="alert-circle-outline" size={56} color={colors.error} />
+          <Ionicons
+            name="alert-circle-outline"
+            size={componentSizes.avatar.lg}
+            color={colors.error}
+          />
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.subtitle}>{subtitle}</Text>
           <TouchableOpacity
@@ -95,29 +99,29 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing[6],
   },
   title: {
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: fontSize.lg,
+    fontWeight: fontWeight.bold,
     color: colors.textPrimary,
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: fontSize.sm,
     color: colors.textSecondary,
     textAlign: 'center',
-    lineHeight: 20,
+    lineHeight: lineHeight.sm,
   },
   retryButton: {
     backgroundColor: colors.primary,
     paddingHorizontal: spacing[6],
     paddingVertical: spacing[3],
-    borderRadius: 8,
-    minHeight: 44,
+    borderRadius: borderRadius.md,
+    minHeight: interaction.minTouchTarget,
     justifyContent: 'center',
     alignItems: 'center',
   },
   retryLabel: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: fontSize.base,
+    fontWeight: fontWeight.semibold,
     color: colors.white,
   },
 })

@@ -155,6 +155,9 @@ export const AppListItem: React.FC<AppListItemProps> = ({
           disabled={disabled}
           style={[itemStyle, containerStyle]}
           activeOpacity={animation.opacity.hover}
+          accessibilityRole="button"
+          accessibilityLabel={title}
+          accessibilityState={{ disabled }}
         >
           {content}
         </TouchableOpacity>

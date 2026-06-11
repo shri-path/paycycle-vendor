@@ -16,7 +16,11 @@
     "retry": "ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
     "close": "ಮುಚ್ಚಿ",
     "you": "ನೀವು",
-    "needs_connection": "ಇಂಟರ್ನೆಟ್ ಸಂಪರ್ಕ ಅಗತ್ಯವಿದೆ"
+    "needs_connection": "ಇಂಟರ್ನೆಟ್ ಸಂಪರ್ಕ ಅಗತ್ಯವಿದೆ",
+    "back": "ಹಿಂದೆ ಹೋಗಿ",
+    "menu": "ಮೆನು",
+    "notifications": "ಅಧಿಸೂಚನೆಗಳು",
+    "notifications_badge": "{{count}} ಓದದ ಅಧಿಸೂಚನೆಗಳು"
   },
   "auth": {
     "welcome": "ಸ್ವಾಗತ",

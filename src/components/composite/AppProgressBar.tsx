@@ -21,6 +21,7 @@ import {
   Animated,
 } from 'react-native'
 import { AppText } from '../primitives/AppText'
+import { useReducedMotion } from '@hooks/useReducedMotion'
 import { colors, spacing, borderRadius, componentSizes, animation } from '@constants/tokens'
 
 export type ProgressVariant = 'default' | 'success' | 'warning' | 'error'
@@ -49,9 +50,9 @@ export interface AppProgressBarProps {
 const getVariantColor = (variant: ProgressVariant): string => {
   switch (variant) {
     case 'success':
-      return colors.success || '#10B981'
+      return colors.success
     case 'warning':
-      return colors.warning || '#F59E0B'
+      return colors.warning
     case 'error':
       return colors.error
     default:
@@ -122,9 +123,11 @@ export const AppProgressBar: React.FC<AppProgressBarProps> = ({
 }) => {
   const animatedValue = useRef(new Animated.Value(0)).current
   const percentage = Math.min((value / max) * 100, 100)
+  const reduceMotion = useReducedMotion()
 
   useEffect(() => {
-    if (animated) {
+    // Skip the tween when animation is disabled or the user prefers reduced motion.
+    if (animated && !reduceMotion) {
       Animated.timing(animatedValue, {
         toValue: percentage,
         duration: animation.duration.slow,
@@ -133,7 +136,7 @@ export const AppProgressBar: React.FC<AppProgressBarProps> = ({
     } else {
       animatedValue.setValue(percentage)
     }
-  }, [percentage, animated, animatedValue])
+  }, [percentage, animated, animatedValue, reduceMotion])
 
   const barWidth = animatedValue.interpolate({
     inputRange: [0, 100],
@@ -161,6 +164,8 @@ export const AppProgressBar: React.FC<AppProgressBarProps> = ({
           styles.barContainer,
           { height },
         ]}
+        accessibilityRole="progressbar"
+        accessibilityValue={{ min: 0, max, now: value }}
       >
         <Animated.View
           style={[

@@ -26,7 +26,8 @@ import {
 import { Ionicons } from '@expo/vector-icons'
 import { AppText } from '../primitives/AppText'
 import { AppIconButton } from '../primitives/AppIconButton'
-import { colors, spacing, borderRadius, componentSizes } from '@constants/tokens'
+import { useTranslation } from '@hooks/useTranslation'
+import { colors, spacing, borderRadius, componentSizes, shadows, semanticColors } from '@constants/tokens'
 
 const { height } = Dimensions.get('window')
 
@@ -41,6 +42,8 @@ export interface AppBottomSheetProps {
   children?: React.ReactNode
   /** Height of the sheet (as percentage or fixed value) */
   sheetHeight?: number | string
+  /** Accessibility label for the close button (defaults to translated "Close") */
+  closeLabel?: string
   /** Container style override */
   containerStyle?: ViewStyle
 }
@@ -52,7 +55,7 @@ export interface AppBottomSheetProps {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: semanticColors.background.overlay,
     justifyContent: 'flex-end',
   },
   container: {
@@ -62,6 +65,7 @@ const styles = StyleSheet.create({
     paddingTop: spacing[3],
     paddingBottom: spacing[4],
     paddingHorizontal: spacing[4],
+    ...shadows.lg,
   },
   header: {
     flexDirection: 'row',
@@ -79,7 +83,7 @@ const styles = StyleSheet.create({
     maxHeight: height * 0.7,
   },
   handle: {
-    width: 40,
+    width: spacing[10],
     height: componentSizes.bottomSheet.handle.height,
     backgroundColor: colors.gray300,
     borderRadius: componentSizes.bottomSheet.handle.borderRadius,
@@ -123,8 +127,11 @@ export const AppBottomSheet: React.FC<AppBottomSheetProps> = ({
   title,
   children,
   sheetHeight = '50%',
+  closeLabel,
   containerStyle,
 }) => {
+  const { t } = useTranslation()
+  const resolvedCloseLabel = closeLabel ?? t('common.close')
   const sheetHeightValue = typeof sheetHeight === 'number'
     ? `${sheetHeight * 100}%`
     : sheetHeight
@@ -166,6 +173,7 @@ export const AppBottomSheet: React.FC<AppBottomSheetProps> = ({
                 onPress={onDismiss ?? (() => {})}
                 variant="ghost"
                 size="sm"
+                accessibilityLabel={resolvedCloseLabel}
                 style={styles.closeButton}
               />
             </View>

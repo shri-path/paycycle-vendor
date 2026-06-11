@@ -13,7 +13,7 @@
 
 import React from 'react'
 import { View, ViewStyle } from 'react-native'
-import { colors, spacing } from '@constants/tokens'
+import { colors, spacing, borderWidth } from '@constants/tokens'
 
 export type DividerVariant = 'solid' | 'dashed' | 'dotted'
 export type DividerOrientation = 'horizontal' | 'vertical'
@@ -46,13 +46,13 @@ const solidLine: ViewStyle = {
 // Note: React Native doesn't support native dashed/dotted borders,
 // so we'll use borderBottomWidth/borderBottomColor and borderStyle where supported
 const dashedLine: ViewStyle = {
-  borderBottomWidth: 1,
+  borderBottomWidth: borderWidth.thin,
   borderBottomColor: colors.gray200,
   borderStyle: 'dashed',
 }
 
 const dottedLine: ViewStyle = {
-  borderBottomWidth: 1,
+  borderBottomWidth: borderWidth.thin,
   borderBottomColor: colors.gray200,
   borderStyle: 'dotted',
 }

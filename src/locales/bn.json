@@ -16,7 +16,11 @@
     "retry": "আবার চেষ্টা করুন",
     "close": "বন্ধ করুন",
     "you": "আপনি",
-    "needs_connection": "ইন্টারনেট সংযোগ প্রয়োজন"
+    "needs_connection": "ইন্টারনেট সংযোগ প্রয়োজন",
+    "back": "ফিরে যান",
+    "menu": "মেনু",
+    "notifications": "বিজ্ঞপ্তি",
+    "notifications_badge": "{{count}} অপঠিত বিজ্ঞপ্তি"
   },
   "auth": {
     "welcome": "স্বাগতম",

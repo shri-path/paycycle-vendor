@@ -120,13 +120,15 @@ export const AppStatsCard: React.FC<AppStatsCardProps> = ({
     <AppCard
       style={[styles.card, containerStyle ]}
       onPress={onPress}
+      accessibilityLabel={onPress ? `${label}: ${value}` : undefined}
     >
       {icon && (
         <Ionicons
           name={icon}
           size={componentSizes.icon.lg}
           color={colors.primary}
-          style={styles.icon} 
+          style={styles.icon}
+          importantForAccessibility="no"
         />
       )}
 
