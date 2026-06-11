@@ -23,13 +23,14 @@ A skill is not a suggestion. If a skill conflicts with `FEATURE_PLAN.md`, follow
 | 06 | [navigation-routing.md](navigation-routing.md) | Expo Router screens, routes, deep links |
 | 07 | [localization-i18n.md](localization-i18n.md) | Translations across all 9 languages |
 | 08 | [error-handling.md](error-handling.md) | Error boundaries, error mapping, logging |
-| 09 | [accessibility-ux.md](accessibility-ux.md) | Touch targets, screen reader, contrast |
+| 09 | [accessibility-ux.md](accessibility-ux.md) | Low cognitive load, a11y, i18n/RTL, thumb reach |
 | 10 | [animation-haptics.md](animation-haptics.md) | Motion + tactile feedback |
 | 11 | [performance-optimization.md](performance-optimization.md) | Lists, memory, re-renders, bundle |
 | 12 | [security-auth.md](security-auth.md) | Auth, secure storage, multi-tenancy |
 | 13 | [real-time-sync.md](real-time-sync.md) | Socket.IO, live updates, background sync |
 | 14 | [testing-strategy.md](testing-strategy.md) | Component, store, service, screen tests |
 | 15 | [form-validation.md](form-validation.md) | Input validation rules + inline error UX |
+| 16 | [ui-visual-design.md](ui-visual-design.md) | Visual craft — hierarchy, spacing, type, color, depth |
 
 ---
 
@@ -38,17 +39,17 @@ A skill is not a suggestion. If a skill conflicts with `FEATURE_PLAN.md`, follow
 For any new feature, the Dev implements in this sequence — each step has a dedicated skill:
 
 1. **Types** — define DTOs/models in `src/types/` (typed, no `any`).
-2. **Components** → `component-development.md` — build/reuse primitives & composites.
+2. **Components** → `component-development.md` (+ `ui-visual-design.md`) — build/reuse primitives & composites with world-class visual craft.
 3. **State** → `state-management.md` — Zustand store slice for the feature.
 4. **Service** → `api-integration.md` — mock + real API methods.
-5. **Screen** → `screen-development.md` — assemble UI with all 5 states.
+5. **Screen** → `screen-development.md` (+ `ui-visual-design.md` + `accessibility-ux.md`) — assemble UI with all 5 states, clear hierarchy, low cognitive load.
    - **Validation** → `form-validation.md` — for any form: validators in `src/utils/validation.ts` + inline `AppInput` error (red border + message below, clears live).
 6. **Navigation** → `navigation-routing.md` — wire routes / deep links.
 7. **Offline** → `offline-first.md` — local-first writes + queue.
 8. **Localization** → `localization-i18n.md` — keys in all 9 locale files.
 9. **Animation & Haptics** → `animation-haptics.md` — feedback on every interaction.
 10. **Error handling** → `error-handling.md` — boundaries, mapping, logging.
-11. **Accessibility** → `accessibility-ux.md` — labels, targets, contrast.
+11. **Accessibility & UX** → `accessibility-ux.md` — low cognitive load, labels, targets, contrast, i18n/RTL. **Visual polish** → `ui-visual-design.md` — hierarchy, spacing rhythm, type scale, color, elevation.
 12. **Security** → `security-auth.md` — token/tenant rules (if applicable).
 13. **Real-time** → `real-time-sync.md` — live updates (if applicable).
 14. **Tests** → `testing-strategy.md` — cover the above.

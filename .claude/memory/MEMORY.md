@@ -7,5 +7,5 @@
 - [Babel Config Must Stay CommonJS](reference_babel_commonjs.md) — babel.config.js must use module.exports; native ESM breaks Metro
 - [Agent Interaction Protocol](feedback_agent_interaction.md) — Handoffs auto (no approval); pause only for open questions with recommendation + trade-offs; architect asks even in auto mode
 - [Error Logging Standard](project_error_logging.md) — Runtime errors to Logs/YYYY-MM-DD.txt via shared logger, correlationId, no PII, git-ignored
-- [Skills Are A Binding Contract](project_skills.md) — 15 mandatory skills at .claude/skills/ (+README); dev follows step order, review enforces each Definition of Done
+- [Skills Are A Binding Contract](project_skills.md) — 16 mandatory skills at .claude/skills/ (+README); dev follows step order, review enforces each Definition of Done; incl. ui-visual-design (Skill 16) + cognitive-load/i18n rewrite of accessibility-ux
 - [Project Document Paths](reference_project_docs.md) — Absolute paths to features, wireframes, user stories, DB design, and progress tracker; agent update rules

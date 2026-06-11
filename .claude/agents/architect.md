@@ -142,6 +142,7 @@ When planning a feature, reference the corresponding skills to ensure your desig
 |---|---|
 | Component requirements & design | `component-development.md` |
 | Screen flow & 5-state design | `screen-development.md` |
+| Visual design — hierarchy, spacing, type, color, depth | `ui-visual-design.md` |
 | Form/input validation rules & inline error UX | `form-validation.md` |
 | State management architecture | `state-management.md` |
 | API integration points | `api-integration.md` |
@@ -151,7 +152,7 @@ When planning a feature, reference the corresponding skills to ensure your desig
 | Localization planning | `localization-i18n.md` |
 | Animation & haptic specs | `animation-haptics.md` |
 | Test requirements & matrix | `testing-strategy.md` |
-| Accessibility requirements | `accessibility-ux.md` |
+| Accessibility, cognitive load & i18n/RTL requirements | `accessibility-ux.md` |
 | Error handling architecture | `error-handling.md` |
 | Security & auth architecture | `security-auth.md` |
 | Real-time sync requirements | `real-time-sync.md` |
