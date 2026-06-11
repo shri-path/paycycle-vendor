@@ -79,7 +79,7 @@ function mockStore(state: Record<string, unknown>) {
       available,
       availableMeta: meta,
       isAvailableLoading: false,
-      detailError: null,
+      availableError: null,
       fetchDetail: mockFetchDetail,
       fetchAvailable: mockFetchAvailable,
       addCustomers: mockAddCustomers,

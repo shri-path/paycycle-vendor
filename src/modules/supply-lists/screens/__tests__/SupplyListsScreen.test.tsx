@@ -139,8 +139,8 @@ describe('SupplyListsScreen', () => {
   it('switches the status filter to archived', async () => {
     mockStore({ lists: [makeList({})] })
     const screen = await act(async () => render(<SupplyListsScreen />))
-    // Segmented control: tap the "Ended/Archived" label (index 1).
-    fireEvent.press(screen.getByText(t('supply.status_ended')))
+    // Segmented control: tap the "Archived" label (index 1).
+    fireEvent.press(screen.getByText(t('supply.status_archived')))
     expect(mockSetFilter).toHaveBeenCalledWith('archived')
   })
 

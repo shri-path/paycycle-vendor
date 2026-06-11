@@ -126,7 +126,11 @@
     "business_name_required": "ബിസിനസ്സ് പേര് ആവശ്യമാണ്",
     "business_name_invalid": "ബിസിനസ്സ് പേരിൽ അസാധുവായ പ്രതീകങ്ങൾ ഉണ്ട്",
     "too_long": "ഇത് വളരെ നീളമുള്ളതാണ്",
-    "invalid_characters": "അസാധുവായ പ്രതീകങ്ങൾ അടങ്ങിയിരിക്കുന്നു"
+    "invalid_characters": "അസാധുവായ പ്രതീകങ്ങൾ അടങ്ങിയിരിക്കുന്നു",
+    "invalid_input": "അസാധുവായ ഇൻപുട്ട് ഉണ്ട്",
+    "invalid_number": "സാധുവായ ഒരു സംഖ്യ നൽകുക",
+    "invalid_time": "സമയം HH:mm ആയി നൽകുക",
+    "invalid_days": "കുറഞ്ഞത് ഒരു ദിവസമെങ്കിലും തിരഞ്ഞെടുക്കുക"
   },
   "roles": {
     "owner_badge": "ഉടമ",
@@ -234,6 +238,8 @@
     "empty_my_lists": "ഇതുവരെ ലിസ്റ്റുകൾ അനുവദിച്ചിട്ടില്ല",
     "unassigned": "അനുവദിച്ചിട്ടില്ല",
     "staff_label": "ജീവനക്കാർ: {{names}}",
+    "in_lists": "ഇതിൽ: {{names}}",
+    "month_stats": "ഈ മാസം",
     "customers_count": "{{count}} ഉപഭോക്താക്കൾ",
     "today_progress": "ഇന്ന്: {{done}}/{{total}}",
     "today_not_started": "ആരംഭിച്ചിട്ടില്ല",
@@ -298,6 +304,7 @@
     "status_active": "സജീവം",
     "status_paused": "താൽക്കാലികമായി നിർത്തി",
     "status_ended": "അവസാനിച്ചു",
+    "status_archived": "ആർക്കൈവ് ചെയ്തു",
     "unnamed_customer": "പേരില്ലാത്ത ഉപഭോക്താവ്",
     "card_a11y": "{{name}}, {{count}} ഉപഭോക്താക്കൾ, {{status}}",
     "customer_a11y": "{{name}}, {{status}}",

@@ -98,7 +98,7 @@ function AvailableRow({
         ) : null}
         {otherLists ? (
           <AppText variant="caption" color={colors.textSecondary} numberOfLines={1}>
-            {t('supply.staff_label', { names: otherLists })}
+            {t('supply.in_lists', { names: otherLists })}
           </AppText>
         ) : null}
       </View>
@@ -120,7 +120,7 @@ function AddCustomersScreenContent() {
     available,
     availableMeta,
     isAvailableLoading,
-    detailError,
+    availableError,
     fetchDetail,
     fetchAvailable,
     addCustomers,
@@ -131,7 +131,7 @@ function AddCustomersScreenContent() {
       available: s.available,
       availableMeta: s.availableMeta,
       isAvailableLoading: s.isAvailableLoading,
-      detailError: s.detailError,
+      availableError: s.availableError,
       fetchDetail: s.fetchDetail,
       fetchAvailable: s.fetchAvailable,
       addCustomers: s.addCustomers,
@@ -219,7 +219,7 @@ function AddCustomersScreenContent() {
         setSelected([])
       } catch {
         void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
-        // 409 (all already subscribed) keeps the selection; error shown via detailError.
+        // 409 (all already subscribed) keeps the selection; error shown via availableError.
       } finally {
         busy.current = false
       }
@@ -275,8 +275,8 @@ function AddCustomersScreenContent() {
       {!isConnected ? (
         <AppAlert type="warning" title={t('common.offline')} message={t('common.offline_message')} />
       ) : null}
-      {detailError ? (
-        <AppAlert type="error" title={t('common.error')} message={t(detailError)} />
+      {availableError ? (
+        <AppAlert type="error" title={t('common.error')} message={t(availableError)} />
       ) : null}
       {summary ? (
         <AppAlert

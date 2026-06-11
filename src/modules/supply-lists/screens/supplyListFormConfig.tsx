@@ -92,7 +92,7 @@ export const ScheduleFields: React.FC<ScheduleFieldsProps> = ({
     onChangeText={onStartTimeChange}
     placeholder="06:30"
     maxLength={5}
-    keyboardType="numbers-and-punctuation"
+    keyboardType="decimal-pad"
     testID="form-start-time"
     error={startTimeError}
   />

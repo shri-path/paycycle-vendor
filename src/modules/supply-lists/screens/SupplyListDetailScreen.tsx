@@ -162,6 +162,8 @@ function SupplyListDetailScreenContent() {
   const [editSub, setEditSub] = useState<SubscriptionDto | null>(null)
   const [editQty, setEditQty] = useState('')
   const [editRate, setEditRate] = useState('')
+  const [editQtyError, setEditQtyError] = useState<string | null>(null)
+  const [editRateError, setEditRateError] = useState<string | null>(null)
   const [confirmRemove, setConfirmRemove] = useState(false)
 
   const busy = useRef(false)
@@ -290,18 +292,29 @@ function SupplyListDetailScreenContent() {
     setEditSub(sub)
     setEditQty(String(sub.quantity))
     setEditRate(String(sub.ratePerUnit))
+    setEditQtyError(null)
+    setEditRateError(null)
   }, [])
 
   const closeEditSub = useCallback(() => {
     setEditSub(null)
     setConfirmRemove(false)
+    setEditQtyError(null)
+    setEditRateError(null)
   }, [])
 
   const handleSaveSub = useCallback(() => {
     if (!listId || !editSub) return
     const quantity = Number(editQty)
     const ratePerUnit = Number(editRate)
-    if (!Number.isFinite(quantity) || quantity < 0 || !Number.isFinite(ratePerUnit) || ratePerUnit < 0) {
+    // Inline field errors (not just a haptic) so the user sees what to fix.
+    const qtyError =
+      !Number.isFinite(quantity) || quantity < 0 ? 'validation.invalid_number' : null
+    const rateError =
+      !Number.isFinite(ratePerUnit) || ratePerUnit < 0 ? 'validation.invalid_number' : null
+    setEditQtyError(qtyError)
+    setEditRateError(rateError)
+    if (qtyError || rateError) {
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
       return
     }
@@ -472,7 +485,7 @@ function SupplyListDetailScreenContent() {
       </AppCard>
 
       {/* Month stats */}
-      <AppSection title={t('supply.title')}>
+      <AppSection title={t('supply.month_stats')}>
         <AppCard variant="default" style={styles.statsCard}>
           <View style={styles.statRow}>
             <AppText variant="body" color={colors.textSecondary}>{t('supply.customers_count', { count: String(list.customerCount) })}</AppText>
@@ -645,17 +658,25 @@ function SupplyListDetailScreenContent() {
         <AppInput
           label={t('supply.field_quantity')}
           value={editQty}
-          onChangeText={setEditQty}
+          onChangeText={(v) => {
+            setEditQty(v)
+            if (editQtyError) setEditQtyError(null)
+          }}
           keyboardType="numeric"
           containerStyle={styles.sheetField}
+          error={editQtyError ? t(editQtyError) : undefined}
           testID="edit-sub-qty"
         />
         <AppInput
           label={t('supply.field_rate')}
           value={editRate}
-          onChangeText={setEditRate}
+          onChangeText={(v) => {
+            setEditRate(v)
+            if (editRateError) setEditRateError(null)
+          }}
           keyboardType="numeric"
           containerStyle={styles.sheetField}
+          error={editRateError ? t(editRateError) : undefined}
           testID="edit-sub-rate"
         />
         <View style={styles.sheetActions}>

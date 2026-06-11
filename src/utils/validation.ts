@@ -19,6 +19,8 @@ export const LIMITS = {
   otp: 6,
   // Area / route label for staff (US-002). Free text, generous cap.
   areaLabel: 200,
+  // Supply-list name (US-005). Free text, server caps at 100.
+  supplyListName: 100,
 } as const
 
 // ---------------------------------------------------------------------------
@@ -45,7 +47,7 @@ const PASSWORD_REGEX = {
 // ---------------------------------------------------------------------------
 
 // Matches obvious injection / markup / SQL meta-sequences in free text.
-const INJECTION_RE = /<\/?\s*\w|[<>]|--|\/\*|\*\/|\bOR\b\s+\d+\s*=\s*\d+|xp_/i
+export const INJECTION_RE = /<\/?\s*\w|[<>]|--|\/\*|\*\/|\bOR\b\s+\d+\s*=\s*\d+|xp_/i
 
 /** Control chars = code points < 0x20 (C0) or 0x7F (DEL). Checked by code point. */
 const isControlChar = (ch: string): boolean => {
@@ -155,4 +157,84 @@ export function validatePassword(password: string): string | null {
   if (!PASSWORD_REGEX.digit.test(password)) return 'validation.password_complexity'
   if (!PASSWORD_REGEX.special.test(password)) return 'validation.password_complexity'
   return null
+}
+
+// ---------------------------------------------------------------------------
+// Supply-list field validators (US-005)
+// Numeric fields arrive as raw text strings (text inputs); '' means "unset".
+// Each returns an i18n key on failure, or null when valid/empty-optional.
+// ---------------------------------------------------------------------------
+
+const HHMM_RE = /^([01]\d|2[0-3]):[0-5]\d$/
+
+/** Supply-list days that can be selected per frequency. */
+export type SupplyDaysFrequency = 'DAILY' | 'WEEKLY' | 'MONTHLY'
+
+/**
+ * Validates a supply-list name (required free text). Sanitize with sanitizeText
+ * BEFORE calling; this guards length + injection/markup sequences.
+ * @returns An i18n key if invalid, or null if valid.
+ */
+export function validateSupplyListName(raw: string): string | null {
+  const v = raw.trim()
+  if (v.length < 1) return 'validation.required'
+  if (v.length > LIMITS.supplyListName) return 'validation.too_long'
+  if (hasControlChar(v) || INJECTION_RE.test(v)) return 'validation.invalid_input'
+  return null
+}
+
+/** Validates the required unit selection. */
+export function validateSupplyUnit(unit: string): string | null {
+  return unit === '' ? 'validation.required' : null
+}
+
+/**
+ * Validates an OPTIONAL non-negative numeric text field (quantity / rate).
+ * Empty is allowed; otherwise must be a finite number ≥ 0.
+ * @returns An i18n key if invalid, or null if valid/empty.
+ */
+export function validateOptionalNonNegativeNumber(raw: string): string | null {
+  const trimmed = raw.trim()
+  if (trimmed === '') return null
+  const n = Number(trimmed)
+  if (!Number.isFinite(n) || n < 0) return 'validation.invalid_number'
+  return null
+}
+
+/**
+ * Validates an OPTIONAL "HH:mm" 24-hour start time.
+ * @returns An i18n key if invalid, or null if valid/empty.
+ */
+export function validateStartTime(raw: string): string | null {
+  const v = raw.trim()
+  if (v === '') return null
+  return HHMM_RE.test(v) ? null : 'validation.invalid_time'
+}
+
+/**
+ * Validates the frequency-conditional day selection.
+ * DAILY → no days; WEEKLY → 1..7 required; MONTHLY → 1..31 required.
+ * @returns An i18n key if invalid, or null if valid.
+ */
+export function validateFrequencyDays(
+  frequency: SupplyDaysFrequency,
+  days: number[],
+): string | null {
+  if (frequency === 'DAILY') return null
+  if (days.length === 0) return 'validation.invalid_days'
+  const max = frequency === 'WEEKLY' ? 7 : 31
+  const allInRange = days.every((d) => Number.isInteger(d) && d >= 1 && d <= max)
+  return allInRange ? null : 'validation.invalid_days'
+}
+
+/**
+ * Validates that an optional primary-staff id is a member of the assigned staff.
+ * @returns An i18n key if invalid, or null if valid/empty.
+ */
+export function validatePrimaryStaffId(
+  primaryStaffId: string,
+  staffIds: string[],
+): string | null {
+  if (primaryStaffId === '') return null
+  return staffIds.includes(primaryStaffId) ? null : 'validation.required'
 }

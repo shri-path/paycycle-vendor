@@ -168,8 +168,6 @@ function SupplyListsScreenContent() {
   const header = (
     <AppHeader
       title={t('supply.title')}
-      showBack
-      onBackPress={() => router.back()}
       rightAction={
         <RoleGate require="owner">
           <AppIconButton
@@ -243,7 +241,7 @@ function SupplyListsScreenContent() {
           testID="supply-search"
         />
         <AppSegmentedControl
-          segments={[t('supply.status_active'), t('supply.status_ended')]}
+          segments={[t('supply.status_active'), t('supply.status_archived')]}
           selectedIndex={selectedIndex}
           onChange={onChangeStatus}
         />

@@ -34,6 +34,9 @@ export interface SupplyListMultiSelectProps {
    * Render the selected lists as a non-interactive display (no toggling).
    * Staff-side list assignment is now managed from the supply-list detail screen
    * (US-005, OQ-2), so the roles module shows this read-only.
+   *
+   * RESERVED: no caller wires this yet — it is kept for the planned read-only
+   * Staff Detail "assigned lists" view. Covered by the readOnly-mode tests.
    */
   readOnly?: boolean
   /** Test ID prefix. */

@@ -126,7 +126,11 @@
     "business_name_required": "வணிகப் பெயர் தேவை",
     "business_name_invalid": "வணிகப் பெயரில் தவறான எழுத்துகள் உள்ளன",
     "too_long": "இது மிக நீளமாக உள்ளது",
-    "invalid_characters": "தவறான எழுத்துகள் உள்ளன"
+    "invalid_characters": "தவறான எழுத்துகள் உள்ளன",
+    "invalid_input": "தவறான உள்ளீடு உள்ளது",
+    "invalid_number": "சரியான எண்ணை உள்ளிடவும்",
+    "invalid_time": "நேரத்தை HH:mm வடிவில் உள்ளிடவும்",
+    "invalid_days": "குறைந்தது ஒரு நாளையாவது தேர்ந்தெடுக்கவும்"
   },
   "roles": {
     "owner_badge": "உரிமையாளர்",
@@ -234,6 +238,8 @@
     "empty_my_lists": "இன்னும் பட்டியல்கள் ஒதுக்கப்படவில்லை",
     "unassigned": "ஒதுக்கப்படவில்லை",
     "staff_label": "பணியாளர்: {{names}}",
+    "in_lists": "உள்ளது: {{names}}",
+    "month_stats": "இந்த மாதம்",
     "customers_count": "{{count}} வாடிக்கையாளர்கள்",
     "today_progress": "இன்று: {{done}}/{{total}}",
     "today_not_started": "தொடங்கவில்லை",
@@ -298,6 +304,7 @@
     "status_active": "செயலில்",
     "status_paused": "இடைநிறுத்தப்பட்டது",
     "status_ended": "முடிந்தது",
+    "status_archived": "காப்பகப்படுத்தப்பட்டது",
     "unnamed_customer": "பெயரிடப்படாத வாடிக்கையாளர்",
     "card_a11y": "{{name}}, {{count}} வாடிக்கையாளர்கள், {{status}}",
     "customer_a11y": "{{name}}, {{status}}",

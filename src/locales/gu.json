@@ -126,7 +126,11 @@
     "business_name_required": "વ્યવસાયનું નામ જરૂરી છે",
     "business_name_invalid": "વ્યવસાયના નામમાં અમાન્ય અક્ષરો છે",
     "too_long": "આ ઘણું લાંબું છે",
-    "invalid_characters": "અમાન્ય અક્ષરો છે"
+    "invalid_characters": "અમાન્ય અક્ષરો છે",
+    "invalid_input": "અમાન્ય ઇનપુટ છે",
+    "invalid_number": "માન્ય સંખ્યા દાખલ કરો",
+    "invalid_time": "સમય HH:mm માં દાખલ કરો",
+    "invalid_days": "ઓછામાં ઓછો એક દિવસ પસંદ કરો"
   },
   "roles": {
     "owner_badge": "માલિક",
@@ -234,6 +238,8 @@
     "empty_my_lists": "હજી કોઈ સૂચિ સોંપાઈ નથી",
     "unassigned": "સોંપાયેલ નથી",
     "staff_label": "સ્ટાફ: {{names}}",
+    "in_lists": "માં: {{names}}",
+    "month_stats": "આ મહિને",
     "customers_count": "{{count}} ગ્રાહકો",
     "today_progress": "આજે: {{done}}/{{total}}",
     "today_not_started": "શરૂ થયું નથી",
@@ -298,6 +304,7 @@
     "status_active": "સક્રિય",
     "status_paused": "થોભાવેલ",
     "status_ended": "સમાપ્ત",
+    "status_archived": "આર્કાઇવ કરેલ",
     "unnamed_customer": "નામ વગરનો ગ્રાહક",
     "card_a11y": "{{name}}, {{count}} ગ્રાહકો, {{status}}",
     "customer_a11y": "{{name}}, {{status}}",

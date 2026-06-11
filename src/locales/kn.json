@@ -126,7 +126,11 @@
     "business_name_required": "ವ್ಯಾಪಾರದ ಹೆಸರು ಅಗತ್ಯ",
     "business_name_invalid": "ವ್ಯಾಪಾರದ ಹೆಸರಿನಲ್ಲಿ ಅಮಾನ್ಯ ಅಕ್ಷರಗಳಿವೆ",
     "too_long": "ಇದು ತುಂಬಾ ಉದ್ದವಾಗಿದೆ",
-    "invalid_characters": "ಅಮಾನ್ಯ ಅಕ್ಷರಗಳಿವೆ"
+    "invalid_characters": "ಅಮಾನ್ಯ ಅಕ್ಷರಗಳಿವೆ",
+    "invalid_input": "ಅಮಾನ್ಯ ಇನ್‌ಪುಟ್ ಇದೆ",
+    "invalid_number": "ಮಾನ್ಯ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
+    "invalid_time": "ಸಮಯವನ್ನು HH:mm ರೂಪದಲ್ಲಿ ನಮೂದಿಸಿ",
+    "invalid_days": "ಕನಿಷ್ಠ ಒಂದು ದಿನವನ್ನು ಆಯ್ಕೆಮಾಡಿ"
   },
   "roles": {
     "owner_badge": "ಮಾಲೀಕ",
@@ -234,6 +238,8 @@
     "empty_my_lists": "ಇನ್ನೂ ಪಟ್ಟಿಗಳನ್ನು ನಿಯೋಜಿಸಿಲ್ಲ",
     "unassigned": "ನಿಯೋಜಿಸಿಲ್ಲ",
     "staff_label": "ಸಿಬ್ಬಂದಿ: {{names}}",
+    "in_lists": "ಇದರಲ್ಲಿ: {{names}}",
+    "month_stats": "ಈ ತಿಂಗಳು",
     "customers_count": "{{count}} ಗ್ರಾಹಕರು",
     "today_progress": "ಇಂದು: {{done}}/{{total}}",
     "today_not_started": "ಪ್ರಾರಂಭವಾಗಿಲ್ಲ",
@@ -298,6 +304,7 @@
     "status_active": "ಸಕ್ರಿಯ",
     "status_paused": "ವಿರಾಮಗೊಂಡಿದೆ",
     "status_ended": "ಮುಗಿದಿದೆ",
+    "status_archived": "ಆರ್ಕೈವ್ ಮಾಡಲಾಗಿದೆ",
     "unnamed_customer": "ಹೆಸರಿಲ್ಲದ ಗ್ರಾಹಕ",
     "card_a11y": "{{name}}, {{count}} ಗ್ರಾಹಕರು, {{status}}",
     "customer_a11y": "{{name}}, {{status}}",

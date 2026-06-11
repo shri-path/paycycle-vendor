@@ -126,7 +126,11 @@
     "business_name_required": "ব্যবসার নাম আবশ্যক",
     "business_name_invalid": "ব্যবসার নামে অবৈধ অক্ষর রয়েছে",
     "too_long": "এটি খুব দীর্ঘ",
-    "invalid_characters": "অবৈধ অক্ষর রয়েছে"
+    "invalid_characters": "অবৈধ অক্ষর রয়েছে",
+    "invalid_input": "অবৈধ ইনপুট রয়েছে",
+    "invalid_number": "একটি বৈধ সংখ্যা লিখুন",
+    "invalid_time": "সময় HH:mm হিসাবে লিখুন",
+    "invalid_days": "অন্তত একটি দিন নির্বাচন করুন"
   },
   "roles": {
     "owner_badge": "মালিক",
@@ -234,6 +238,8 @@
     "empty_my_lists": "এখনও কোনো তালিকা বরাদ্দ নেই",
     "unassigned": "বরাদ্দ করা হয়নি",
     "staff_label": "কর্মী: {{names}}",
+    "in_lists": "এতে: {{names}}",
+    "month_stats": "এই মাসে",
     "customers_count": "{{count}} জন গ্রাহক",
     "today_progress": "আজ: {{done}}/{{total}}",
     "today_not_started": "শুরু হয়নি",
@@ -298,6 +304,7 @@
     "status_active": "সক্রিয়",
     "status_paused": "বিরতিতে",
     "status_ended": "সমাপ্ত",
+    "status_archived": "সংরক্ষণাগারভুক্ত",
     "unnamed_customer": "নামহীন গ্রাহক",
     "card_a11y": "{{name}}, {{count}} জন গ্রাহক, {{status}}",
     "customer_a11y": "{{name}}, {{status}}",

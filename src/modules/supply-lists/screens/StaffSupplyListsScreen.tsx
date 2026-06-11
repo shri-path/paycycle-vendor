@@ -11,7 +11,7 @@
  */
 
 import React, { useCallback, useEffect } from 'react'
-import { FlatList, StyleSheet, Platform, RefreshControl } from 'react-native'
+import { View, FlatList, StyleSheet, Platform, RefreshControl } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter, type Href } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
@@ -35,20 +35,16 @@ const styles = StyleSheet.create({
 })
 
 function StaffListsSkeleton() {
+  // Static placeholder cards (no FlatList) — the skeleton renders a fixed set of
+  // shimmer rows, so a virtualized list adds no value and complicates testing.
   return (
-    <SafeAreaView style={styles.safe} edges={['bottom']}>
-      <FlatList
-        testID="my-lists-skeleton"
-        data={[0, 1, 2]}
-        keyExtractor={(i) => String(i)}
-        renderItem={() => (
-          <AppCard variant="flat" style={styles.skeletonCard}>
-            {null}
-          </AppCard>
-        )}
-        contentContainerStyle={styles.listContent}
-      />
-    </SafeAreaView>
+    <View style={styles.listContent} testID="my-lists-skeleton">
+      {[0, 1, 2, 3].map((i) => (
+        <AppCard key={i} variant="flat" style={styles.skeletonCard}>
+          <View />
+        </AppCard>
+      ))}
+    </View>
   )
 }
 

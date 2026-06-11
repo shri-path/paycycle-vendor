@@ -126,7 +126,11 @@
     "business_name_required": "Business name is required",
     "business_name_invalid": "Business name contains invalid characters",
     "too_long": "This is too long",
-    "invalid_characters": "Contains invalid characters"
+    "invalid_characters": "Contains invalid characters",
+    "invalid_input": "Contains invalid input",
+    "invalid_number": "Enter a valid number",
+    "invalid_time": "Enter time as HH:mm",
+    "invalid_days": "Select at least one day"
   },
   "roles": {
     "owner_badge": "Owner",
@@ -234,6 +238,8 @@
     "empty_my_lists": "No lists assigned yet",
     "unassigned": "Unassigned",
     "staff_label": "Staff: {{names}}",
+    "in_lists": "In: {{names}}",
+    "month_stats": "This Month",
     "customers_count": "{{count}} customers",
     "today_progress": "Today: {{done}}/{{total}}",
     "today_not_started": "Not started",
@@ -298,6 +304,7 @@
     "status_active": "Active",
     "status_paused": "Paused",
     "status_ended": "Ended",
+    "status_archived": "Archived",
     "unnamed_customer": "Unnamed customer",
     "card_a11y": "{{name}}, {{count}} customers, {{status}}",
     "customer_a11y": "{{name}}, {{status}}",

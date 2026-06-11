@@ -126,7 +126,11 @@
     "business_name_required": "వ్యాపార పేరు తప్పనిసరి",
     "business_name_invalid": "వ్యాపార పేరులో చెల్లని అక్షరాలు ఉన్నాయి",
     "too_long": "ఇది చాలా పొడవుగా ఉంది",
-    "invalid_characters": "చెల్లని అక్షరాలు ఉన్నాయి"
+    "invalid_characters": "చెల్లని అక్షరాలు ఉన్నాయి",
+    "invalid_input": "చెల్లని ఇన్‌పుట్ ఉంది",
+    "invalid_number": "చెల్లుబాటు అయ్యే సంఖ్యను నమోదు చేయండి",
+    "invalid_time": "సమయాన్ని HH:mm లో నమోదు చేయండి",
+    "invalid_days": "కనీసం ఒక రోజును ఎంచుకోండి"
   },
   "roles": {
     "owner_badge": "యజమాని",
@@ -234,6 +238,8 @@
     "empty_my_lists": "ఇంకా జాబితాలు కేటాయించబడలేదు",
     "unassigned": "కేటాయించబడలేదు",
     "staff_label": "సిబ్బంది: {{names}}",
+    "in_lists": "లో: {{names}}",
+    "month_stats": "ఈ నెల",
     "customers_count": "{{count}} కస్టమర్లు",
     "today_progress": "ఈ రోజు: {{done}}/{{total}}",
     "today_not_started": "ప్రారంభం కాలేదు",
@@ -298,6 +304,7 @@
     "status_active": "క్రియాశీలం",
     "status_paused": "నిలిపివేయబడింది",
     "status_ended": "ముగిసింది",
+    "status_archived": "ఆర్కైవ్ చేయబడింది",
     "unnamed_customer": "పేరు లేని కస్టమర్",
     "card_a11y": "{{name}}, {{count}} కస్టమర్లు, {{status}}",
     "customer_a11y": "{{name}}, {{status}}",

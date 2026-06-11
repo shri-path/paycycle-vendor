@@ -3,10 +3,12 @@
  * Purpose: Form state + validation for the Create / Edit supply-list screens.
  *
  * - Holds the editable field values, per-field error keys, and a setField updater.
- * - Validation rules (Task 6): name 1–100; unit required; defaultQuantity /
+ * - Validation rules (Task 6) live in `@utils/validation` (pure, shared): name
+ *   1–100 + sanitized/injection-guarded; unit required; defaultQuantity /
  *   defaultRatePerUnit ≥ 0 and finite (optional); startTime "HH:mm" (optional);
  *   frequency-conditional days — WEEKLY → 1..7 required, MONTHLY → 1..31 required,
- *   DAILY → none; primaryStaffId ∈ staffIds.
+ *   DAILY → none; primaryStaffId ∈ staffIds. This hook only routes fields to them.
+ * - The free-text `name` is sanitized (control chars stripped) in setField.
  * - Errors are stored as RAW i18n keys; the screen translates with t() at render.
  * - toCreateInput() builds the POST body; toUpdatePatch() emits ONLY changed fields
  *   (vs the `initial` snapshot) so Edit sends a minimal PATCH.
@@ -21,6 +23,15 @@ import type {
   SupplyUnit,
   UpdateSupplyListInput,
 } from '../../../types/supplyLists'
+import {
+  sanitizeText,
+  validateFrequencyDays,
+  validateOptionalNonNegativeNumber,
+  validatePrimaryStaffId,
+  validateStartTime,
+  validateSupplyListName,
+  validateSupplyUnit,
+} from '@utils/validation'
 
 /** Editable form values. Numeric fields are kept as strings (text inputs). */
 export interface SupplyListFormValues {
@@ -52,8 +63,6 @@ export interface UseSupplyListForm {
   toUpdatePatch: () => UpdateSupplyListInput
 }
 
-const HHMM_RE = /^([01]\d|2[0-3]):[0-5]\d$/
-
 const EMPTY_VALUES: SupplyListFormValues = {
   name: '',
   supplyType: '',
@@ -74,55 +83,30 @@ function parseNum(raw: string): number | null {
   return Number(trimmed)
 }
 
-/** Validates a single field; returns a raw i18n error key or null. */
+/**
+ * Validates a single field; returns a raw i18n error key or null.
+ * Delegates to the shared, pure validators in `@utils/validation` (codebase
+ * convention) — the form layer only routes each field to its validator.
+ */
 function validateField(
   field: keyof SupplyListFormValues,
   values: SupplyListFormValues,
 ): string | null {
   switch (field) {
-    case 'name': {
-      const name = values.name.trim()
-      if (name.length < 1) return 'validation.required'
-      if (name.length > 100) return 'validation.too_long'
-      return null
-    }
+    case 'name':
+      return validateSupplyListName(values.name)
     case 'unit':
-      return values.unit === '' ? 'validation.required' : null
-    case 'defaultQuantity': {
-      const n = parseNum(values.defaultQuantity)
-      if (n === null) return null
-      // No dedicated `validation.invalid_number` key yet (WS-0 owns locales) —
-      // reuse `validation.required` for now; flagged to the orchestrator.
-      if (!Number.isFinite(n) || n < 0) return 'validation.required'
-      return null
-    }
-    case 'defaultRatePerUnit': {
-      const n = parseNum(values.defaultRatePerUnit)
-      if (n === null) return null
-      if (!Number.isFinite(n) || n < 0) return 'validation.required'
-      return null
-    }
-    case 'startTime': {
-      const t = values.startTime.trim()
-      if (t === '') return null
-      // No `validation.invalid_time` key yet — reuse `validation.required` (flagged).
-      return HHMM_RE.test(t) ? null : 'validation.required'
-    }
-    case 'frequencyDays': {
-      const days = values.frequencyDays
-      if (values.frequency === 'DAILY') return null
-      if (days.length === 0) return 'validation.required'
-      const max = values.frequency === 'WEEKLY' ? 7 : 31
-      const allInRange = days.every((d) => Number.isInteger(d) && d >= 1 && d <= max)
-      // No `validation.invalid_days` key yet — reuse `validation.required` (flagged).
-      return allInRange ? null : 'validation.required'
-    }
-    case 'primaryStaffId': {
-      const id = values.primaryStaffId
-      if (id === '') return null
-      // No `validation.invalid_primary_staff` key yet — reuse `validation.required` (flagged).
-      return values.staffIds.includes(id) ? null : 'validation.required'
-    }
+      return validateSupplyUnit(values.unit)
+    case 'defaultQuantity':
+      return validateOptionalNonNegativeNumber(values.defaultQuantity)
+    case 'defaultRatePerUnit':
+      return validateOptionalNonNegativeNumber(values.defaultRatePerUnit)
+    case 'startTime':
+      return validateStartTime(values.startTime)
+    case 'frequencyDays':
+      return validateFrequencyDays(values.frequency, values.frequencyDays)
+    case 'primaryStaffId':
+      return validatePrimaryStaffId(values.primaryStaffId, values.staffIds)
     default:
       return null
   }
@@ -167,7 +151,13 @@ export function useSupplyListForm(initial?: Partial<SupplyListFormValues>): UseS
 
   const setField = useCallback(
     <K extends keyof SupplyListFormValues>(field: K, value: SupplyListFormValues[K]) => {
-      const next: SupplyListFormValues = { ...valuesRef.current, [field]: value }
+      // Sanitize the free-text `name` field (strip control chars) before storing;
+      // validateSupplyListName then guards injection/markup → validation.invalid_input.
+      const nextValue =
+        field === 'name' && typeof value === 'string'
+          ? (sanitizeText(value) as SupplyListFormValues[K])
+          : value
+      const next: SupplyListFormValues = { ...valuesRef.current, [field]: nextValue }
       valuesRef.current = next
       setValues(next)
       // Re-validate the touched field (and dependents) for live feedback.

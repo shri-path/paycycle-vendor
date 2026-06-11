@@ -126,7 +126,11 @@
     "business_name_required": "व्यवसायाचे नाव आवश्यक आहे",
     "business_name_invalid": "व्यवसायाच्या नावात अवैध वर्ण आहेत",
     "too_long": "हे खूप लांब आहे",
-    "invalid_characters": "अवैध वर्ण आहेत"
+    "invalid_characters": "अवैध वर्ण आहेत",
+    "invalid_input": "अवैध इनपुट आहे",
+    "invalid_number": "वैध संख्या प्रविष्ट करा",
+    "invalid_time": "वेळ HH:mm मध्ये प्रविष्ट करा",
+    "invalid_days": "किमान एक दिवस निवडा"
   },
   "roles": {
     "owner_badge": "मालक",
@@ -234,6 +238,8 @@
     "empty_my_lists": "अजून याद्या नियुक्त केल्या नाहीत",
     "unassigned": "नियुक्त केलेले नाही",
     "staff_label": "कर्मचारी: {{names}}",
+    "in_lists": "मध्ये: {{names}}",
+    "month_stats": "या महिन्यात",
     "customers_count": "{{count}} ग्राहक",
     "today_progress": "आज: {{done}}/{{total}}",
     "today_not_started": "सुरू झाले नाही",
@@ -298,6 +304,7 @@
     "status_active": "सक्रिय",
     "status_paused": "थांबवलेले",
     "status_ended": "समाप्त",
+    "status_archived": "संग्रहित",
     "unnamed_customer": "नाव नसलेला ग्राहक",
     "card_a11y": "{{name}}, {{count}} ग्राहक, {{status}}",
     "customer_a11y": "{{name}}, {{status}}",

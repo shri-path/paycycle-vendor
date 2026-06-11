@@ -253,6 +253,21 @@ describe('SupplyListDetailScreen', () => {
     )
   })
 
+  it('shows an inline field error and skips save for an invalid quantity', async () => {
+    const screen = await render(<SupplyListDetailScreen />)
+    fireEvent.press(screen.getByTestId('customer-card-sub1'))
+    await screen.findByTestId('edit-sub-save')
+    fireEvent.changeText(screen.getByTestId('edit-sub-qty'), '-5')
+    await waitFor(() =>
+      expect(screen.getByTestId('edit-sub-qty').props.value).toBe('-5'),
+    )
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('edit-sub-save'))
+    })
+    expect(mockUpdateSub).not.toHaveBeenCalled()
+    expect(screen.getByText(t('validation.invalid_number'))).toBeTruthy()
+  })
+
   it('removes a subscription after confirm', async () => {
     const screen = await render(<SupplyListDetailScreen />)
     fireEvent.press(screen.getByTestId('customer-card-sub1'))

@@ -87,6 +87,10 @@ export interface SupplyListsState {
   available: AvailableCustomerDto[]
   availableMeta: PaginationMeta | null
   isAvailableLoading: boolean
+  // Error slice owned by the Add-Customers screen (fetch-available + add). Kept
+  // separate from `detailError` so an add-screen failure never pollutes the
+  // detail screen's error banner.
+  availableError: string | null
 
   // actions
   setListStatusFilter: (status: SupplyListStatus) => void
@@ -124,6 +128,7 @@ const initialNonPersisted = {
   available: [] as AvailableCustomerDto[],
   availableMeta: null as PaginationMeta | null,
   isAvailableLoading: false,
+  availableError: null as string | null,
 }
 
 export const useSupplyListsStore = create<SupplyListsState>()(
@@ -135,7 +140,7 @@ export const useSupplyListsStore = create<SupplyListsState>()(
 
       setListStatusFilter: (status) => set({ listStatusFilter: status }),
 
-      clearError: () => set({ listsError: null, detailError: null }),
+      clearError: () => set({ listsError: null, detailError: null, availableError: null }),
 
       clearSupplyLists: () =>
         set({
@@ -222,7 +227,7 @@ export const useSupplyListsStore = create<SupplyListsState>()(
         const vendorId = getActiveVendorId()
         if (!vendorId) return
         const page = opts.page ?? 1
-        set({ isAvailableLoading: true })
+        set({ isAvailableLoading: true, availableError: null })
         try {
           const { data, meta } = await supplyListsService.listAvailable(vendorId, listId, {
             search: opts.search,
@@ -239,7 +244,7 @@ export const useSupplyListsStore = create<SupplyListsState>()(
             action: 'fetchAvailable',
             endpoint: 'GET /vendors/:id/supply-lists/:listId/available-customers',
           })
-          set({ isAvailableLoading: false, detailError: mapApiError(err, 'supply') })
+          set({ isAvailableLoading: false, availableError: mapApiError(err, 'supply') })
         }
       },
 
@@ -371,7 +376,7 @@ export const useSupplyListsStore = create<SupplyListsState>()(
       addCustomers: async (listId, input) => {
         const vendorId = getActiveVendorId()
         if (!vendorId) throw new Error('supply.error_not_found')
-        set({ isCustomersLoading: true, detailError: null })
+        set({ isCustomersLoading: true, availableError: null })
         try {
           const result = await supplyListsService.addCustomers(vendorId, listId, input)
           set((s) => ({
@@ -390,7 +395,7 @@ export const useSupplyListsStore = create<SupplyListsState>()(
           })
           set({
             isCustomersLoading: false,
-            detailError: mapApiError(err, 'supply', 'add_customers'),
+            availableError: mapApiError(err, 'supply', 'add_customers'),
           })
           throw err
         }
