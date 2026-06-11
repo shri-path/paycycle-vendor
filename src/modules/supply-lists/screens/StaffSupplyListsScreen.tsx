@@ -81,7 +81,7 @@ function StaffSupplyListsScreenContent() {
   )
   const keyExtractor = useCallback((l: SupplyListListDto) => l.id, [])
 
-  const header = <AppHeader title={t('supply.my_lists_title')} showBack onBackPress={() => router.back()} />
+  const header = <AppHeader title={t('supply.my_lists_title')} />
 
   // Loading (first load, no cached data yet)
   if (isListsLoading && lists.length === 0) {

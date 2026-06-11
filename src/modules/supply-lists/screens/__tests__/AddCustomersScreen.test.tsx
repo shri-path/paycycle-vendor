@@ -159,4 +159,21 @@ describe('AddCustomersScreen', () => {
       ),
     ).toBeTruthy()
   })
+
+  it('shows an inline error and skips add for an invalid custom quantity (BUG-001)', async () => {
+    const screen = await render(<AddCustomersScreen />)
+    fireEvent.press(screen.getByTestId('available-c1'))
+    await waitFor(() =>
+      expect(screen.getByTestId('available-c1').props.accessibilityState.checked).toBe(true),
+    )
+    fireEvent.press(screen.getByText(t('supply.custom_qty')))
+    const qtyInput = await screen.findByTestId('custom-qty')
+    fireEvent.changeText(qtyInput, '-5')
+    await waitFor(() => expect(screen.getByTestId('custom-qty').props.value).toBe('-5'))
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('add-submit'))
+    })
+    expect(mockAddCustomers).not.toHaveBeenCalled()
+    expect(screen.getByText(t('validation.invalid_number'))).toBeTruthy()
+  })
 })

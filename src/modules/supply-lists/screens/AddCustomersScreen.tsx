@@ -150,6 +150,8 @@ function AddCustomersScreenContent() {
   const [customRate, setCustomRate] = useState('')
   const [startDate, setStartDate] = useState<Date | undefined>(undefined)
   const [summary, setSummary] = useState<{ added: number; skipped: number } | null>(null)
+  const [customQtyError, setCustomQtyError] = useState<string | null>(null)
+  const [customRateError, setCustomRateError] = useState<string | null>(null)
 
   const busy = useRef(false)
 
@@ -191,11 +193,20 @@ function AddCustomersScreenContent() {
     // Validate custom inputs (progressive disclosure mirrors the backend refinement).
     const qty = Number(customQty)
     const rate = Number(customRate)
+    let hasError = false
     if (!useDefaultQty && (!Number.isFinite(qty) || qty < 0)) {
-      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
-      return
+      setCustomQtyError('validation.invalid_number')
+      hasError = true
+    } else {
+      setCustomQtyError(null)
     }
     if (!useDefaultRate && (!Number.isFinite(rate) || rate < 0)) {
+      setCustomRateError('validation.invalid_number')
+      hasError = true
+    } else {
+      setCustomRateError(null)
+    }
+    if (hasError) {
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
       return
     }
@@ -358,10 +369,14 @@ function AddCustomersScreenContent() {
         {!useDefaultQty ? (
           <AppInput
             value={customQty}
-            onChangeText={setCustomQty}
+            onChangeText={(v) => {
+              setCustomQty(v)
+              if (customQtyError) setCustomQtyError(null)
+            }}
             keyboardType="numeric"
             placeholder={t('supply.custom_qty')}
             containerStyle={styles.customInput}
+            error={customQtyError ? t(customQtyError) : undefined}
             testID="custom-qty"
           />
         ) : null}
@@ -379,10 +394,14 @@ function AddCustomersScreenContent() {
         {!useDefaultRate ? (
           <AppInput
             value={customRate}
-            onChangeText={setCustomRate}
+            onChangeText={(v) => {
+              setCustomRate(v)
+              if (customRateError) setCustomRateError(null)
+            }}
             keyboardType="numeric"
             placeholder={t('supply.custom_rate')}
             containerStyle={styles.customInput}
+            error={customRateError ? t(customRateError) : undefined}
             testID="custom-rate"
           />
         ) : null}
