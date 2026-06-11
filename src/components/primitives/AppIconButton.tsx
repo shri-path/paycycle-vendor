@@ -22,7 +22,7 @@ import {
   View,
 } from 'react-native'
 import { AppText } from './AppText'
-import { colors, borderRadius, fontSize, fontWeight, componentSizes, borderWidth, animation } from '@constants/tokens'
+import { colors, borderRadius, fontSize, fontWeight, componentSizes, borderWidth, animation, interaction } from '@constants/tokens'
 
 export type IconButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost'
 export type IconButtonSize = 'sm' | 'md' | 'lg'
@@ -46,6 +46,8 @@ export interface AppIconButtonProps {
   style?: ViewStyle
   /** Test ID for e2e testing */
   testID?: string
+  /** Screen-reader label (already translated by caller) describing the action */
+  accessibilityLabel?: string
 }
 
 // ============================================================================
@@ -101,6 +103,13 @@ const variantStyles = StyleSheet.create({
 })
 
 const baseButtonStyle: ViewStyle = {
+  justifyContent: 'center',
+  alignItems: 'center',
+}
+
+const iconSlotStyle: ViewStyle = {
+  width: componentSizes.icon.md,
+  height: componentSizes.icon.md,
   justifyContent: 'center',
   alignItems: 'center',
 }
@@ -180,6 +189,7 @@ export const AppIconButton: React.FC<AppIconButtonProps> = ({
   badge,
   style,
   testID,
+  accessibilityLabel,
 }) => {
   let iconColor: string = colors.white
 
@@ -220,7 +230,7 @@ export const AppIconButton: React.FC<AppIconButtonProps> = ({
   const iconContent = loading ? (
     <ActivityIndicator color={iconColor} size={size === 'sm' ? 'small' : 'small'} />
   ) : (
-    <View style={{ width: componentSizes.icon.md, height: componentSizes.icon.md, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={iconSlotStyle}>
       {icon}
     </View>
   )
@@ -231,7 +241,11 @@ export const AppIconButton: React.FC<AppIconButtonProps> = ({
       disabled={disabled || loading}
       style={[buttonStyle, style]}
       activeOpacity={animation.opacity.active}
+      hitSlop={interaction.defaultHitSlop}
       testID={testID}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityState={{ disabled: disabled || loading }}
     >
       {iconContent}
 

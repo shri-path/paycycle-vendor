@@ -327,7 +327,8 @@ When testing, validate observable outcomes against these skills:
 | Test Area | Skill to Validate Against |
 |---|---|
 | Screen states (5 states) | `screen-development.md` |
-| Touch targets, screen reader, contrast | `accessibility-ux.md` |
+| Cognitive load, touch targets, screen reader, contrast, RTL | `accessibility-ux.md` |
+| Visual hierarchy, spacing rhythm, type scale, color, elevation | `ui-visual-design.md` |
 | List scroll, memory, startup time | `performance-optimization.md` |
 | Indic text overflow, number formatting, all 9 languages | `localization-i18n.md` |
 | Error states, retry behavior, crash resilience | `error-handling.md` |

@@ -65,6 +65,14 @@ describe('rolesService (mock mode)', () => {
       expect(meta.total).toBe(staff.length)
     })
 
+    it('returns the staff-limits block (US-004, default unlimited stub)', async () => {
+      const { limits } = await rolesService.listStaff(VENDOR_ID)
+      expect(limits).not.toBeNull()
+      expect(limits?.maxStaff).toBeNull()
+      expect(limits?.canAddMore).toBe(true)
+      expect(typeof limits?.currentActive).toBe('number')
+    })
+
     it('includes a member with null todayStats (US-006 not wired)', async () => {
       const { staff } = await rolesService.listStaff(VENDOR_ID)
       expect(staff.some((s) => s.todayStats === null)).toBe(true)
@@ -108,6 +116,44 @@ describe('rolesService (mock mode)', () => {
       expect(updated.status).toBe('DISABLED')
       // restore for other tests
       await rolesService.updateStaff(VENDOR_ID, 'staff-1', { status: 'ACTIVE' })
+    })
+
+    it('applies a name patch to the fixture (US-004)', async () => {
+      const updated = await rolesService.updateStaff(VENDOR_ID, 'staff-1', {
+        name: 'Ramesh K.',
+      })
+      expect(updated.name).toBe('Ramesh K.')
+      await rolesService.updateStaff(VENDOR_ID, 'staff-1', { name: 'Ramesh Kumar' })
+    })
+  })
+
+  describe('resendInvite (US-004)', () => {
+    it('returns a fresh invite url + expiry for an INVITED member', async () => {
+      const result = await rolesService.resendInvite(VENDOR_ID, 'staff-3', 'whatsapp')
+      expect(result.inviteUrl).toContain('paycyclevendor://join/')
+      expect(typeof result.expiresAt).toBe('string')
+      expect(result.sentVia).toBe('whatsapp')
+    })
+
+    it('throws error_resend_not_pending for a non-INVITED member (422 path)', async () => {
+      await expect(rolesService.resendInvite(VENDOR_ID, 'staff-1')).rejects.toThrow(
+        'roles.error_resend_not_pending',
+      )
+    })
+  })
+
+  describe('updatePermissions (US-004)', () => {
+    it('MERGEs grants and returns the full 3-key state', async () => {
+      const result = await rolesService.updatePermissions(VENDOR_ID, 'staff-2', [
+        { key: 'mark_deliveries', granted: true },
+        { key: 'mark_leaves', granted: false },
+        { key: 'add_extra_charges', granted: true },
+      ])
+      expect(result.permissions).toHaveLength(3)
+      const map = Object.fromEntries(result.permissions.map((p) => [p.key, p.granted]))
+      expect(map['mark_deliveries']).toBe(true)
+      expect(map['mark_leaves']).toBe(false)
+      expect(map['add_extra_charges']).toBe(true)
     })
   })
 
@@ -168,15 +214,51 @@ describe('rolesService (real mode)', () => {
     expect(result).toEqual(role)
   })
 
-  it('listStaff hits the list path with page/limit params and unwraps data + meta', async () => {
-    const meta = { page: 2, limit: 20, total: 40, totalPages: 2 }
+  it('listStaff hits the list path with page/limit params and unwraps data + meta + limits', async () => {
+    const limits = { maxStaff: 5, currentActive: 3, canAddMore: true }
+    const meta = { page: 2, limit: 20, total: 40, totalPages: 2, limits }
     mockedHttp.get.mockResolvedValueOnce({ data: { data: [], meta } })
     const result = await rolesService.listStaff(VENDOR_ID, 2, 20)
     expect(mockedHttp.get).toHaveBeenCalledWith(APIPath.Staff.List(VENDOR_ID), {
       params: { page: 2, limit: 20 },
     })
     expect(result.meta).toEqual(meta)
+    expect(result.limits).toEqual(limits)
     expect(result.staff).toEqual([])
+  })
+
+  it('listStaff returns null limits when the backend omits the block', async () => {
+    const meta = { page: 1, limit: 20, total: 0, totalPages: 0 }
+    mockedHttp.get.mockResolvedValueOnce({ data: { data: [], meta } })
+    const result = await rolesService.listStaff(VENDOR_ID)
+    expect(result.limits).toBeNull()
+  })
+
+  it('resendInvite posts the sendVia body to the resend path (US-004)', async () => {
+    mockedHttp.post.mockResolvedValueOnce({
+      data: { data: { inviteUrl: 'u', expiresAt: 'e', sentVia: 'sms' } },
+    })
+    await rolesService.resendInvite(VENDOR_ID, 's1', 'sms')
+    expect(mockedHttp.post).toHaveBeenCalledWith(
+      APIPath.Staff.ResendInvitation(VENDOR_ID, 's1'),
+      { sendVia: 'sms' },
+    )
+    const body = mockedHttp.post.mock.calls[0]?.[1]
+    expect(body).not.toHaveProperty('vendorId')
+  })
+
+  it('updatePermissions patches the full grant map to the permissions path (US-004)', async () => {
+    const grants = [
+      { key: 'mark_deliveries' as const, granted: true },
+      { key: 'mark_leaves' as const, granted: false },
+      { key: 'add_extra_charges' as const, granted: false },
+    ]
+    mockedHttp.patch.mockResolvedValueOnce({ data: { data: { permissions: grants } } })
+    await rolesService.updatePermissions(VENDOR_ID, 's1', grants)
+    expect(mockedHttp.patch).toHaveBeenCalledWith(
+      APIPath.Staff.Permissions(VENDOR_ID, 's1'),
+      { permissions: grants },
+    )
   })
 
   it('inviteStaff posts the input body WITHOUT a vendorId field (multi-tenancy)', async () => {

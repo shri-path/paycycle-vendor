@@ -22,7 +22,8 @@ import {
   Modal,
 } from 'react-native'
 import { AppText } from './AppText'
-import { colors, spacing, borderRadius, fontSize, fontWeight, componentSizes } from '@constants/tokens'
+import { getCurrentLanguage } from '@locales/index'
+import { colors, spacing, borderRadius, fontSize, fontWeight, componentSizes, borderWidth, semanticColors } from '@constants/tokens'
 
 export type DatePickerMode = 'date' | 'time' | 'datetime'
 
@@ -47,6 +48,12 @@ export interface AppDatePickerProps {
   helperText?: string
   /** Disable the picker */
   disabled?: boolean
+  /**
+   * BCP-47 locale used to format the displayed date/time. Defaults to the app's
+   * current language (region-localised to India) so the order and numerals match
+   * the user's locale instead of a hardcoded DD/MM/YYYY.
+   */
+  locale?: string
   /** Container style override */
   containerStyle?: ViewStyle
 }
@@ -63,7 +70,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing[1],
   },
   pickerWrapper: {
-    borderWidth: 1,
+    borderWidth: borderWidth.thin,
     borderColor: colors.gray200,
     borderRadius: borderRadius.md,
     paddingHorizontal: spacing[3],
@@ -91,9 +98,13 @@ const styles = StyleSheet.create({
   pickerIcon: {
     marginLeft: spacing[2],
   },
+  pickerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: semanticColors.background.overlay,
     justifyContent: 'flex-end',
   },
   modalContent: {
@@ -161,9 +172,12 @@ const styles = StyleSheet.create({
 // UTILITIES
 // ============================================================================
 
-const formatDate = (date: Date, mode: DatePickerMode): string => {
-  if (!date) return ''
+/** Resolve the locale to format with: explicit prop, else app language as <lang>-IN. */
+const resolveLocale = (locale?: string): string =>
+  locale || `${getCurrentLanguage()}-IN`
 
+/** Manual DD/MM/YYYY fallback used when the Intl API is unavailable (e.g. Hermes without ICU). */
+const formatDateManual = (date: Date, mode: DatePickerMode): string => {
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
   const day = String(date.getDate()).padStart(2, '0')
@@ -179,6 +193,40 @@ const formatDate = (date: Date, mode: DatePickerMode): string => {
       return `${day}/${month}/${year} ${hours}:${minutes}`
     default:
       return ''
+  }
+}
+
+const formatDate = (date: Date, mode: DatePickerMode, locale?: string): string => {
+  if (!date) return ''
+
+  const dateOptions: Intl.DateTimeFormatOptions = {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  }
+  const timeOptions: Intl.DateTimeFormatOptions = {
+    hour: '2-digit',
+    minute: '2-digit',
+  }
+
+  try {
+    const resolved = resolveLocale(locale)
+    switch (mode) {
+      case 'date':
+        return new Intl.DateTimeFormat(resolved, dateOptions).format(date)
+      case 'time':
+        return new Intl.DateTimeFormat(resolved, timeOptions).format(date)
+      case 'datetime':
+        return new Intl.DateTimeFormat(resolved, {
+          ...dateOptions,
+          ...timeOptions,
+        }).format(date)
+      default:
+        return ''
+    }
+  } catch {
+    // Intl may be unavailable on some RN runtimes — fall back to manual format.
+    return formatDateManual(date, mode)
   }
 }
 
@@ -227,12 +275,13 @@ export const AppDatePicker: React.FC<AppDatePickerProps> = ({
   error,
   helperText,
   disabled = false,
+  locale,
   containerStyle,
 }) => {
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [tempDate, setTempDate] = useState<Date | undefined>(value)
 
-  const displayValue = value ? formatDate(value, mode) : placeholder
+  const displayValue = value ? formatDate(value, mode, locale) : placeholder
 
   const pickerWrapperStyle: ViewStyle = {
     ...styles.pickerWrapper,
@@ -271,8 +320,11 @@ export const AppDatePicker: React.FC<AppDatePickerProps> = ({
         onPress={handleOpenPicker}
         disabled={disabled}
         style={pickerWrapperStyle}
+        accessibilityRole="button"
+        accessibilityLabel={label}
+        accessibilityState={{ disabled }}
       >
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View style={styles.pickerRow}>
           <AppText
             variant="body"
             style={[
@@ -283,7 +335,7 @@ export const AppDatePicker: React.FC<AppDatePickerProps> = ({
           >
             {displayValue}
           </AppText>
-          <AppText style={styles.pickerIcon}>📅</AppText>
+          <AppText style={styles.pickerIcon} importantForAccessibility="no">📅</AppText>
         </View>
       </TouchableOpacity>
 
@@ -310,7 +362,7 @@ export const AppDatePicker: React.FC<AppDatePickerProps> = ({
             {tempDate && (
               <View style={styles.dateDisplay}>
                 <AppText style={styles.dateDisplayText}>
-                  {formatDate(tempDate, mode)}
+                  {formatDate(tempDate, mode, locale)}
                 </AppText>
               </View>
             )}
@@ -319,6 +371,7 @@ export const AppDatePicker: React.FC<AppDatePickerProps> = ({
               <TouchableOpacity
                 style={[styles.button, styles.buttonSecondary]}
                 onPress={handleCancel}
+                accessibilityRole="button"
               >
                 <AppText
                   style={[styles.buttonText, styles.buttonTextSecondary]}
@@ -330,6 +383,7 @@ export const AppDatePicker: React.FC<AppDatePickerProps> = ({
               <TouchableOpacity
                 style={[styles.button, styles.buttonPrimary]}
                 onPress={handleConfirm}
+                accessibilityRole="button"
               >
                 <AppText style={styles.buttonText}>Confirm</AppText>
               </TouchableOpacity>

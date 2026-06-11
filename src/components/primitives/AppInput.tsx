@@ -26,7 +26,7 @@ import {
 } from 'react-native'
 import { AppText } from './AppText'
 import { useFocusRing, inputOutlineReset } from '@hooks/useFocusRing'
-import { colors, spacing, borderRadius, fontSize, componentSizes } from '@constants/tokens'
+import { colors, spacing, borderRadius, fontSize, componentSizes, borderWidth, interaction } from '@constants/tokens'
 
 export interface AppInputProps extends TextInputProps {
   /** Label text displayed above input */
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
+    borderWidth: borderWidth.thin,
     borderColor: colors.gray200,
     borderRadius: borderRadius.md,
     paddingHorizontal: spacing[3],
@@ -234,6 +234,9 @@ export const AppInput: React.FC<AppInputProps> = ({
               onClear?.()
               props.onChangeText?.('')
             }}
+            hitSlop={interaction.defaultHitSlop}
+            accessibilityRole="button"
+            testID={testID ? `${testID}-clear` : undefined}
           >
             <AppText variant="body" color={colors.textSecondary}>
               ✕
@@ -254,6 +257,7 @@ export const AppInput: React.FC<AppInputProps> = ({
           testID={testID ? `${testID}-error` : undefined}
           style={styles.helperText}
           color={error ? colors.error : colors.textSecondary}
+          accessibilityLiveRegion={error ? 'polite' : 'none'}
         >
           {error || helperText}
         </AppText>

@@ -20,7 +20,7 @@ import {
   ViewStyle,
 } from 'react-native'
 import { AppText } from './AppText'
-import { colors, spacing, borderRadius, fontSize, fontWeight, componentSizes, borderWidth } from '@constants/tokens'
+import { colors, spacing, borderRadius, fontSize, fontWeight, componentSizes, borderWidth, interaction } from '@constants/tokens'
 
 export interface AppCheckboxProps {
   /** Checkbox label text */
@@ -167,7 +167,10 @@ export const AppCheckbox: React.FC<AppCheckboxProps> = ({
       onPress={handlePress}
       disabled={disabled}
       style={[styles.container, containerStyle]}
-      activeOpacity={disabled ? 1 : 0.7}
+      activeOpacity={disabled ? 1 : interaction.activeOpacity}
+      accessibilityRole="checkbox"
+      accessibilityLabel={label}
+      accessibilityState={{ checked: indeterminate ? 'mixed' : checked, disabled }}
     >
       <View style={checkboxStyle}>
         {checked && <AppText style={styles.checkmark}>✓</AppText>}

@@ -58,17 +58,15 @@ describe('authService (mock mode)', () => {
   })
 
   describe('forgotPassword', () => {
-    it('returns a non-empty reset token in mock mode', async () => {
-      const token = await authService.forgotPassword('+919876543210')
-      expect(typeof token).toBe('string')
-      expect(token.length).toBeGreaterThan(0)
+    it('returns the dev OTP in mock mode (real OTP delivered via SMS in production)', async () => {
+      await expect(authService.forgotPassword('+919876543210')).resolves.toBe('123456')
     })
   })
 
   describe('resetPassword', () => {
     it('resolves without error in mock mode', async () => {
       await expect(
-        authService.resetPassword('+919876543210', 'mock-reset-token', '123456', 'NewPass@1'),
+        authService.resetPassword('+919876543210', '123456', 'NewPass@1'),
       ).resolves.toBeUndefined()
     })
   })

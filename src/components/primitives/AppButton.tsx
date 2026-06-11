@@ -97,6 +97,11 @@ const baseButtonStyle: ViewStyle = {
   gap: spacing[1],
 }
 
+const iconSlotStyle: ViewStyle = {
+  width: componentSizes.icon.md,
+  height: componentSizes.icon.md,
+}
+
 // ============================================================================
 // COMPONENT
 // ============================================================================
@@ -195,7 +200,7 @@ export const AppButton: React.FC<AppButtonProps> = ({
       accessibilityHint={accessibilityHint}
     >
       {leftIcon && !loading && (
-        <View style={{ width: componentSizes.icon.md, height: componentSizes.icon.md }}>
+        <View style={iconSlotStyle}>
           {leftIcon}
         </View>
       )}
@@ -213,7 +218,7 @@ export const AppButton: React.FC<AppButtonProps> = ({
       )}
 
       {rightIcon && !loading && (
-        <View style={{ width: componentSizes.icon.md, height: componentSizes.icon.md }}>
+        <View style={iconSlotStyle}>
           {rightIcon}
         </View>
       )}

@@ -82,16 +82,18 @@ function ResetPasswordScreenContent() {
             </XStack>
           ) : null}
 
-          {/* Dev hint: only visible in development builds, tree-shaken in production */}
-          {__DEV__ ? (
+          {/* Dev hint: shows the actual generated OTP echoed by the API in non-production
+              environments. Only rendered in dev builds (tree-shaken in production) and
+              only when an OTP is available — never in production. */}
+          {__DEV__ && form.devOtp ? (
             <YStack
               backgroundColor={colors.warningBg}
               borderRadius={8}
               padding={spacing[2]}
               marginBottom={spacing[3]}
             >
-              <AppText variant="caption" color={colors.warning}>
-                [Dev] OTP: 123456
+              <AppText variant="caption" color={colors.warning} testID="reset-dev-otp">
+                [Dev] OTP: {form.devOtp}
               </AppText>
             </YStack>
           ) : null}
@@ -149,6 +151,9 @@ function ResetPasswordScreenContent() {
               </TouchableOpacity>
             }
           />
+
+          {/* Spacer pushes the primary CTA to the bottom of the screen (thumb reach) */}
+          <YStack flex={1} minHeight={spacing[6]} />
 
           <AppButton
             label={t('auth.reset_password')}

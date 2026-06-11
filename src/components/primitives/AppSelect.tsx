@@ -22,7 +22,7 @@ import {
   FlatList,
 } from 'react-native'
 import { AppText } from './AppText'
-import { colors, spacing, borderRadius, fontSize, componentSizes } from '@constants/tokens'
+import { colors, spacing, borderRadius, fontSize, componentSizes, borderWidth, semanticColors } from '@constants/tokens'
 
 export interface SelectOption {
   label: string
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing[1],
   },
   selectWrapper: {
-    borderWidth: 1,
+    borderWidth: borderWidth.thin,
     borderColor: colors.gray200,
     borderRadius: borderRadius.md,
     paddingHorizontal: spacing[3],
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: semanticColors.background.overlay,
     justifyContent: 'flex-end',
   },
   modalContent: {
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
   modalHeader: {
     paddingHorizontal: spacing[4],
     paddingVertical: spacing[3],
-    borderBottomWidth: 1,
+    borderBottomWidth: borderWidth.thin,
     borderBottomColor: colors.gray200,
   },
   modalHeaderText: {
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
   optionItem: {
     paddingHorizontal: spacing[4],
     paddingVertical: spacing[3],
-    borderBottomWidth: 1,
+    borderBottomWidth: borderWidth.thin,
     borderBottomColor: colors.gray100,
     flexDirection: 'row',
     alignItems: 'center',
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
   closeButton: {
     paddingHorizontal: spacing[4],
     paddingVertical: spacing[3],
-    borderTopWidth: 1,
+    borderTopWidth: borderWidth.thin,
     borderTopColor: colors.gray200,
   },
   closeButtonText: {
@@ -222,6 +222,9 @@ export const AppSelect: React.FC<AppSelectProps> = ({
         onPress={() => !disabled && setIsModalVisible(true)}
         disabled={disabled}
         style={selectWrapperStyle}
+        accessibilityRole="button"
+        accessibilityLabel={label}
+        accessibilityState={{ disabled }}
       >
         <AppText
           variant="body"
@@ -269,6 +272,8 @@ export const AppSelect: React.FC<AppSelectProps> = ({
                     item.value === value && styles.optionItemSelected,
                   ]}
                   onPress={() => handleSelectOption(item.value)}
+                  accessibilityRole="menuitem"
+                  accessibilityState={{ selected: item.value === value }}
                 >
                   <AppText style={styles.optionLabel}>{item.label}</AppText>
                   {item.value === value && (

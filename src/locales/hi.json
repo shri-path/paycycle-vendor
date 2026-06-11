@@ -16,7 +16,11 @@
     "retry": "पुनः प्रयास करें",
     "close": "बंद करें",
     "you": "आप",
-    "needs_connection": "इंटरनेट कनेक्शन की आवश्यकता है"
+    "needs_connection": "इंटरनेट कनेक्शन की आवश्यकता है",
+    "back": "वापस जाएं",
+    "menu": "मेनू",
+    "notifications": "सूचनाएं",
+    "notifications_badge": "{{count}} अपठित सूचनाएं"
   },
   "auth": {
     "welcome": "स्वागत है",
@@ -208,6 +212,16 @@
     "error_no_membership": "आप इस व्यवसाय के सदस्य नहीं हैं।",
     "error_invite_expired": "यह आमंत्रण समाप्त हो गया है। अपने मालिक से नया मांगें।",
     "error_invite_invalid": "यह आमंत्रण लिंक अमान्य है या पहले से इस्तेमाल हो चुका है।",
+    "staff_usage": "स्टाफ: {{current}} / {{max}}",
+    "staff_limit_reached": "स्टाफ की सीमा पूरी हो गई",
+    "staff_limit_upgrade_hint": "आप अपने प्लान की स्टाफ सीमा तक पहुँच गए हैं। और जोड़ने के लिए सहायता से संपर्क करें।",
+    "staff_limit_hint": "अधिक स्टाफ आमंत्रित करने के लिए अपना प्लान अपग्रेड करें।",
+    "edit_name": "नाम बदलें",
+    "save_name": "नाम सहेजें",
+    "resend_invite_section": "लंबित आमंत्रण",
+    "resend_invite": "आमंत्रण फिर भेजें",
+    "resend_invite_sent": "आमंत्रण फिर भेजा गया",
+    "error_resend_not_pending": "यह आमंत्रण अब फिर से नहीं भेजा जा सकता — स्टाफ सदस्य पहले ही शामिल हो चुका है।",
     "list_bullet": "• {{label}}",
     "lists_count": "{{count}} सूची असाइन की गई"
   }

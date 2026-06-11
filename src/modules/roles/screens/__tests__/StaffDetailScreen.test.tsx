@@ -43,6 +43,12 @@ const useNetworkStatusMock = useNetworkStatus as jest.Mock
 const mockFetchDetail = jest.fn().mockResolvedValue(undefined)
 const mockFetchRole = jest.fn().mockResolvedValue(undefined)
 const mockUpdate = jest.fn().mockResolvedValue(undefined)
+const mockUpdatePermissions = jest.fn().mockResolvedValue(undefined)
+const mockResend = jest.fn().mockResolvedValue({
+  inviteUrl: 'paycyclevendor://join/fresh',
+  expiresAt: '2026-07-01T00:00:00.000Z',
+  sentVia: 'whatsapp',
+})
 const mockRemove = jest.fn().mockResolvedValue(undefined)
 const mockAssign = jest.fn().mockResolvedValue(undefined)
 const mockUnassign = jest.fn().mockResolvedValue(undefined)
@@ -76,6 +82,8 @@ function mockStore(state: Record<string, unknown>) {
       fetchRole: mockFetchRole,
       fetchStaffDetail: mockFetchDetail,
       updateStaff: mockUpdate,
+      updatePermissions: mockUpdatePermissions,
+      resendInvite: mockResend,
       removeStaff: mockRemove,
       assignLists: mockAssign,
       unassignList: mockUnassign,
@@ -137,10 +145,30 @@ describe('StaffDetailScreen', () => {
     useNetworkStatusMock.mockReturnValue({ isConnected: false, isChecking: false })
     const screen = await render(<StaffDetailScreen />)
     expect(screen.getByText(t('common.offline'))).toBeTruthy()
+    // US-004 actions are disabled offline (network-dependent writes).
+    expect(screen.getByTestId('detail-save-name').props.accessibilityState.disabled).toBe(true)
+    expect(screen.getByTestId('detail-save-perms').props.accessibilityState.disabled).toBe(true)
     // The remove button is disabled offline; tapping it does not open the dialog
     // and confirming is unreachable, so no mutation fires.
     fireEvent.press(screen.getByTestId('detail-remove'))
     expect(mockRemove).not.toHaveBeenCalled()
+    // Tapping the disabled name-save offline must not fire updateStaff.
+    fireEvent.press(screen.getByTestId('detail-save-name'))
+    expect(mockUpdate).not.toHaveBeenCalled()
+    // Tapping the disabled perms-save offline must not fire updatePermissions.
+    fireEvent.press(screen.getByTestId('detail-save-perms'))
+    expect(mockUpdatePermissions).not.toHaveBeenCalled()
+  })
+
+  it('disables the resend action for an INVITED member when offline (US-004)', async () => {
+    useNetworkStatusMock.mockReturnValue({ isConnected: false, isChecking: false })
+    const invited: StaffResponseDto = { ...staff, status: 'INVITED', userId: null, joinedAt: null }
+    mockStore({ staffDetail: { s1: invited } })
+    const screen = await render(<StaffDetailScreen />)
+    const resendBtn = screen.getByTestId('detail-resend-invite')
+    expect(resendBtn.props.accessibilityState.disabled).toBe(true)
+    fireEvent.press(resendBtn)
+    expect(mockResend).not.toHaveBeenCalled()
   })
 
   // NOTE: mutation-success tests are ordered LAST and each fully settles its async
@@ -165,7 +193,7 @@ describe('StaffDetailScreen', () => {
     })
   })
 
-  it('saves permissions via updateStaff', async () => {
+  it('saves permissions via the dedicated /permissions endpoint with the full grant map', async () => {
     const screen = await render(<StaffDetailScreen />)
     // Toggle mark_leaves on, waiting for the local-state re-render to flush before save.
     fireEvent.press(screen.getByTestId('detail-perms-mark_leaves'))
@@ -176,9 +204,64 @@ describe('StaffDetailScreen', () => {
       fireEvent.press(screen.getByTestId('detail-save-perms'))
     })
     await waitFor(() => {
-      expect(mockUpdate).toHaveBeenCalledWith('s1', {
-        permissions: ['mark_deliveries', 'mark_leaves'],
-      })
+      // US-004: full 3-key grant map sent to updatePermissions (not updateStaff).
+      expect(mockUpdatePermissions).toHaveBeenCalledWith('s1', [
+        { key: 'mark_deliveries', granted: true },
+        { key: 'mark_leaves', granted: true },
+        { key: 'add_extra_charges', granted: false },
+      ])
+    })
+  })
+
+  it('renders and saves the editable name (US-004)', async () => {
+    const screen = await render(<StaffDetailScreen />)
+    const nameInput = screen.getByTestId('detail-name')
+    expect(nameInput.props.value).toBe('Raju')
+    fireEvent.changeText(nameInput, 'Raju Verma')
+    await waitFor(() => expect(nameInput.props.value).toBe('Raju Verma'))
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('detail-save-name'))
+    })
+    await waitFor(() => {
+      expect(mockUpdate).toHaveBeenCalledWith('s1', { name: 'Raju Verma' })
+    })
+  })
+
+  it('hides the resend section for a non-INVITED (active) member', async () => {
+    const screen = await render(<StaffDetailScreen />)
+    expect(screen.queryByTestId('detail-resend-invite')).toBeNull()
+  })
+
+  it('shows the resend section for an INVITED member and opens the share sheet on success', async () => {
+    const invited: StaffResponseDto = { ...staff, status: 'INVITED', userId: null, joinedAt: null }
+    mockStore({ staffDetail: { s1: invited } })
+    const screen = await render(<StaffDetailScreen />)
+    expect(screen.getByTestId('detail-resend-invite')).toBeTruthy()
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('detail-resend-invite'))
+    })
+    await waitFor(() => {
+      expect(mockResend).toHaveBeenCalledWith('s1', 'whatsapp')
+    })
+    await waitFor(() => {
+      expect(screen.getByTestId('invite-url')).toHaveTextContent('paycyclevendor://join/fresh')
+    })
+  })
+
+  it('re-fetches detail when resend fails (422 race)', async () => {
+    const invited: StaffResponseDto = { ...staff, status: 'INVITED', userId: null, joinedAt: null }
+    mockResend.mockRejectedValueOnce({
+      isAxiosError: true,
+      response: { status: 422, data: {} },
+    })
+    mockStore({ staffDetail: { s1: invited } })
+    const screen = await render(<StaffDetailScreen />)
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('detail-resend-invite'))
+    })
+    await waitFor(() => {
+      // fetchStaffDetail called on mount (1) + after the failed resend (2).
+      expect(mockFetchDetail).toHaveBeenCalledTimes(2)
     })
   })
 

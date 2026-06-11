@@ -41,6 +41,12 @@ export const APIPath = {
     Detail: (vendorId: string, staffId: string) => `/vendors/${vendorId}/staff/${staffId}`,
     /** POST — create an invite. */
     Invite: (vendorId: string) => `/vendors/${vendorId}/staff/invite`,
+    /** POST — resend a pending invitation, returns a fresh invite URL (US-004). */
+    ResendInvitation: (vendorId: string, staffId: string) =>
+      `/vendors/${vendorId}/staff/${staffId}/resend-invitation`,
+    /** PATCH — set a staff member's permission grants (MERGE semantics, US-004). */
+    Permissions: (vendorId: string, staffId: string) =>
+      `/vendors/${vendorId}/staff/${staffId}/permissions`,
     /** POST — assign supply lists to a staff member (OQ-6 stub until US-005). */
     Lists: (vendorId: string, staffId: string) => `/vendors/${vendorId}/staff/${staffId}/lists`,
     /** DELETE — unassign a single supply list (OQ-6 stub until US-005). */

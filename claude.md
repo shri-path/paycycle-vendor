@@ -121,14 +121,22 @@ paycycle_vendor/
 
 ---
 
-## UX Rules
+## UX / UI Rules
 
-- Tap-first UX (minimize typing)
-- Numeric keypad for amounts
-- Large touch targets (44x44 minimum)
-- Clear confirmations for destructive actions
-- Support low literacy users
-- Every screen must handle: Loading, Empty, Error, Content, Offline states
+World-class UX **and** top-notch UI are mandatory, not aspirational. Two binding skills govern this and Review enforces both:
+- **`.claude/skills/accessibility-ux.md`** — how it *feels*: lowest cognitive load, accessibility, internationalization (i18n + RTL + text expansion), thumb reach.
+- **`.claude/skills/ui-visual-design.md`** — how it *looks*: visual hierarchy, 4/8pt spacing rhythm, type scale, 60/30/10 color, elevation, polish.
+
+Core rules (see skills for the full enforceable checklists):
+- **Lowest cognitive load** — one dominant action per screen, progressive disclosure, recognition over recall, smart defaults, ≤5–7 choices at once, chunk long forms.
+- **Tap-first UX** (minimize typing); numeric keypad for amounts; selection over free text.
+- **Large touch targets** (44x44 minimum) with `hitSlop` on small tappables.
+- **International-ready** — every string via `t()`; design for ~+35% text expansion; `start`/`end` (never `left`/`right`) for RTL; locale-aware numbers/currency/dates; no clipping of long scripts.
+- **Visual craft** — tokens only (no hardcoded hex/px), clear hierarchy via `AppText` variants, consistent spacing/elevation, calm and uncluttered (never flashy).
+- **Color never the only signal** — pair with icon + text; contrast ≥ 4.5:1.
+- **Clear confirmations** for destructive actions; prefer undo for safe ones.
+- **Support low-literacy and non-tech users** everywhere.
+- **Every screen** must handle: Loading (skeleton), Empty, Error, Content, Offline.
 
 ---
 

@@ -165,13 +165,26 @@ You are an **orchestrator**. For any non-trivial feature, review faster and deep
 
 ### 11. Accessibility & UX Review (`accessibility-ux.md`)
 
-- [ ] Touch targets 44x44 minimum on all interactive elements
-- [ ] 8px minimum gap between adjacent touch targets
-- [ ] `accessibilityRole` on every interactive element
-- [ ] `accessibilityLabel` on icon-only buttons
-- [ ] Color never used alone for status — always color + icon + text
+- [ ] **Cognitive load**: one dominant primary action; rare options progressively disclosed; smart defaults/pre-fill; ≤5–7 choices at once; long forms chunked; plain copy; consistent placement
+- [ ] **Minimal input**: tap over type; correct keyboard (`number-pad`/`AppPhoneInput`); forgiving parsing; reversible/undo over needless confirmation
+- [ ] **i18n/RTL/text-expansion**: all strings via `t()`; `start`/`end` not `left`/`right`; directional icons mirrored; +35% expansion fits (2 lines OK); locale-aware numbers/currency/dates; no fragment concatenation
+- [ ] Touch targets 44x44 minimum; 8px minimum gap between adjacent targets
+- [ ] `accessibilityRole` on every interactive element; `accessibilityLabel` on icon-only buttons; decorative icons hidden
+- [ ] Color never used alone for status — always color + icon + text; contrast met
+- [ ] Dynamic changes announced (live region); focus managed on screen change & after errors
 - [ ] Font scaling tested at 1.5x — no clipping
 - [ ] WhatsApp interaction patterns followed (bottom actions, haptic, status ticks)
+
+### 16. Modern UI / Visual Design Review (`ui-visual-design.md`)
+
+- [ ] One clear focal point; single dominant filled-primary action, others subdued (no competing primaries)
+- [ ] Hierarchy via `AppText` variants — no invented font sizes; ≤~3 sizes/screen; body ≥ 16
+- [ ] All spacing/padding/gaps from `spacing` (4/8pt grid); one consistent screen padding; grouping by proximity; no card-in-card
+- [ ] 60/30/10 color balance; semantic colors only for meaning; text on tints ≥ 4.5:1; no `#000` fills; zero off-token hex
+- [ ] Elevation from `shadows` tokens; one step between layers; border OR shadow, not both; consistent `borderRadius`
+- [ ] Reused base components with consistent icon/button/card metrics
+- [ ] Skeleton matches final layout; empty/loading/disabled/pressed states polished and distinct
+- [ ] Token-only colors (theme-safe); layout survives Dynamic Type + long strings
 
 ### 12. Error Handling Review (`error-handling.md`)
 
@@ -277,6 +290,7 @@ Produce `docs/features/[feature-name]/REVIEW_REPORT.md`:
 | testing-strategy.md | ✅/❌/N/A | [Brief note] |
 | form-validation.md | ✅/❌/N/A | [Brief note] |
 | accessibility-ux.md | ✅/❌/N/A | [Brief note] |
+| ui-visual-design.md | ✅/❌/N/A | [Brief note] |
 | error-handling.md | ✅/❌/N/A | [Brief note] |
 | security-auth.md | ✅/❌/N/A | [Brief note] |
 | real-time-sync.md | ✅/❌/N/A | [Brief note] |

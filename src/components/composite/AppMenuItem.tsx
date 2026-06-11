@@ -138,7 +138,10 @@ export const AppMenuItem: React.FC<AppMenuItemProps> = ({
           containerStyle,
           disabled && styles.disabled,
         ]}
-        activeOpacity={disabled ? 1 : 0.6}
+        activeOpacity={disabled ? 1 : animation.opacity.active}
+        accessibilityRole="button"
+        accessibilityLabel={label}
+        accessibilityState={{ disabled }}
       >
         <View style={styles.leftContent}>
           {icon && (
@@ -167,7 +170,7 @@ export const AppMenuItem: React.FC<AppMenuItemProps> = ({
           </View>
         </View>
 
-        <AppText style={styles.arrow}>→</AppText>
+        <AppText style={styles.arrow} importantForAccessibility="no">→</AppText>
       </TouchableOpacity>
 
       {showDivider && <View style={styles.divider} />}

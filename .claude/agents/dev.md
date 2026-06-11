@@ -33,8 +33,9 @@ You MUST read and follow the appropriate skill before implementing each layer. S
 
 | Implementation Activity | Skill to Follow |
 |---|---|
-| Creating/modifying UI components | `component-development.md` |
-| Building screens (all 5 states) | `screen-development.md` |
+| Creating/modifying UI components | `component-development.md` + `ui-visual-design.md` |
+| Building screens (all 5 states) | `screen-development.md` + `ui-visual-design.md` |
+| Visual craft — hierarchy, spacing, type, color, depth | `ui-visual-design.md` |
 | Form/input validation + inline errors | `form-validation.md` |
 | Setting up Zustand stores | `state-management.md` |
 | API service layer + mocks | `api-integration.md` |
@@ -44,7 +45,7 @@ You MUST read and follow the appropriate skill before implementing each layer. S
 | Translations, locale formatting | `localization-i18n.md` |
 | Animations, transitions, haptics | `animation-haptics.md` |
 | Component tests, E2E tests | `testing-strategy.md` |
-| Touch targets, screen reader, a11y | `accessibility-ux.md` |
+| Cognitive load, a11y, i18n/RTL, touch targets | `accessibility-ux.md` |
 | Error boundaries, API error mapping | `error-handling.md` |
 | Auth, secure storage, multi-tenancy | `security-auth.md` |
 | Socket.IO, live updates, bg sync | `real-time-sync.md` |
