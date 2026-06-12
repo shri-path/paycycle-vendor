@@ -218,6 +218,16 @@ export const useAuthStore = create<AuthState>()(
           } catch {
             // customers store not loaded yet — nothing to clear.
           }
+          // Wipe all local audit data (incl. actor/customer PII) on logout (US-007).
+          try {
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
+            const { useAuditStore } = require('@modules/audit/store/audit.store') as {
+              useAuditStore: { getState: () => { clearAudit: () => void } }
+            }
+            useAuditStore.getState().clearAudit()
+          } catch {
+            // audit store not loaded yet — nothing to clear.
+          }
           set({
             isAuthenticated: false,
             user: null,

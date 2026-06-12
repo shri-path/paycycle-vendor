@@ -21,6 +21,7 @@ export type ApiErrorContext =
   | 'supply'
   | 'delivery'
   | 'customer'
+  | 'audit'
 
 /**
  * Sub-action within the `'delivery'` context (US-006). Several delivery endpoints
@@ -170,6 +171,13 @@ export function mapApiError(
       }
     }
 
+    // Audit surfaces (US-007) — read-only; resolve shared status codes by meaning.
+    if (context === 'audit') {
+      if (status === 403) return 'roles.error_forbidden' // staff hit an owner-only endpoint
+      if (status === 404) return 'audit.error_no_membership'
+      if (status === 400 || status === 422) return 'audit.error_invalid_filter'
+    }
+
     if (status === 401) return 'auth.invalid_credentials'
     if (status === 403) return 'roles.error_forbidden'
     if (status === 409) return 'auth.phone_already_registered'
@@ -189,6 +197,7 @@ export function mapApiError(
       err.message.startsWith('supply.') ||
       err.message.startsWith('delivery.') ||
       err.message.startsWith('customer.') ||
+      err.message.startsWith('audit.') ||
       err.message.startsWith('common.'))
   ) {
     return err.message
