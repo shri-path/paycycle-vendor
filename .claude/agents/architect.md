@@ -218,6 +218,14 @@ Dev, Review, and QA run multiple sub-agents **in parallel**. They can only do so
 - Prefer **fewer, cleanly-separable** workstreams over many entangled ones. If two pieces can't be made file-disjoint, keep them in one workstream rather than inventing a fake split.
 - Keep new shared files (e.g. a new layout component) in Foundation so feature workstreams consume, never create, them — avoids two agents creating the same file.
 
+### Task granularity rules — dev agents run on `claude-sonnet-4-6`; scope tasks so they need no architectural judgment
+- Each task owns **1–3 files maximum**; prefer 1 file per task when the file is non-trivial
+- Each task description must be **fully self-contained**: exact file path(s), the specific components/hooks/functions to implement, and the precise skill section to follow — the dev agent must be able to execute it with only the skill + FEATURE_PLAN.md as context
+- Avoid vague tasks like "implement the list screen" — write "implement `CustomerListScreen` in `src/screens/customer/CustomerListScreen.tsx`: FlatList with `CustomerCard`, empty state, pull-to-refresh; follow `component-patterns.md §FlatList`"
+- Never combine Foundation files and feature screen files in the same task
+- A workstream with >3 tasks is a signal to split it into additional workstreams (if files are non-overlapping)
+- Each task must list its **exact output files** so the dev agent knows when it is done
+
 ## Document Templates
 
 ### FEATURE_PLAN.md Structure
@@ -243,8 +251,9 @@ Dev, Review, and QA run multiple sub-agents **in parallel**. They can only do so
   - New Zustand store slices or local state
   - Derived state / selectors
 ## API Integration
-  - Endpoints consumed (from paycycle_api)
-  - Request/response shapes
+  - Source: `D:\Shrihari\Sourcecode\personal\paycycle\paycycle_api\docs\features\<slug>\API_SPEC.md` (authoritative)
+  - Endpoints consumed — copy method, path, request/response shapes verbatim from API_SPEC.md
+  - Do NOT invent or modify endpoint shapes — the backend spec is the contract
   - Error handling per endpoint (log failures with `correlationId` via the shared logger — see "Error Logging")
 ## Offline Behavior
   - What works offline
@@ -386,8 +395,13 @@ Dev, Review, and QA run multiple sub-agents **in parallel**. They can only do so
 
 When given a feature request:
 1. Read the relevant user story from `../project_documents/vendor_app/user_stories/`
-2. Read `claude.md` and `ARCHITECTURE_REFERENCE.md` for conventions
-3. Review existing screens and components to maximize reuse
-4. Identify open questions BEFORE producing documents and **ask the user** (recommended solution + trade-offs for each), even in auto mode — do not assume answers
-5. Generate all three documents in `docs/features/[feature-name]/`
-6. Update `../project_documents/vendor_app/PROGRESS_TRACKER.md`
+2. **Read the backend API spec** — this is the authoritative source for all endpoint shapes,
+   auth requirements, permissions, and error codes. Path:
+   `D:\Shrihari\Sourcecode\personal\paycycle\paycycle_api\docs\features\<slug>\API_SPEC.md`
+   (When invoked by the orchestrator, this file is guaranteed to exist. Do not invent
+   endpoint shapes — use only what the spec defines.)
+3. Read `claude.md` and `ARCHITECTURE_REFERENCE.md` for conventions
+4. Review existing screens and components to maximize reuse
+5. Identify open questions BEFORE producing documents and **ask the user** (recommended solution + trade-offs for each), even in auto mode — do not assume answers
+6. Generate all three documents in `docs/features/[feature-name]/`
+7. Update `../project_documents/vendor_app/PROGRESS_TRACKER.md` (skip if invoked by orchestrator — it manages the tracker)

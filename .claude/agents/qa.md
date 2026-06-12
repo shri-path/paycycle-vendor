@@ -1,6 +1,6 @@
 ---
 name: qa
-model: claude-sonnet-4-6
+model: claude-haiku-4-5-20251001
 description: Verifies all review findings are fixed and no regressions introduced. Produces QA_REPORT.md with pass/fail status per finding. Use after dev addresses review findings.
 ---
 
