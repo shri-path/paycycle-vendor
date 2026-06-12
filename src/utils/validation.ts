@@ -21,6 +21,10 @@ export const LIMITS = {
   areaLabel: 200,
   // Supply-list name (US-005). Free text, server caps at 100.
   supplyListName: 100,
+  // Extra-charge amount digits (US-006).
+  amount: 12,
+  // Extra-charge comment / leave reason (US-006). Free text, generous cap.
+  comment: 280,
 } as const
 
 // ---------------------------------------------------------------------------
@@ -237,4 +241,44 @@ export function validatePrimaryStaffId(
 ): string | null {
   if (primaryStaffId === '') return null
   return staffIds.includes(primaryStaffId) ? null : 'validation.required'
+}
+
+// ---------------------------------------------------------------------------
+// Delivery (US-006)
+// ---------------------------------------------------------------------------
+
+const AMOUNT_RE = /^\d+(\.\d{1,2})?$/
+
+/**
+ * Validates an extra-charge amount (US-006). Forgiving parse: strips spaces and
+ * thousands separators before checking. Must be a non-zero positive number with
+ * at most 2 decimals.
+ * @returns An i18n key if invalid, or null if valid.
+ */
+export function validateAmount(raw: string): string | null {
+  const v = raw.trim().replace(/[\s,]/g, '')
+  if (!v) return 'validation.required'
+  if (!AMOUNT_RE.test(v)) return 'validation.invalid_amount'
+  if (Number(v) <= 0) return 'validation.amount_positive'
+  if (v.replace('.', '').length > LIMITS.amount) return 'validation.too_long'
+  return null
+}
+
+/** Normalises an amount string to a number (strips spaces/commas). 0 on invalid. */
+export function parseAmount(raw: string): number {
+  const v = raw.trim().replace(/[\s,]/g, '')
+  const n = Number(v)
+  return Number.isFinite(n) ? n : 0
+}
+
+/**
+ * Validates a required free-text comment / reason (US-006 extra charge).
+ * @returns An i18n key if invalid, or null if valid.
+ */
+export function validateComment(raw: string): string | null {
+  const v = raw.trim()
+  if (!v) return 'validation.required'
+  if (v.length > LIMITS.comment) return 'validation.too_long'
+  if (hasControlChar(v) || INJECTION_RE.test(v)) return 'validation.invalid_characters'
+  return null
 }

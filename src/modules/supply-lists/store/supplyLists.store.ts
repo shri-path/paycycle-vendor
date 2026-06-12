@@ -170,7 +170,20 @@ export const useSupplyListsStore = create<SupplyListsState>()(
             action: 'fetchLists',
             endpoint: 'GET /vendors/:id/supply-lists',
           })
-          set({ isListsLoading: false, listsError: mapApiError(err, 'supply') })
+          const rawError = mapApiError(err, 'supply')
+          // 404 on the list index doesn't mean "resource not found" — it means
+          // the vendor has no lists yet or the endpoint is unavailable.
+          const errorKey =
+            rawError === 'supply.error_not_found' ? 'supply.error_load_failed' : rawError
+          // Offline: keep cached lists so the screen stays usable.
+          // API errors (404, 403, 5xx, etc.): clear stale lists so the
+          // error state (listsError && lists.length === 0) always renders.
+          const isOffline = errorKey === 'common.offline_message'
+          set({
+            isListsLoading: false,
+            listsError: errorKey,
+            ...(isOffline ? {} : { lists: [] }),
+          })
         }
       },
 

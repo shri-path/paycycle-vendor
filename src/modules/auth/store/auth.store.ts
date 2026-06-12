@@ -198,6 +198,16 @@ export const useAuthStore = create<AuthState>()(
           } catch {
             // supply-lists store not loaded yet — nothing to clear.
           }
+          // Wipe all local delivery data (incl. customer PII) on logout (US-006).
+          try {
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
+            const { useDeliveryStore } = require('@modules/delivery/store/delivery.store') as {
+              useDeliveryStore: { getState: () => { clearDelivery: () => void } }
+            }
+            useDeliveryStore.getState().clearDelivery()
+          } catch {
+            // delivery store not loaded yet — nothing to clear.
+          }
           set({
             isAuthenticated: false,
             user: null,
