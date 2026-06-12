@@ -229,6 +229,16 @@ function StaffHomeScreenContent() {
           )}
         </AppSection>
 
+        {/* Self-scoped activity feed (US-007) — available to staff and owner. */}
+        <AppButton
+          label={t('audit.title_my_activity')}
+          onPress={() => router.push('/(app)/activity/my-activity' as Href)}
+          variant="secondary"
+          fullWidth
+          style={styles.quickMarkBtn}
+          testID="staff-home-my-activity"
+        />
+
         {/* Footer-anchored primary CTA — start fast swipe marking (US-006).
             Disabled offline (writes are online-only). */}
         {assignedLists.length > 0 ? (

@@ -136,6 +136,22 @@ export const APIPath = {
     DateDetail: (vendorId: string, date: string) =>
       `/vendors/${vendorId}/deliveries/date/${date}`,
   },
+  // Audit & Accountability (US-007). Read-only surfaces mounted at /api/v1/vendors.
+  // vendorId is JWT-derived on the server — present in the path only for routing,
+  // never as user-controlled tenant data. No `/v1` in the path strings (the base
+  // URL ends `/api/v1`), identical to the supply-list / customer / delivery convention.
+  Audit: {
+    /** GET — activity timeline (owner: all; staff: own-only, server-forced). Filters + pagination. */
+    Logs: (vendorId: string) => `/vendors/${vendorId}/audit-logs`,
+    /** GET — delivery-action conflicts (owner only). */
+    Conflicts: (vendorId: string) => `/vendors/${vendorId}/audit-logs/conflicts`,
+    /** GET — per-staff activity aggregation (owner only). */
+    StaffSummary: (vendorId: string) => `/vendors/${vendorId}/audit-logs/staff-summary`,
+    /** POST — export filtered logs as CSV (owner only). Returns text/csv inline. */
+    Export: (vendorId: string) => `/vendors/${vendorId}/audit-logs/export`,
+    /** GET — the caller's own recent activity + today/week/month counts (owner + staff). */
+    MyActivity: (vendorId: string) => `/vendors/${vendorId}/audit-logs/my-activity`,
+  },
 } as const;
 
 export default APIPath;
