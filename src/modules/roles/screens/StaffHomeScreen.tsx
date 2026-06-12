@@ -33,6 +33,7 @@ import { RoleGate } from '@components/composite/RoleGate'
 import { ScreenErrorBoundary } from '@components/composite/ScreenErrorBoundary'
 import { useRolesStore } from '../store/roles.store'
 import { useRole } from '../hooks/useRole'
+import { useDeliveryToday } from '@modules/delivery/hooks/useDeliveryToday'
 import { useTranslation } from '@hooks/useTranslation'
 import { useNetworkStatus } from '@hooks/useNetworkStatus'
 import { useAuthStore } from '@modules/auth/store/auth.store'
@@ -47,6 +48,7 @@ const styles = StyleSheet.create({
   skeletonCard: { height: 96, marginBottom: spacing[3], backgroundColor: colors.gray100 },
   listsSection: { marginTop: spacing[4] },
   listItemBtn: { marginTop: spacing[2] },
+  quickMarkBtn: { marginTop: spacing[5] },
 })
 
 function StaffHomeSkeleton() {
@@ -77,6 +79,9 @@ function StaffHomeScreenContent() {
     })),
   )
 
+  // US-006: real today summary (delivered/total) from the delivery store.
+  const { delivered, total, refetch: refetchToday } = useDeliveryToday()
+
   // OQ-7: non-blocking notice when a focus re-fetch detects permission drift.
   const [permissionsUpdated, setPermissionsUpdated] = useState(false)
   const prevPermissions = useRef<string | null>(null)
@@ -84,6 +89,10 @@ function StaffHomeScreenContent() {
   useEffect(() => {
     void fetchSupplyListOptions()
   }, [fetchSupplyListOptions])
+
+  useEffect(() => {
+    refetchToday()
+  }, [refetchToday])
 
   // OQ-7 + security: re-fetch the role on every focus (catches mid-session staff
   // disable/permission change), snapshotting permissions to detect drift.
@@ -108,10 +117,18 @@ function StaffHomeScreenContent() {
     return assignedListIds.map((id) => ({ listId: id, name: byId.get(id) ?? id }))
   }, [assignedListIds, supplyListOptions])
 
-  const onOpenList = useCallback(() => {
-    // Delivery list flow ships in US-006 — acknowledge the tap until then.
+  const onOpenList = useCallback(
+    (listId: string) => {
+      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+      router.push(`/(app)/deliveries/${listId}` as Href)
+    },
+    [router],
+  )
+
+  const onStartQuickMarking = useCallback(() => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-  }, [])
+    router.push('/(app)/deliveries/quick-mark' as Href)
+  }, [router])
 
   const header = (
     <AppHeader title={vendorName ?? t('common.app_name')} />
@@ -169,10 +186,10 @@ function StaffHomeScreenContent() {
       ) : null}
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* Today summary — placeholder values until US-006 wires real stats. */}
+        {/* Today summary — real delivered/total from the delivery store (US-006). */}
         <AppStatsCard
           label={t('roles.today_summary')}
-          value={t('roles.today_done', { done: 0, total: 0 })}
+          value={t('roles.today_done', { done: delivered, total })}
           icon="cube-outline"
         />
 
@@ -199,8 +216,8 @@ function StaffHomeScreenContent() {
                   {list.name}
                 </AppText>
                 <AppButton
-                  label={t('roles.coming_soon')}
-                  onPress={onOpenList}
+                  label={t('delivery.open_list')}
+                  onPress={() => onOpenList(list.listId)}
                   variant="secondary"
                   size="sm"
                   style={styles.listItemBtn}
@@ -211,6 +228,21 @@ function StaffHomeScreenContent() {
             </>
           )}
         </AppSection>
+
+        {/* Footer-anchored primary CTA — start fast swipe marking (US-006).
+            Disabled offline (writes are online-only). */}
+        {assignedLists.length > 0 ? (
+          <AppButton
+            label={t('delivery.start_quick_marking')}
+            onPress={onStartQuickMarking}
+            variant="primary"
+            fullWidth
+            disabled={!isConnected}
+            accessibilityHint={!isConnected ? t('common.needs_connection') : undefined}
+            style={styles.quickMarkBtn}
+            testID="staff-home-quick-mark"
+          />
+        ) : null}
 
         {/* Financial data is owner-only. Staff see the explanatory note instead of
             any financial figures; the gate is defence-in-depth over the route guard. */}

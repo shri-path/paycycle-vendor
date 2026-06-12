@@ -30,6 +30,17 @@ jest.mock('expo-router', () => {
 jest.mock('../../hooks/useRole', () => ({ useRole: jest.fn() }))
 jest.mock('../../store/roles.store', () => ({ useRolesStore: jest.fn() }))
 jest.mock('@modules/auth/store/auth.store', () => ({ useAuthStore: jest.fn() }))
+// US-006: StaffHome consumes the delivery today summary; mock the hook so the test
+// stays focused on the staff-landing behaviour (delivery store is covered elsewhere).
+jest.mock('@modules/delivery/hooks/useDeliveryToday', () => ({
+  useDeliveryToday: jest.fn(() => ({
+    delivered: 0,
+    total: 0,
+    isLoading: false,
+    error: null,
+    refetch: jest.fn(),
+  })),
+}))
 
 import React from 'react'
 import { render } from '@testing-library/react-native'

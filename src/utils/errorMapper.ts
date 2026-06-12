@@ -12,7 +12,27 @@
 import axios from 'axios'
 
 /** Surface that produced the error — lets the mapper resolve ambiguous codes. */
-export type ApiErrorContext = 'invite_accept' | 'role' | 'staff' | 'invite' | 'resend' | 'supply'
+export type ApiErrorContext =
+  | 'invite_accept'
+  | 'role'
+  | 'staff'
+  | 'invite'
+  | 'resend'
+  | 'supply'
+  | 'delivery'
+
+/**
+ * Sub-action within the `'delivery'` context (US-006). Several delivery endpoints
+ * share a status code but mean different things (a 400/422 on an extra-charge is an
+ * invalid amount/comment, on mark/leave it is a validation error). The store passes
+ * the action it invoked so the mapper resolves to the right i18n key.
+ */
+export type DeliveryErrorAction =
+  | 'mark'
+  | 'mark_bulk'
+  | 'extra_charge'
+  | 'create_leave'
+  | 'cancel_leave'
 
 /**
  * Sub-action within the `'supply'` context (US-005). Several supply endpoints share
@@ -37,7 +57,7 @@ export type SupplyErrorAction =
 export function mapApiError(
   err: unknown,
   context?: ApiErrorContext,
-  action?: SupplyErrorAction,
+  action?: SupplyErrorAction | DeliveryErrorAction,
 ): string {
   if (axios.isAxiosError(err)) {
     // Network error (no response) = offline
@@ -99,6 +119,18 @@ export function mapApiError(
       }
     }
 
+    // Delivery surfaces (US-006) — resolve shared status codes by sub-action.
+    if (context === 'delivery') {
+      if (status === 403) return 'roles.error_forbidden'
+      if (status === 409) return 'delivery.error_conflict'
+      if (status === 404) return 'delivery.error_not_found'
+      if (status === 400 || status === 422) {
+        return action === 'extra_charge'
+          ? 'delivery.error_invalid_charge'
+          : 'validation.required'
+      }
+    }
+
     if (status === 401) return 'auth.invalid_credentials'
     if (status === 403) return 'roles.error_forbidden'
     if (status === 409) return 'auth.phone_already_registered'
@@ -116,6 +148,7 @@ export function mapApiError(
       err.message.startsWith('validation.') ||
       err.message.startsWith('roles.') ||
       err.message.startsWith('supply.') ||
+      err.message.startsWith('delivery.') ||
       err.message.startsWith('common.'))
   ) {
     return err.message

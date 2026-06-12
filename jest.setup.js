@@ -3,6 +3,14 @@
  * Purpose: Global mocks for native modules that require native binary registration
  */
 
+// Mock AsyncStorage globally — its native module is null under Jest. Any module
+// that (transitively) imports a persisted Zustand store pulls this in, so a single
+// global mock keeps every importing test green (US-006: the delivery store is
+// imported by StaffHomeScreen via useDeliveryToday).
+jest.mock('@react-native-async-storage/async-storage', () =>
+  require('@react-native-async-storage/async-storage/jest/async-storage-mock'),
+)
+
 // Mock expo-localization — requires native binary; always return English defaults in tests
 jest.mock('expo-localization', () => ({
   getLocales: () => [

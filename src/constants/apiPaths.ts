@@ -79,6 +79,34 @@ export const APIPath = {
     Subscription: (vendorId: string, listId: string, subscriptionId: string) =>
       `/vendors/${vendorId}/supply-lists/${listId}/customers/${subscriptionId}`,
   },
+  // Daily Delivery Tracking (US-006). Mounted at /api/v1/vendors. vendorId is
+  // JWT-derived on the server — present in the path only for routing, never as
+  // user-controlled tenant data. No `/v1` in the path strings (the base URL ends
+  // `/api/v1`), identical to the supply-list convention.
+  Delivery: {
+    /** GET — today's all-lists overview (owner) / assigned (staff). */
+    Today: (vendorId: string) => `/vendors/${vendorId}/deliveries/today`,
+    /** GET — per-list deliveries (paginated). */
+    ListDeliveries: (vendorId: string, listId: string) =>
+      `/vendors/${vendorId}/supply-lists/${listId}/deliveries`,
+    /** PATCH — mark a single delivery DELIVERED/LEAVE. */
+    Mark: (vendorId: string, deliveryId: string) =>
+      `/vendors/${vendorId}/deliveries/${deliveryId}/mark`,
+    /** POST — bulk-mark a list's pending deliveries DELIVERED. */
+    MarkBulk: (vendorId: string) => `/vendors/${vendorId}/deliveries/mark-bulk`,
+    /** POST — add an extra charge to a delivery. */
+    ExtraCharges: (vendorId: string) => `/vendors/${vendorId}/extra-charges`,
+    /** GET (list) + POST (create) leaves. */
+    Leaves: (vendorId: string) => `/vendors/${vendorId}/leaves`,
+    /** DELETE — cancel a planned leave. */
+    LeaveDetail: (vendorId: string, leaveId: string) =>
+      `/vendors/${vendorId}/leaves/${leaveId}`,
+    /** GET — month calendar (owner). */
+    Calendar: (vendorId: string) => `/vendors/${vendorId}/deliveries/calendar`,
+    /** GET — single-day detail (owner). */
+    DateDetail: (vendorId: string, date: string) =>
+      `/vendors/${vendorId}/deliveries/date/${date}`,
+  },
 } as const;
 
 export default APIPath;
