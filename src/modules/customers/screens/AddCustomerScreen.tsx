@@ -27,6 +27,8 @@ import { AppCheckbox } from '@components/primitives/AppCheckbox'
 import { AppAlert } from '@components/primitives/AppAlert'
 import { AppSection } from '@components/composite/AppSection'
 import { ScreenErrorBoundary } from '@components/composite/ScreenErrorBoundary'
+import { LimitReachedModal } from '@modules/subscription/components'
+import { useLimitReached } from '@modules/subscription/hooks/useLimitReached'
 import { useCustomerForm } from '../hooks/useCustomerForm'
 import { useCustomersStore } from '../store/customers.store'
 import { useSupplyListsStore } from '@modules/supply-lists/store/supplyLists.store'
@@ -62,6 +64,8 @@ function AddCustomerScreenContent() {
 
   const { values, errors, setField, validate } = useCustomerForm()
   const [phoneFieldError, setPhoneFieldError] = React.useState<string | null>(null)
+
+  const limitReached = useLimitReached()
 
   const { createCustomer, isMutating, mutationError, clearError } = useCustomersStore(
     useShallow((s) => ({
@@ -140,6 +144,8 @@ function AddCustomerScreenContent() {
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
       if (axios.isAxiosError(err) && err.response?.status === 409) {
         setPhoneFieldError(CUSTOMER_ERROR_KEYS.duplicatePhone)
+      } else if (limitReached.show(err, 'customers')) {
+        // 451 — limit modal will surface; nothing else to do
       }
     } finally {
       submitting.current = false
@@ -318,6 +324,15 @@ function AddCustomerScreenContent() {
           />
         </View>
       </KeyboardAvoidingView>
+
+      <LimitReachedModal
+        visible={limitReached.state.visible}
+        resource={limitReached.state.resource}
+        current={limitReached.state.current}
+        max={limitReached.state.max}
+        onUpgrade={limitReached.goUpgrade}
+        onClose={limitReached.close}
+      />
     </SafeAreaView>
   )
 }

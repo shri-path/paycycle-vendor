@@ -152,6 +152,29 @@ export const APIPath = {
     /** GET — the caller's own recent activity + today/week/month counts (owner + staff). */
     MyActivity: (vendorId: string) => `/vendors/${vendorId}/audit-logs/my-activity`,
   },
+  // Subscription & Pricing (US-009). Plans catalog is not vendor-scoped; all manage
+  // endpoints are mounted under /api/v1/vendors/:vendorId/subscription. vendorId is
+  // JWT-derived on the server — present in the path only for routing, never as
+  // user-controlled tenant data. No `/v1` in the path strings (the base URL ends
+  // `/api/v1`), identical to the audit / customer / delivery convention.
+  Subscription: {
+    /** GET — list all active subscription plans (not vendor-scoped). */
+    Plans: () => `/subscription-plans`,
+    /** GET — current plan + live usage + utilization% + can-add-more. */
+    View: (vendorId: string) => `/vendors/${vendorId}/subscription`,
+    /** POST — upgrade to a strictly higher-tier plan. */
+    Upgrade: (vendorId: string) => `/vendors/${vendorId}/subscription/upgrade`,
+    /** POST — manually renew the subscription for another billing period. */
+    Renew: (vendorId: string) => `/vendors/${vendorId}/subscription/renew`,
+    /** POST — cancel the subscription (stays active until nextBillingDate). */
+    Cancel: (vendorId: string) => `/vendors/${vendorId}/subscription/cancel`,
+    /** PATCH — toggle auto-renewal on the current subscription. */
+    AutoRenewal: (vendorId: string) => `/vendors/${vendorId}/subscription/auto-renewal`,
+    /** GET — billing history (paginated, reverse chronological). */
+    Invoices: (vendorId: string) => `/vendors/${vendorId}/subscription/invoices`,
+    /** GET — subscription event history (paginated). Not surfaced in MVP UI. */
+    History: (vendorId: string) => `/vendors/${vendorId}/subscription/history`,
+  },
 } as const;
 
 export default APIPath;

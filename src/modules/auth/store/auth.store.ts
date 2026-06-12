@@ -228,6 +228,16 @@ export const useAuthStore = create<AuthState>()(
           } catch {
             // audit store not loaded yet — nothing to clear.
           }
+          // Wipe all local subscription data (incl. persisted plan catalog) on logout (US-009).
+          try {
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
+            const { useSubscriptionStore } = require('@modules/subscription/store/subscription.store') as {
+              useSubscriptionStore: { getState: () => { clearSubscription: () => void } }
+            }
+            useSubscriptionStore.getState().clearSubscription()
+          } catch {
+            // subscription store not loaded yet — nothing to clear.
+          }
           set({
             isAuthenticated: false,
             user: null,

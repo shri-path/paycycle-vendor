@@ -29,6 +29,8 @@ import { AppAlert } from '@components/primitives/AppAlert'
 import { AppSegmentedControl } from '@components/composite/AppSegmentedControl'
 import { AppSection } from '@components/composite/AppSection'
 import { ScreenErrorBoundary } from '@components/composite/ScreenErrorBoundary'
+import { LimitReachedModal } from '@modules/subscription/components'
+import { useLimitReached } from '@modules/subscription/hooks/useLimitReached'
 import { PermissionToggleList, InviteShareSheet } from '../components'
 import { useRolesStore } from '../store/roles.store'
 import { useRequireOwner } from '../hooks/useRequireOwner'
@@ -87,6 +89,7 @@ function InviteStaffScreenContent() {
   const [touched, setTouched] = useState(false)
 
   const [result, setResult] = useState<InviteStaffResult | null>(null)
+  const limitReached = useLimitReached()
 
   const submitting = useRef(false)
 
@@ -142,8 +145,11 @@ function InviteStaffScreenContent() {
       })
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
       setResult(res)
-    } catch {
+    } catch (err: unknown) {
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+      if (limitReached.show(err, 'staff')) {
+        // 451 — limit modal surfaced; nothing else to do
+      }
     } finally {
       submitting.current = false
     }
@@ -259,6 +265,15 @@ function InviteStaffScreenContent() {
         inviteUrl={result?.inviteUrl ?? null}
         expiresAt={result?.expiresAt ?? null}
         onDismiss={handleSheetDismiss}
+      />
+
+      <LimitReachedModal
+        visible={limitReached.state.visible}
+        resource={limitReached.state.resource}
+        current={limitReached.state.current}
+        max={limitReached.state.max}
+        onUpgrade={limitReached.goUpgrade}
+        onClose={limitReached.close}
       />
     </SafeAreaView>
   )
