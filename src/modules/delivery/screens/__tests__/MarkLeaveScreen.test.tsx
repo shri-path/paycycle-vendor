@@ -43,10 +43,11 @@ function delivery(): DeliveryDto {
   }
 }
 
-function setStore(listDeliveries: Record<string, DeliveryDto[]>): void {
+function setStore(listDeliveries: Record<string, DeliveryDto[]>, isListLoading = false): void {
   useDeliveryStore.mockImplementation((selector: (s: unknown) => unknown) =>
     selector({
       listDeliveries,
+      isListLoading,
       isMutating: false,
       mutationError: null,
       createLeave: mockCreate,
@@ -71,6 +72,12 @@ describe('MarkLeaveScreen', () => {
     setStore({ l1: [] })
     const screen = await render(<MarkLeaveScreen />)
     expect(screen.getByText(t('delivery.empty_customers'))).toBeTruthy()
+  })
+
+  it('shows the loading skeleton while the customer roster loads', async () => {
+    setStore({}, true)
+    const screen = await render(<MarkLeaveScreen />)
+    expect(screen.getByTestId('mark-leave-skeleton')).toBeTruthy()
   })
 
   it('renders the customer selector (content)', async () => {

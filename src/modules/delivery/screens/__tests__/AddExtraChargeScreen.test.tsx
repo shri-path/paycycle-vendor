@@ -59,10 +59,11 @@ function delivery(custId: string): DeliveryDto {
   }
 }
 
-function setStore(listDeliveries: Record<string, DeliveryDto[]>): void {
+function setStore(listDeliveries: Record<string, DeliveryDto[]>, isListLoading = false): void {
   useDeliveryStore.mockImplementation((selector: (s: unknown) => unknown) =>
     selector({
       listDeliveries,
+      isListLoading,
       isMutating: false,
       mutationError: null,
       addExtraCharge: mockAdd,
@@ -87,6 +88,12 @@ describe('AddExtraChargeScreen', () => {
     const screen = await render(<AddExtraChargeScreen />)
     expect(screen.getByText(t('delivery.amount_label'))).toBeTruthy()
     expect(screen.getByTestId('add-charge-btn')).toBeTruthy()
+  })
+
+  it('shows the loading skeleton while the chosen list deliveries load', async () => {
+    setStore({}, true)
+    const screen = await render(<AddExtraChargeScreen />)
+    expect(screen.getByTestId('add-charge-skeleton')).toBeTruthy()
   })
 
   it('blocks with error_mark_delivery_first when the customer has no delivery', async () => {
