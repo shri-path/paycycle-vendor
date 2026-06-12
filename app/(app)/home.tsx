@@ -49,6 +49,12 @@ export default function HomeScreen() {
           fullWidth
         />
         <AppButton
+          label={t('customer.title')}
+          onPress={() => router.push('/(app)/customers' as Href)}
+          variant="primary"
+          fullWidth
+        />
+        <AppButton
           label={t('auth.logout')}
           onPress={handleLogout}
           variant="secondary"

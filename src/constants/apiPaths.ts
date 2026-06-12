@@ -79,6 +79,35 @@ export const APIPath = {
     Subscription: (vendorId: string, listId: string, subscriptionId: string) =>
       `/vendors/${vendorId}/supply-lists/${listId}/customers/${subscriptionId}`,
   },
+  // Customer Management (US-008). Mounted at /api/v1/vendors. vendorId is
+  // JWT-derived on the server — present in the path only for routing, never as
+  // user-controlled tenant data. No `/v1` in the path strings (the base URL ends
+  // `/api/v1`), identical to the supply-list / delivery convention.
+  Customers: {
+    /** GET (list) + POST (create). Non-standard envelope: `data: { total, customers }`. */
+    List: (vendorId: string) => `/vendors/${vendorId}/customers`,
+    /** GET (detail) / PATCH (update) / DELETE (deactivate) a single customer. */
+    Detail: (vendorId: string, customerId: string) =>
+      `/vendors/${vendorId}/customers/${customerId}`,
+    /** GET — monthly bill breakdown. Owner-only. */
+    Bill: (vendorId: string, customerId: string, month: string) =>
+      `/vendors/${vendorId}/customers/${customerId}/bill/${month}`,
+    /** GET (paginated list) + POST (record payment). Standard meta envelope. */
+    Payments: (vendorId: string, customerId: string) =>
+      `/vendors/${vendorId}/customers/${customerId}/payments`,
+    /** PATCH — set credit limit. Returns `{ creditLimit, creditUtilization }`. */
+    CreditLimit: (vendorId: string, customerId: string) =>
+      `/vendors/${vendorId}/customers/${customerId}/credit-limit`,
+    /** GET — monthly delivery calendar. */
+    Calendar: (vendorId: string, customerId: string, month: string) =>
+      `/vendors/${vendorId}/customers/${customerId}/calendar/${month}`,
+    /** GET (list) + POST (add subscription). */
+    Subscriptions: (vendorId: string, customerId: string) =>
+      `/vendors/${vendorId}/customers/${customerId}/subscriptions`,
+    /** DELETE — remove a single subscription. */
+    SubscriptionDetail: (vendorId: string, customerId: string, subscriptionId: string) =>
+      `/vendors/${vendorId}/customers/${customerId}/subscriptions/${subscriptionId}`,
+  },
   // Daily Delivery Tracking (US-006). Mounted at /api/v1/vendors. vendorId is
   // JWT-derived on the server — present in the path only for routing, never as
   // user-controlled tenant data. No `/v1` in the path strings (the base URL ends
