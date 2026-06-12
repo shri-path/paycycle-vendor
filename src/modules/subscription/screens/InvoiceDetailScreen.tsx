@@ -118,7 +118,6 @@ function InvoiceDetailScreenContent() {
         <View style={styles.card}>
           <Field label={t('subscription.invoice_number')} value={invoice.invoiceNumber} />
           <Field label={t('customer.title')} value={vendorName} />
-          <Field label={t('subscription.payment_date')} value={invoice.invoiceDate ? formatLocaleDate(invoice.invoiceDate) : null} />
           <Field label={t('subscription.amount')} value={formatCurrency(invoice.amount)} />
           <Field label={t('subscription.tax')} value={formatCurrency(invoice.tax)} />
 

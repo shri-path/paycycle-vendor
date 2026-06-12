@@ -16,7 +16,7 @@
  * - `true` for 451 → extracts `error.details.limits.{max,current}` + resource,
  *   sets modal state, and returns true so the host can early-return.
  *
- * `goUpgrade` routes to `error.details.upgradeUrl` (default `/(app)/subscription/upgrade`).
+ * `goUpgrade` navigates to `/(app)/subscription/upgrade` (canonical upgrade screen).
  * For staff users the CTA navigates to the upgrade screen; server-side 403 prevents
  * the actual upgrade (the screen can show an error for that case).
  *
@@ -60,7 +60,6 @@ const DEFAULT_UPGRADE_PATH = '/(app)/subscription/upgrade'
 export function useLimitReached(): UseLimitReachedReturn {
   const router = useRouter()
   const [state, setState] = useState<LimitState>(DEFAULT_STATE)
-  const [upgradeUrl, setUpgradeUrl] = useState<string>(DEFAULT_UPGRADE_PATH)
 
   const show = useCallback((err: unknown, fallbackResource: LimitResource = 'customers'): boolean => {
     if (!axios.isAxiosError(err)) return false
@@ -79,9 +78,7 @@ export function useLimitReached(): UseLimitReachedReturn {
     const current = limits?.current ?? 0
     const max = limits?.max ?? 0
     const detailResource = (errorBody?.details?.resource ?? fallbackResource) as LimitResource
-    const detailUpgradeUrl = errorBody?.details?.upgradeUrl ?? DEFAULT_UPGRADE_PATH
 
-    setUpgradeUrl(detailUpgradeUrl)
     setState({
       visible: true,
       resource: detailResource,
@@ -98,10 +95,10 @@ export function useLimitReached(): UseLimitReachedReturn {
 
   const goUpgrade = useCallback(() => {
     setState((s) => ({ ...s, visible: false }))
-    // Route to the upgrade path from the 451 response, or the default.
-    const path = upgradeUrl.startsWith('/') ? `/(app)/subscription/upgrade` : DEFAULT_UPGRADE_PATH
-    router.push(path as never)
-  }, [upgradeUrl, router])
+    // The API always sends a relative path; we always navigate to the canonical upgrade screen.
+    // upgradeUrl is extracted for future extensibility but the Expo Router path is fixed this iteration.
+    router.push(DEFAULT_UPGRADE_PATH as never)
+  }, [router])
 
   return { state, show, close, goUpgrade }
 }

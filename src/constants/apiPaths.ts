@@ -175,6 +175,24 @@ export const APIPath = {
     /** GET — subscription event history (paginated). Not surfaced in MVP UI. */
     History: (vendorId: string) => `/vendors/${vendorId}/subscription/history`,
   },
+  // Dashboard (US-010). Mounted at /api/v1/vendors. vendorId is JWT-derived on the
+  // server — present in the path only for routing, never as user-controlled tenant
+  // data. No `/v1` in the path strings (the base URL ends `/api/v1`), identical to
+  // the audit / subscription convention. Backend endpoints do not exist yet (OQ-1);
+  // the service uses mock fixtures until the US-010 backend lands.
+  Dashboard: {
+    /** GET — owner dashboard aggregate. Owner only. */
+    Owner: (vendorId: string) => `/vendors/${vendorId}/dashboard/owner`,
+    /** GET — staff dashboard aggregate. Staff only. staffId required in path (OQ-2 RESOLVED: staffId required in path, resolved from auth context). */
+    Staff: (vendorId: string, staffId: string) =>
+      `/vendors/${vendorId}/dashboard/staff/${staffId}`,
+    /** GET — supply forecast. Owner only. Query: ?days=1|7&supplyType=<type>. */
+    Forecast: (vendorId: string) => `/vendors/${vendorId}/supply-forecast`,
+    /** GET — outstanding aging breakdown. Owner only. */
+    OutstandingAging: (vendorId: string) => `/vendors/${vendorId}/outstanding-aging`,
+    /** PATCH — update vendor settings (autoMarkEnabled etc). Owner only. */
+    Settings: (vendorId: string) => `/vendors/${vendorId}/settings`,
+  },
 } as const;
 
 export default APIPath;
