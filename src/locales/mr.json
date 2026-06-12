@@ -20,7 +20,8 @@
     "back": "मागे जा",
     "menu": "मेनू",
     "notifications": "सूचना",
-    "notifications_badge": "{{count}} न वाचलेल्या सूचना"
+    "notifications_badge": "{{count}} न वाचलेल्या सूचना",
+    "currency_symbol": "₹"
   },
   "auth": {
     "welcome": "स्वागत आहे",
@@ -413,6 +414,14 @@
     "empty_day": "या दिवशी कोणतीही क्रिया नाही.",
     "empty_customers": "तुमच्या याद्यांमध्ये ग्राहक नाहीत.",
     "quick_offline_blocked": "डिलिव्हरी खूण करण्यासाठी इंटरनेट कनेक्शन आवश्यक आहे.",
-    "in_lists": "{{count}} याद्यांमध्ये"
+    "in_lists": "{{count}} याद्यांमध्ये",
+    "delivered_count_label": "{{value}} पोहोचवले",
+    "leaves_count_label": "{{value}} रजेवर",
+    "pending_count_label": "{{value}} प्रलंबित",
+    "revenue_badge": "महसूल: {{value}}",
+    "total_leaves_badge": "रजा: {{value}}",
+    "delivered_leaves_summary": "पोहोचवले: {{delivered}} · रजेवर: {{leaves}}",
+    "next_month": "पुढील महिना",
+    "prev_month": "मागील महिना"
   }
 }

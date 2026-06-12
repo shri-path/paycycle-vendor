@@ -9,7 +9,7 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { View, StyleSheet, ScrollView } from 'react-native'
+import { View, StyleSheet, ScrollView, KeyboardAvoidingView, Platform } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
@@ -38,11 +38,29 @@ function toISODate(d: Date): string {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
+  kav: { flex: 1 },
   content: { padding: spacing[4], paddingBottom: spacing[10], gap: spacing[3] },
   banner: { marginBottom: spacing[2] },
   sectionLabel: { marginBottom: spacing[1] },
   errorText: { marginTop: spacing[1] },
+  skeletonWrap: { padding: spacing[4] },
+  skeletonRow: {
+    height: 72,
+    borderRadius: spacing[2],
+    backgroundColor: colors.gray100,
+    marginBottom: spacing[3],
+  },
 })
+
+function CustomerListSkeleton() {
+  return (
+    <View style={styles.skeletonWrap} testID="mark-leave-skeleton">
+      {[0, 1, 2, 3].map((i) => (
+        <View key={i} style={styles.skeletonRow} />
+      ))}
+    </View>
+  )
+}
 
 function MarkLeaveScreenContent() {
   const { t } = useTranslation()
@@ -52,17 +70,25 @@ function MarkLeaveScreenContent() {
   const canMarkLeave = isOwner || hasPermission('mark_leaves')
 
   const supplyListOptions = useRolesStore(useShallow((s) => s.supplyListOptions))
-  const { listDeliveries, isMutating, mutationError, createLeave, fetchListDeliveries, clearError } =
-    useDeliveryStore(
-      useShallow((s) => ({
-        listDeliveries: s.listDeliveries,
-        isMutating: s.isMutating,
-        mutationError: s.mutationError,
-        createLeave: s.createLeave,
-        fetchListDeliveries: s.fetchListDeliveries,
-        clearError: s.clearError,
-      })),
-    )
+  const {
+    listDeliveries,
+    isListLoading,
+    isMutating,
+    mutationError,
+    createLeave,
+    fetchListDeliveries,
+    clearError,
+  } = useDeliveryStore(
+    useShallow((s) => ({
+      listDeliveries: s.listDeliveries,
+      isListLoading: s.isListLoading,
+      isMutating: s.isMutating,
+      mutationError: s.mutationError,
+      createLeave: s.createLeave,
+      fetchListDeliveries: s.fetchListDeliveries,
+      clearError: s.clearError,
+    })),
+  )
 
   // Load deliveries for each accessible list so we can build the customer roster.
   useEffect(() => {
@@ -162,6 +188,16 @@ function MarkLeaveScreenContent() {
     <AppHeader title={t('delivery.title_mark_leave')} showBack onBackPress={() => router.back()} />
   )
 
+  // Loading — building the customer roster from the accessible lists' deliveries.
+  if (isListLoading && customerOptions.length === 0) {
+    return (
+      <SafeAreaView style={styles.safe} edges={['bottom']}>
+        {header}
+        <CustomerListSkeleton />
+      </SafeAreaView>
+    )
+  }
+
   // Empty — no customers in accessible lists.
   if (customerOptions.length === 0) {
     return (
@@ -178,86 +214,93 @@ function MarkLeaveScreenContent() {
   return (
     <SafeAreaView style={styles.safe} edges={['bottom']}>
       {header}
-      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        {!isConnected ? (
-          <AppAlert
-            type="warning"
-            title={t('common.offline')}
-            message={t('common.needs_connection')}
-            containerStyle={styles.banner}
+      <KeyboardAvoidingView
+        style={styles.kav}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+          {!isConnected ? (
+            <AppAlert
+              type="warning"
+              title={t('common.offline')}
+              message={t('common.needs_connection')}
+              containerStyle={styles.banner}
+            />
+          ) : null}
+          {!canMarkLeave ? (
+            <AppAlert type="info" title={t('delivery.view_only')} containerStyle={styles.banner} />
+          ) : null}
+          {mutationError ? (
+            <AppAlert type="error" title={t(mutationError)} onClose={clearError} containerStyle={styles.banner} />
+          ) : null}
+
+          <AppRadioGroup
+            label={t('delivery.select_customer')}
+            options={customerOptions}
+            value={customerId}
+            onChange={onSelectCustomer}
           />
-        ) : null}
-        {!canMarkLeave ? <AppAlert type="info" title={t('delivery.view_only')} containerStyle={styles.banner} /> : null}
-        {mutationError ? (
-          <AppAlert type="error" title={t(mutationError)} onClose={clearError} containerStyle={styles.banner} />
-        ) : null}
 
-        <AppRadioGroup
-          label={t('delivery.select_customer')}
-          options={customerOptions}
-          value={customerId}
-          onChange={onSelectCustomer}
-        />
+          {customerId ? (
+            <View>
+              <AppText variant="label" weight="semibold" style={styles.sectionLabel}>
+                {t('delivery.select_lists')}
+              </AppText>
+              {customerListIds.map((listId) => (
+                <AppCheckbox
+                  key={listId}
+                  label={listNameById.get(listId) ?? listId}
+                  checked={selectedListIds.includes(listId)}
+                  onChange={(checked) => toggleList(listId, checked)}
+                />
+              ))}
+            </View>
+          ) : null}
 
-        {customerId ? (
-          <View>
-            <AppText variant="label" weight="semibold" style={styles.sectionLabel}>
-              {t('delivery.select_lists')}
-            </AppText>
-            {customerListIds.map((listId) => (
-              <AppCheckbox
-                key={listId}
-                label={listNameById.get(listId) ?? listId}
-                checked={selectedListIds.includes(listId)}
-                onChange={(checked) => toggleList(listId, checked)}
+          {customerId ? (
+            <AppSegmentedControl
+              segments={[t('delivery.date_today_only'), t('delivery.date_range')]}
+              selectedIndex={dateMode}
+              onChange={(index) => setDateMode(index)}
+            />
+          ) : null}
+
+          {customerId && dateMode === 1 ? (
+            <View>
+              <AppDatePicker
+                label={t('delivery.start_date')}
+                value={startDate}
+                onChange={setStartDate}
+                mode="date"
               />
-            ))}
-          </View>
-        ) : null}
+              <AppDatePicker
+                label={t('delivery.end_date')}
+                value={endDate}
+                onChange={setEndDate}
+                mode="date"
+                minimumDate={startDate}
+              />
+            </View>
+          ) : null}
 
-        {customerId ? (
-          <AppSegmentedControl
-            segments={[t('delivery.date_today_only'), t('delivery.date_range')]}
-            selectedIndex={dateMode}
-            onChange={(index) => setDateMode(index)}
+          {error ? (
+            <AppText variant="caption" color={colors.error} style={styles.errorText}>
+              {t(error)}
+            </AppText>
+          ) : null}
+
+          <AppButton
+            label={t('delivery.confirm_leave')}
+            variant="primary"
+            fullWidth
+            disabled={!isValid || isMutating}
+            loading={isMutating}
+            accessibilityHint={!isConnected ? t('common.needs_connection') : undefined}
+            onPress={onSubmit}
+            testID="confirm-leave-btn"
           />
-        ) : null}
-
-        {customerId && dateMode === 1 ? (
-          <View>
-            <AppDatePicker
-              label={t('delivery.start_date')}
-              value={startDate}
-              onChange={setStartDate}
-              mode="date"
-            />
-            <AppDatePicker
-              label={t('delivery.end_date')}
-              value={endDate}
-              onChange={setEndDate}
-              mode="date"
-              minimumDate={startDate}
-            />
-          </View>
-        ) : null}
-
-        {error ? (
-          <AppText variant="caption" color={colors.error} style={styles.errorText}>
-            {t(error)}
-          </AppText>
-        ) : null}
-
-        <AppButton
-          label={t('delivery.confirm_leave')}
-          variant="primary"
-          fullWidth
-          disabled={!isValid || isMutating}
-          loading={isMutating}
-          accessibilityHint={!isConnected ? t('common.needs_connection') : undefined}
-          onPress={onSubmit}
-          testID="confirm-leave-btn"
-        />
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   )
 }

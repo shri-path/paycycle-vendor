@@ -42,7 +42,31 @@ const styles = StyleSheet.create({
   cardMeta: { marginTop: spacing[1] },
   countsRow: { flexDirection: 'row', gap: spacing[4], marginTop: spacing[2], flexWrap: 'wrap' },
   openBtn: { marginTop: spacing[3] },
+  skeletonWrap: { padding: spacing[4] },
+  skeletonSummary: {
+    height: 72,
+    borderRadius: spacing[2],
+    backgroundColor: colors.gray100,
+    marginBottom: spacing[3],
+  },
+  skeletonCard: {
+    height: 140,
+    borderRadius: spacing[2],
+    backgroundColor: colors.gray100,
+    marginBottom: spacing[3],
+  },
 })
+
+function TodayOverviewSkeleton() {
+  return (
+    <View style={styles.skeletonWrap} testID="today-skeleton">
+      <View style={styles.skeletonSummary} />
+      {[0, 1, 2].map((i) => (
+        <View key={i} style={styles.skeletonCard} />
+      ))}
+    </View>
+  )
+}
 
 function TodayOverviewScreenContent() {
   useRequireOwner()
@@ -84,10 +108,13 @@ function TodayOverviewScreenContent() {
 
   const onSelectConflict = useCallback(
     (deliveryId: string) => {
-      const owningList = today?.byList.find(() => true)
+      // Resolve the conflict, then the list that owns it (by name — the only link
+      // the today payload exposes between a conflict and its list).
+      const conflict = today?.conflicts.find((c) => c.deliveryId === deliveryId)
+      const owningList = today?.byList.find((l) => l.listName === conflict?.listName)
+      if (!owningList) return
       void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-      if (owningList) router.push(`/(app)/deliveries/${owningList.listId}` as Href)
-      else void deliveryId
+      router.push(`/(app)/deliveries/${owningList.listId}` as Href)
     },
     [router, today],
   )
@@ -111,17 +138,17 @@ function TodayOverviewScreenContent() {
           />
           <View style={styles.countsRow}>
             <AppText variant="caption" color={colors.textSecondary}>
-              {t('delivery.delivered_count')}: {item.delivered}
+              {t('delivery.delivered_count_label', { value: item.delivered })}
             </AppText>
             <AppText variant="caption" color={colors.textSecondary}>
-              {t('delivery.leaves_count')}: {item.onLeave}
+              {t('delivery.leaves_count_label', { value: item.onLeave })}
             </AppText>
             <AppText variant="caption" color={colors.textSecondary}>
-              {t('delivery.pending_count')}: {item.pending}
+              {t('delivery.pending_count_label', { value: item.pending })}
             </AppText>
             {item.revenue != null ? (
               <AppText variant="caption" weight="medium" color={colors.textPrimary}>
-                {t('delivery.revenue_label')}: {formatCurrency(item.revenue)}
+                {t('delivery.revenue_badge', { value: formatCurrency(item.revenue) })}
               </AppText>
             ) : null}
           </View>
@@ -139,6 +166,8 @@ function TodayOverviewScreenContent() {
     [t, openList],
   )
 
+  const keyExtractor = useCallback((item: TodayListDto) => item.listId, [])
+
   const dateLabel = today?.date ? formatLocaleDate(today.date) : ''
   const header = (
     <AppHeader title={t('delivery.title_today')} showBack onBackPress={() => router.back()} />
@@ -148,10 +177,7 @@ function TodayOverviewScreenContent() {
     return (
       <SafeAreaView style={styles.safe} edges={['bottom']}>
         {header}
-        <AppEmptyState
-          icon={<Ionicons name="hourglass-outline" size={componentSizes.icon.xxxl} color={colors.primary} />}
-          title={t('common.loading')}
-        />
+        <TodayOverviewSkeleton />
       </SafeAreaView>
     )
   }
@@ -186,8 +212,11 @@ function TodayOverviewScreenContent() {
       <FlatList
         data={today?.byList ?? []}
         renderItem={renderItem}
-        keyExtractor={(item) => item.listId}
+        keyExtractor={keyExtractor}
         contentContainerStyle={styles.content}
+        windowSize={5}
+        maxToRenderPerBatch={10}
+        removeClippedSubviews
         refreshControl={<RefreshControl refreshing={isLoading} onRefresh={load} />}
         ListHeaderComponent={
           <View>

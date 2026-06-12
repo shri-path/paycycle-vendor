@@ -32,7 +32,44 @@ const styles = StyleSheet.create({
   content: { padding: spacing[4], paddingBottom: spacing[10], gap: spacing[3] },
   row: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: spacing[2], gap: spacing[2] },
   rowInfo: { flex: 1 },
+  skeletonWrap: { padding: spacing[4] },
+  skeletonSummary: {
+    height: 72,
+    borderRadius: spacing[2],
+    backgroundColor: colors.gray100,
+    marginBottom: spacing[3],
+  },
+  skeletonHeader: {
+    height: 16,
+    width: '40%',
+    borderRadius: spacing[1],
+    backgroundColor: colors.gray100,
+    marginTop: spacing[3],
+    marginBottom: spacing[2],
+  },
+  skeletonRow: {
+    height: 44,
+    borderRadius: spacing[2],
+    backgroundColor: colors.gray100,
+    marginBottom: spacing[2],
+  },
 })
+
+function DayDetailSkeleton() {
+  return (
+    <View style={styles.skeletonWrap} testID="day-detail-skeleton">
+      <View style={styles.skeletonSummary} />
+      {[0, 1].map((section) => (
+        <View key={section}>
+          <View style={styles.skeletonHeader} />
+          {[0, 1].map((r) => (
+            <View key={r} style={styles.skeletonRow} />
+          ))}
+        </View>
+      ))}
+    </View>
+  )
+}
 
 function DayDetailScreenContent() {
   useRequireOwner()
@@ -71,10 +108,7 @@ function DayDetailScreenContent() {
     return (
       <SafeAreaView style={styles.safe} edges={['bottom']}>
         {header}
-        <AppEmptyState
-          icon={<Ionicons name="hourglass-outline" size={componentSizes.icon.xxxl} color={colors.primary} />}
-          title={t('common.loading')}
-        />
+        <DayDetailSkeleton />
       </SafeAreaView>
     )
   }
@@ -125,7 +159,7 @@ function DayDetailScreenContent() {
             done: detail.summary.totalDeliveries,
             total: detail.summary.totalDeliveries,
           })}
-          badge={`${t('delivery.revenue_label')}: ${formatCurrency(detail.summary.revenue)}`}
+          badge={t('delivery.revenue_badge', { value: formatCurrency(detail.summary.revenue) })}
           icon="cube-outline"
         />
 
@@ -142,7 +176,10 @@ function DayDetailScreenContent() {
               </View>
               <View>
                 <AppText variant="caption" color={colors.textSecondary}>
-                  {t('delivery.delivered_count')}: {row.delivered} · {t('delivery.leaves_count')}: {row.leaves}
+                  {t('delivery.delivered_leaves_summary', {
+                    delivered: row.delivered,
+                    leaves: row.leaves,
+                  })}
                 </AppText>
                 <AppText variant="caption" weight="medium" color={colors.textPrimary}>
                   {formatCurrency(row.revenue)}

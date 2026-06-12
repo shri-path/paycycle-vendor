@@ -20,7 +20,8 @@
     "back": "వెనుకకు",
     "menu": "మెను",
     "notifications": "నోటిఫికేషన్లు",
-    "notifications_badge": "{{count}} చదవని నోటిఫికేషన్లు"
+    "notifications_badge": "{{count}} చదవని నోటిఫికేషన్లు",
+    "currency_symbol": "₹"
   },
   "auth": {
     "welcome": "స్వాగతం",
@@ -413,6 +414,14 @@
     "empty_day": "ఈ రోజు ఎటువంటి కార్యకలాపం లేదు.",
     "empty_customers": "మీ జాబితాలలో కస్టమర్‌లు లేరు.",
     "quick_offline_blocked": "డెలివరీలను గుర్తించడానికి ఇంటర్నెట్ కనెక్షన్ అవసరం.",
-    "in_lists": "{{count}} జాబితాలలో"
+    "in_lists": "{{count}} జాబితాలలో",
+    "delivered_count_label": "{{value}} డెలివరీ అయింది",
+    "leaves_count_label": "{{value}} సెలవులో",
+    "pending_count_label": "{{value}} పెండింగ్",
+    "revenue_badge": "ఆదాయం: {{value}}",
+    "total_leaves_badge": "సెలవులు: {{value}}",
+    "delivered_leaves_summary": "డెలివరీ అయింది: {{delivered}} · సెలవులో: {{leaves}}",
+    "next_month": "తదుపరి నెల",
+    "prev_month": "మునుపటి నెల"
   }
 }

@@ -9,7 +9,7 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { View, StyleSheet, ScrollView } from 'react-native'
+import { View, StyleSheet, ScrollView, KeyboardAvoidingView, Platform } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import * as Haptics from 'expo-haptics'
@@ -40,11 +40,29 @@ import { colors, spacing } from '@constants/tokens'
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
+  kav: { flex: 1 },
   content: { padding: spacing[4], paddingBottom: spacing[10], gap: spacing[3] },
   banner: { marginBottom: spacing[2] },
   dateRow: { marginBottom: spacing[1] },
   chipsLabel: { marginBottom: spacing[1] },
+  skeletonWrap: { padding: spacing[4] },
+  skeletonRow: {
+    height: 72,
+    borderRadius: spacing[2],
+    backgroundColor: colors.gray100,
+    marginBottom: spacing[3],
+  },
 })
+
+function CustomerListSkeleton() {
+  return (
+    <View style={styles.skeletonWrap} testID="add-charge-skeleton">
+      {[0, 1, 2, 3].map((i) => (
+        <View key={i} style={styles.skeletonRow} />
+      ))}
+    </View>
+  )
+}
 
 function AddExtraChargeScreenContent() {
   const { t } = useTranslation()
@@ -55,17 +73,25 @@ function AddExtraChargeScreenContent() {
   const canAdd = isOwner || hasPermission('add_extra_charges')
 
   const supplyListOptions = useRolesStore(useShallow((s) => s.supplyListOptions))
-  const { listDeliveries, isMutating, mutationError, addExtraCharge, fetchListDeliveries, clearError } =
-    useDeliveryStore(
-      useShallow((s) => ({
-        listDeliveries: s.listDeliveries,
-        isMutating: s.isMutating,
-        mutationError: s.mutationError,
-        addExtraCharge: s.addExtraCharge,
-        fetchListDeliveries: s.fetchListDeliveries,
-        clearError: s.clearError,
-      })),
-    )
+  const {
+    listDeliveries,
+    isListLoading,
+    isMutating,
+    mutationError,
+    addExtraCharge,
+    fetchListDeliveries,
+    clearError,
+  } = useDeliveryStore(
+    useShallow((s) => ({
+      listDeliveries: s.listDeliveries,
+      isListLoading: s.isListLoading,
+      isMutating: s.isMutating,
+      mutationError: s.mutationError,
+      addExtraCharge: s.addExtraCharge,
+      fetchListDeliveries: s.fetchListDeliveries,
+      clearError: s.clearError,
+    })),
+  )
 
   const [listId, setListId] = useState<string>(params.listId ?? '')
   const [customerId, setCustomerId] = useState<string>(params.customerId ?? '')
@@ -163,95 +189,112 @@ function AddExtraChargeScreenContent() {
     <AppHeader title={t('delivery.title_extra_charge')} showBack onBackPress={() => router.back()} />
   )
 
+  // Loading — a list is chosen but its deliveries (customer roster) are still loading.
+  if (listId && isListLoading && !listDeliveries[listId]?.length) {
+    return (
+      <SafeAreaView style={styles.safe} edges={['bottom']}>
+        {header}
+        <CustomerListSkeleton />
+      </SafeAreaView>
+    )
+  }
+
   return (
     <SafeAreaView style={styles.safe} edges={['bottom']}>
       {header}
-      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        {!isConnected ? (
-          <AppAlert
-            type="warning"
-            title={t('common.offline')}
-            message={t('common.needs_connection')}
-            containerStyle={styles.banner}
-          />
-        ) : null}
-        {!canAdd ? <AppAlert type="info" title={t('delivery.view_only')} containerStyle={styles.banner} /> : null}
-        {mutationError ? (
-          <AppAlert type="error" title={t(mutationError)} onClose={clearError} containerStyle={styles.banner} />
-        ) : null}
+      <KeyboardAvoidingView
+        style={styles.kav}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+          {!isConnected ? (
+            <AppAlert
+              type="warning"
+              title={t('common.offline')}
+              message={t('common.needs_connection')}
+              containerStyle={styles.banner}
+            />
+          ) : null}
+          {!canAdd ? (
+            <AppAlert type="info" title={t('delivery.view_only')} containerStyle={styles.banner} />
+          ) : null}
+          {mutationError ? (
+            <AppAlert type="error" title={t(mutationError)} onClose={clearError} containerStyle={styles.banner} />
+          ) : null}
 
-        <AppText variant="caption" color={colors.textSecondary} style={styles.dateRow}>
-          {formatLocaleDate(new Date().toISOString())}
-        </AppText>
-
-        <AppRadioGroup
-          label={t('delivery.select_lists')}
-          options={listSelectOptions}
-          value={listId}
-          onChange={(v) => {
-            setListId(String(v))
-            setCustomerId('')
-          }}
-        />
-
-        {listId ? (
-          <AppRadioGroup
-            label={t('delivery.select_customer')}
-            options={customerOptions}
-            value={customerId}
-            onChange={(v) => setCustomerId(String(v))}
-          />
-        ) : null}
-
-        {noDeliveryForCustomer ? (
-          <AppAlert type="warning" title={t('delivery.error_mark_delivery_first')} />
-        ) : null}
-
-        <AppInput
-          label={t('delivery.amount_label')}
-          value={amount}
-          onChangeText={onChangeAmount}
-          onBlur={() => {
-            setAmountTouched(true)
-            setAmountError(validateAmount(amount))
-          }}
-          error={amountError ? t(amountError) : undefined}
-          keyboardType="number-pad"
-          prefix="₹"
-          maxLength={LIMITS.amount}
-          testID="amount-input"
-        />
-
-        <View>
-          <AppText variant="caption" color={colors.textSecondary} style={styles.chipsLabel}>
-            {t('delivery.reason_label')}
+          <AppText variant="caption" color={colors.textSecondary} style={styles.dateRow}>
+            {formatLocaleDate(new Date().toISOString())}
           </AppText>
-          <ReasonChips reasons={reasonChips} selected={comment} onSelect={onChangeComment} testID="reason-chips" />
-        </View>
 
-        <AppTextArea
-          label={t('delivery.comment_label')}
-          value={comment}
-          onChangeText={onChangeComment}
-          onBlur={() => {
-            setCommentTouched(true)
-            setCommentError(validateComment(comment))
-          }}
-          error={commentError ? t(commentError) : undefined}
-          maxLength={LIMITS.comment}
-        />
+          <AppRadioGroup
+            label={t('delivery.select_lists')}
+            options={listSelectOptions}
+            value={listId}
+            onChange={(v) => {
+              setListId(String(v))
+              setCustomerId('')
+            }}
+          />
 
-        <AppButton
-          label={t('delivery.add_charge')}
-          variant="primary"
-          fullWidth
-          disabled={!isValid || isMutating}
-          loading={isMutating}
-          accessibilityHint={!isConnected ? t('common.needs_connection') : undefined}
-          onPress={onSubmit}
-          testID="add-charge-btn"
-        />
-      </ScrollView>
+          {listId ? (
+            <AppRadioGroup
+              label={t('delivery.select_customer')}
+              options={customerOptions}
+              value={customerId}
+              onChange={(v) => setCustomerId(String(v))}
+            />
+          ) : null}
+
+          {noDeliveryForCustomer ? (
+            <AppAlert type="warning" title={t('delivery.error_mark_delivery_first')} />
+          ) : null}
+
+          <AppInput
+            label={t('delivery.amount_label')}
+            value={amount}
+            onChangeText={onChangeAmount}
+            onBlur={() => {
+              setAmountTouched(true)
+              setAmountError(validateAmount(amount))
+            }}
+            error={amountError ? t(amountError) : undefined}
+            keyboardType="number-pad"
+            prefix={t('common.currency_symbol')}
+            maxLength={LIMITS.amount}
+            testID="amount-input"
+          />
+
+          <View>
+            <AppText variant="caption" color={colors.textSecondary} style={styles.chipsLabel}>
+              {t('delivery.reason_label')}
+            </AppText>
+            <ReasonChips reasons={reasonChips} selected={comment} onSelect={onChangeComment} testID="reason-chips" />
+          </View>
+
+          <AppTextArea
+            label={t('delivery.comment_label')}
+            value={comment}
+            onChangeText={onChangeComment}
+            onBlur={() => {
+              setCommentTouched(true)
+              setCommentError(validateComment(comment))
+            }}
+            error={commentError ? t(commentError) : undefined}
+            maxLength={LIMITS.comment}
+          />
+
+          <AppButton
+            label={t('delivery.add_charge')}
+            variant="primary"
+            fullWidth
+            disabled={!isValid || isMutating}
+            loading={isMutating}
+            accessibilityHint={!isConnected ? t('common.needs_connection') : undefined}
+            onPress={onSubmit}
+            testID="add-charge-btn"
+          />
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   )
 }

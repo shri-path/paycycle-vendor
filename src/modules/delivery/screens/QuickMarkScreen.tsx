@@ -33,7 +33,21 @@ const styles = StyleSheet.create({
   top: { paddingHorizontal: spacing[4], paddingTop: spacing[3] },
   banner: { paddingHorizontal: spacing[4], paddingTop: spacing[2] },
   cardArea: { flex: 1, justifyContent: 'center', paddingHorizontal: spacing[4] },
+  skeletonCard: {
+    height: 240,
+    borderRadius: spacing[3],
+    backgroundColor: colors.gray100,
+    marginHorizontal: spacing[4],
+  },
 })
+
+function QuickMarkSkeleton() {
+  return (
+    <View style={styles.cardArea} testID="quick-mark-skeleton">
+      <View style={styles.skeletonCard} />
+    </View>
+  )
+}
 
 function QuickMarkScreenContent() {
   const { t } = useTranslation()
@@ -138,10 +152,7 @@ function QuickMarkScreenContent() {
     return (
       <SafeAreaView style={styles.safe} edges={['bottom']}>
         {header}
-        <AppEmptyState
-          icon={<Ionicons name="hourglass-outline" size={componentSizes.icon.xxxl} color={colors.primary} />}
-          title={t('common.loading')}
-        />
+        <QuickMarkSkeleton />
       </SafeAreaView>
     )
   }

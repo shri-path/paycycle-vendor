@@ -20,7 +20,8 @@
     "back": "ফিরে যান",
     "menu": "মেনু",
     "notifications": "বিজ্ঞপ্তি",
-    "notifications_badge": "{{count}} অপঠিত বিজ্ঞপ্তি"
+    "notifications_badge": "{{count}} অপঠিত বিজ্ঞপ্তি",
+    "currency_symbol": "₹"
   },
   "auth": {
     "welcome": "স্বাগতম",
@@ -413,6 +414,14 @@
     "empty_day": "এই দিনে কোনো কার্যকলাপ নেই।",
     "empty_customers": "আপনার তালিকায় কোনো গ্রাহক নেই।",
     "quick_offline_blocked": "ডেলিভারি চিহ্নিত করতে ইন্টারনেট সংযোগ প্রয়োজন।",
-    "in_lists": "{{count}}টি তালিকায়"
+    "in_lists": "{{count}}টি তালিকায়",
+    "delivered_count_label": "{{value}} পৌঁছে দেওয়া হয়েছে",
+    "leaves_count_label": "{{value}} ছুটিতে",
+    "pending_count_label": "{{value}} বাকি",
+    "revenue_badge": "আয়: {{value}}",
+    "total_leaves_badge": "ছুটি: {{value}}",
+    "delivered_leaves_summary": "পৌঁছে দেওয়া হয়েছে: {{delivered}} · ছুটিতে: {{leaves}}",
+    "next_month": "পরবর্তী মাস",
+    "prev_month": "পূর্ববর্তী মাস"
   }
 }

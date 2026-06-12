@@ -20,7 +20,8 @@
     "back": "પાછા જાઓ",
     "menu": "મેનુ",
     "notifications": "સૂચનાઓ",
-    "notifications_badge": "{{count}} વાંચ્યા વગરની સૂચનાઓ"
+    "notifications_badge": "{{count}} વાંચ્યા વગરની સૂચનાઓ",
+    "currency_symbol": "₹"
   },
   "auth": {
     "welcome": "સ્વાગત છે",
@@ -413,6 +414,14 @@
     "empty_day": "આ દિવસે કોઈ પ્રવૃત્તિ નથી.",
     "empty_customers": "તમારી યાદીઓમાં કોઈ ગ્રાહક નથી.",
     "quick_offline_blocked": "ડિલિવરી ચિહ્નિત કરવા માટે ઇન્ટરનેટ કનેક્શન જરૂરી છે.",
-    "in_lists": "{{count}} યાદીઓમાં"
+    "in_lists": "{{count}} યાદીઓમાં",
+    "delivered_count_label": "{{value}} પહોંચાડ્યું",
+    "leaves_count_label": "{{value}} રજા પર",
+    "pending_count_label": "{{value}} બાકી",
+    "revenue_badge": "આવક: {{value}}",
+    "total_leaves_badge": "રજાઓ: {{value}}",
+    "delivered_leaves_summary": "પહોંચાડ્યું: {{delivered}} · રજા પર: {{leaves}}",
+    "next_month": "આગલો મહિનો",
+    "prev_month": "પાછલો મહિનો"
   }
 }

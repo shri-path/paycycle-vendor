@@ -43,6 +43,8 @@ const styles = StyleSheet.create({
     marginTop: spacing[1],
   },
   trailing: {
+    // Cross-axis alignment (not inline direction) — RTL-safe: the column mirrors to
+    // the leading edge automatically, so the time/amount stays on the trailing side.
     alignItems: 'flex-end',
   },
 })

@@ -72,7 +72,7 @@ const DeliveryProgressHeaderComponent: React.FC<DeliveryProgressHeaderProps> = (
             importantForAccessibility="no"
           />
           <AppText variant="caption" color={colors.textSecondary}>
-            {t('delivery.delivered_count')}: {delivered}
+            {t('delivery.delivered_count_label', { value: delivered })}
           </AppText>
         </View>
         <View style={styles.chip}>
@@ -83,7 +83,7 @@ const DeliveryProgressHeaderComponent: React.FC<DeliveryProgressHeaderProps> = (
             importantForAccessibility="no"
           />
           <AppText variant="caption" color={colors.textSecondary}>
-            {t('delivery.leaves_count')}: {onLeave}
+            {t('delivery.leaves_count_label', { value: onLeave })}
           </AppText>
         </View>
         <View style={styles.chip}>
@@ -94,7 +94,7 @@ const DeliveryProgressHeaderComponent: React.FC<DeliveryProgressHeaderProps> = (
             importantForAccessibility="no"
           />
           <AppText variant="caption" color={colors.textSecondary}>
-            {t('delivery.pending_count')}: {pending}
+            {t('delivery.pending_count_label', { value: pending })}
           </AppText>
         </View>
       </View>

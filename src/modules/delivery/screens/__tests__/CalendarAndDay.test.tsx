@@ -91,6 +91,12 @@ describe('CalendarScreen', () => {
     const screen = await render(<CalendarScreen />)
     expect(screen.getByText(t('common.retry'))).toBeTruthy()
   })
+
+  it('shows the loading skeleton with no cached month', async () => {
+    setCalStore({ calendar: {}, isCalendarLoading: true })
+    const screen = await render(<CalendarScreen />)
+    expect(screen.getByTestId('calendar-skeleton')).toBeTruthy()
+  })
 })
 
 describe('DayDetailScreen', () => {
@@ -109,5 +115,17 @@ describe('DayDetailScreen', () => {
     })
     const screen = await render(<DayDetailScreen />)
     expect(screen.getByText(t('delivery.empty_day'))).toBeTruthy()
+  })
+
+  it('shows the loading skeleton with no cached day', async () => {
+    setCalStore({ dayDetail: {}, isDayLoading: true })
+    const screen = await render(<DayDetailScreen />)
+    expect(screen.getByTestId('day-detail-skeleton')).toBeTruthy()
+  })
+
+  it('shows the error + retry with no cached day', async () => {
+    setCalStore({ dayDetail: {}, dayError: 'delivery.error_load_failed' })
+    const screen = await render(<DayDetailScreen />)
+    expect(screen.getByText(t('common.retry'))).toBeTruthy()
   })
 })

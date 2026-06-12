@@ -13,8 +13,24 @@ import { View, TouchableOpacity, StyleSheet } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { AppText } from '@components/primitives/AppText'
 import { useTranslation } from '@hooks/useTranslation'
+import { getCurrentLanguage } from '@locales/index'
 import { colors, spacing, borderRadius, componentSizes, interaction } from '@constants/tokens'
 import type { CalendarDayDto, CalendarDayStatus } from '../../../types/delivery'
+
+/**
+ * Locale-aware abbreviated weekday headers, Sunday-first (matches the grid, which
+ * places the 1st of the month after `firstDay = getDay()` blanks, 0=Sunday). Falls
+ * back to English single letters if Intl lacks the locale's weekday data.
+ */
+function getWeekdayLabels(locale: string): string[] {
+  try {
+    const formatter = new Intl.DateTimeFormat(locale, { weekday: 'short' })
+    // 2024-01-07 is a Sunday → iterate the 7 following days.
+    return Array.from({ length: 7 }, (_, i) => formatter.format(new Date(2024, 0, 7 + i)))
+  } catch {
+    return ['S', 'M', 'T', 'W', 'T', 'F', 'S']
+  }
+}
 
 export interface CalendarMonthGridProps {
   /** Month string `YYYY-MM`. */
@@ -25,8 +41,6 @@ export interface CalendarMonthGridProps {
   onSelectDay: (date: string) => void
   testID?: string
 }
-
-const WEEKDAY_KEYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'] // visual header only
 
 interface CellPresentation {
   icon: React.ComponentProps<typeof Ionicons>['name']
@@ -91,6 +105,8 @@ const CalendarMonthGridComponent: React.FC<CalendarMonthGridProps> = ({
 }) => {
   const { t } = useTranslation()
 
+  const weekdayLabels = useMemo(() => getWeekdayLabels(getCurrentLanguage()), [])
+
   // Build the 42-cell grid (6 weeks) with leading blanks for the first weekday.
   const cells = useMemo(() => {
     const [yearStr, monthStr] = month.split('-')
@@ -113,7 +129,7 @@ const CalendarMonthGridComponent: React.FC<CalendarMonthGridProps> = ({
   return (
     <View style={styles.container} testID={testID}>
       <View style={styles.weekHeader}>
-        {WEEKDAY_KEYS.map((label, idx) => (
+        {weekdayLabels.map((label, idx) => (
           <View key={`wd-${idx}`} style={styles.weekCell}>
             <AppText variant="caption" color={colors.textSecondary} importantForAccessibility="no">
               {label}

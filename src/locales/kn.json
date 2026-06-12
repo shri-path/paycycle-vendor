@@ -20,7 +20,8 @@
     "back": "ಹಿಂದೆ ಹೋಗಿ",
     "menu": "ಮೆನು",
     "notifications": "ಅಧಿಸೂಚನೆಗಳು",
-    "notifications_badge": "{{count}} ಓದದ ಅಧಿಸೂಚನೆಗಳು"
+    "notifications_badge": "{{count}} ಓದದ ಅಧಿಸೂಚನೆಗಳು",
+    "currency_symbol": "₹"
   },
   "auth": {
     "welcome": "ಸ್ವಾಗತ",
@@ -413,6 +414,14 @@
     "empty_day": "ಈ ದಿನ ಯಾವುದೇ ಚಟುವಟಿಕೆ ಇಲ್ಲ.",
     "empty_customers": "ನಿಮ್ಮ ಪಟ್ಟಿಗಳಲ್ಲಿ ಗ್ರಾಹಕರಿಲ್ಲ.",
     "quick_offline_blocked": "ವಿತರಣೆಗಳನ್ನು ಗುರುತಿಸಲು ಇಂಟರ್ನೆಟ್ ಸಂಪರ್ಕ ಬೇಕು.",
-    "in_lists": "{{count}} ಪಟ್ಟಿಗಳಲ್ಲಿ"
+    "in_lists": "{{count}} ಪಟ್ಟಿಗಳಲ್ಲಿ",
+    "delivered_count_label": "{{value}} ತಲುಪಿಸಲಾಗಿದೆ",
+    "leaves_count_label": "{{value}} ರಜೆಯಲ್ಲಿ",
+    "pending_count_label": "{{value}} ಬಾಕಿ",
+    "revenue_badge": "ಆದಾಯ: {{value}}",
+    "total_leaves_badge": "ರಜೆಗಳು: {{value}}",
+    "delivered_leaves_summary": "ತಲುಪಿಸಲಾಗಿದೆ: {{delivered}} · ರಜೆಯಲ್ಲಿ: {{leaves}}",
+    "next_month": "ಮುಂದಿನ ತಿಂಗಳು",
+    "prev_month": "ಹಿಂದಿನ ತಿಂಗಳು"
   }
 }

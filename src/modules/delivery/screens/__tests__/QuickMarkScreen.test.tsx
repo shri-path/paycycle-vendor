@@ -86,6 +86,18 @@ describe('QuickMarkScreen', () => {
     expect(screen.getAllByText(t('delivery.quick_offline_blocked')).length).toBeGreaterThan(0)
   })
 
+  it('shows the loading skeleton while the queue builds with none yet', async () => {
+    setStore({ quickQueue: [], quickIndex: 0, isQuickLoading: true })
+    const screen = await render(<QuickMarkScreen />)
+    expect(screen.getByTestId('quick-mark-skeleton')).toBeTruthy()
+  })
+
+  it('shows the error state + retry when the queue fails to build', async () => {
+    setStore({ quickQueue: [], quickIndex: 0, quickError: 'delivery.error_load_failed' })
+    const screen = await render(<QuickMarkScreen />)
+    expect(screen.getByText(t('common.retry'))).toBeTruthy()
+  })
+
   it('renders the current card (content)', async () => {
     const screen = await render(<QuickMarkScreen />)
     expect(screen.getByTestId('quick-mark-card')).toBeTruthy()

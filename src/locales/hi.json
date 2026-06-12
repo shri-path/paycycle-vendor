@@ -20,7 +20,8 @@
     "back": "वापस जाएं",
     "menu": "मेनू",
     "notifications": "सूचनाएं",
-    "notifications_badge": "{{count}} अपठित सूचनाएं"
+    "notifications_badge": "{{count}} अपठित सूचनाएं",
+    "currency_symbol": "₹"
   },
   "auth": {
     "welcome": "स्वागत है",
@@ -413,6 +414,14 @@
     "empty_day": "इस दिन कोई गतिविधि नहीं।",
     "empty_customers": "आपकी सूचियों में कोई ग्राहक नहीं।",
     "quick_offline_blocked": "डिलीवरी चिह्नित करने के लिए इंटरनेट कनेक्शन चाहिए।",
-    "in_lists": "{{count}} सूचियों में"
+    "in_lists": "{{count}} सूचियों में",
+    "delivered_count_label": "{{value}} पहुंचाया",
+    "leaves_count_label": "{{value}} छुट्टी पर",
+    "pending_count_label": "{{value}} लंबित",
+    "revenue_badge": "आय: {{value}}",
+    "total_leaves_badge": "छुट्टियाँ: {{value}}",
+    "delivered_leaves_summary": "पहुंचाया: {{delivered}} · छुट्टी पर: {{leaves}}",
+    "next_month": "अगला महीना",
+    "prev_month": "पिछला महीना"
   }
 }

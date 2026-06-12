@@ -7,7 +7,7 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { View, StyleSheet, ScrollView } from 'react-native'
+import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter, type Href } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
@@ -65,7 +65,43 @@ const styles = StyleSheet.create({
   },
   content: { paddingBottom: spacing[10] },
   summary: { paddingHorizontal: spacing[4], paddingTop: spacing[4] },
+  skeletonWrap: { paddingHorizontal: spacing[4] },
+  skeletonWeekRow: { flexDirection: 'row', marginBottom: spacing[2] },
+  skeletonWeekCell: {
+    flex: 1,
+    height: 12,
+    marginHorizontal: spacing[1] / 2,
+    borderRadius: spacing[1],
+    backgroundColor: colors.gray100,
+  },
+  skeletonGridRow: { flexDirection: 'row', marginBottom: spacing[2] },
+  skeletonCell: {
+    flex: 1,
+    aspectRatio: 1,
+    marginHorizontal: spacing[1] / 2,
+    borderRadius: spacing[2],
+    backgroundColor: colors.gray100,
+  },
 })
+
+function CalendarSkeleton() {
+  return (
+    <View style={styles.skeletonWrap} testID="calendar-skeleton">
+      <View style={styles.skeletonWeekRow}>
+        {Array.from({ length: 7 }).map((_, i) => (
+          <View key={`wd-${i}`} style={styles.skeletonWeekCell} />
+        ))}
+      </View>
+      {Array.from({ length: 5 }).map((_, r) => (
+        <View key={`r-${r}`} style={styles.skeletonGridRow}>
+          {Array.from({ length: 7 }).map((__, c) => (
+            <View key={`c-${r}-${c}`} style={styles.skeletonCell} />
+          ))}
+        </View>
+      ))}
+    </View>
+  )
+}
 
 function CalendarScreenContent() {
   useRequireOwner()
@@ -120,7 +156,7 @@ function CalendarScreenContent() {
       <AppIconButton
         icon={<Ionicons name="chevron-back" size={componentSizes.icon.lg} color={colors.primary} />}
         onPress={goPrev}
-        accessibilityLabel={t('common.back')}
+        accessibilityLabel={t('delivery.prev_month')}
       />
       <AppText variant="h4" weight="semibold">
         {label}
@@ -128,7 +164,7 @@ function CalendarScreenContent() {
       <AppIconButton
         icon={<Ionicons name="chevron-forward" size={componentSizes.icon.lg} color={colors.primary} />}
         onPress={goNext}
-        accessibilityLabel={t('common.menu')}
+        accessibilityLabel={t('delivery.next_month')}
       />
     </View>
   )
@@ -138,10 +174,7 @@ function CalendarScreenContent() {
       <SafeAreaView style={styles.safe} edges={['bottom']}>
         {header}
         {nav}
-        <AppEmptyState
-          icon={<Ionicons name="hourglass-outline" size={componentSizes.icon.xxxl} color={colors.primary} />}
-          title={t('common.loading')}
-        />
+        <CalendarSkeleton />
       </SafeAreaView>
     )
   }
@@ -173,7 +206,10 @@ function CalendarScreenContent() {
         </View>
       ) : null}
       {nav}
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        refreshControl={<RefreshControl refreshing={isLoading} onRefresh={load} />}
+      >
         {isEmpty ? (
           <AppEmptyState
             icon={<Ionicons name="calendar-outline" size={componentSizes.icon.xxxl} color={colors.primary} />}
@@ -194,12 +230,12 @@ function CalendarScreenContent() {
                   done: monthData.summary.totalDeliveries,
                   total: monthData.summary.totalDeliveries,
                 })}
-                badge={`${t('delivery.total_leaves')}: ${monthData.summary.totalLeaves}`}
+                badge={t('delivery.total_leaves_badge', { value: monthData.summary.totalLeaves })}
                 badgeVariant="warning"
                 icon="cube-outline"
               />
               <AppText variant="caption" color={colors.textSecondary}>
-                {t('delivery.revenue_label')}: {formatCurrency(monthData.summary.revenue)}
+                {t('delivery.revenue_badge', { value: formatCurrency(monthData.summary.revenue) })}
               </AppText>
             </View>
           </>

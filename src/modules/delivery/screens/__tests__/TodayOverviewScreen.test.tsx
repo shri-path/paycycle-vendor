@@ -61,10 +61,10 @@ beforeEach(() => {
 })
 
 describe('TodayOverviewScreen', () => {
-  it('shows the loading state with no cached today', async () => {
+  it('shows the loading skeleton with no cached today', async () => {
     setStore({ today: null, isTodayLoading: true })
     const screen = await render(<TodayOverviewScreen />)
-    expect(screen.getByText(t('common.loading'))).toBeTruthy()
+    expect(screen.getByTestId('today-skeleton')).toBeTruthy()
   })
 
   it('shows the error state + retry with no cache', async () => {

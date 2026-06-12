@@ -18,12 +18,13 @@ jest.mock('@hooks/useNetworkStatus', () => ({
   useNetworkStatus: jest.fn().mockReturnValue({ isConnected: true, isChecking: false }),
 }))
 
+const mockPush = jest.fn()
 jest.mock('expo-router', () => {
   const ReactActual = require('react')
   return {
     // Mimic react-navigation focus: run the effect callback once on mount.
     useFocusEffect: (cb: () => void | (() => void)) => ReactActual.useEffect(cb, [cb]),
-    useRouter: () => ({ push: jest.fn(), replace: jest.fn(), back: jest.fn() }),
+    useRouter: () => ({ push: mockPush, replace: jest.fn(), back: jest.fn() }),
   }
 })
 
@@ -43,7 +44,7 @@ jest.mock('@modules/delivery/hooks/useDeliveryToday', () => ({
 }))
 
 import React from 'react'
-import { render } from '@testing-library/react-native'
+import { render, fireEvent } from '@testing-library/react-native'
 import StaffHomeScreen from '../StaffHomeScreen'
 import { t } from '@locales/index'
 import { useNetworkStatus } from '@hooks/useNetworkStatus'
@@ -147,5 +148,26 @@ describe('StaffHomeScreen', () => {
     const screen = await render(<StaffHomeScreen />)
     expect(screen.getByText(t('common.offline'))).toBeTruthy()
     expect(screen.getByText('Morning Milk')).toBeTruthy()
+  })
+
+  it('disables the Quick Mark CTA when offline (writes are online-only)', async () => {
+    useNetworkStatusMock.mockReturnValue({ isConnected: false, isChecking: false })
+    mockStore({
+      assignedListIds: ['l1'],
+      supplyListOptions: [{ listId: 'l1', name: 'Morning Milk' }],
+    })
+    const screen = await render(<StaffHomeScreen />)
+    const cta = screen.getByTestId('staff-home-quick-mark')
+    expect(cta.props.accessibilityState?.disabled).toBe(true)
+  })
+
+  it('navigates to quick-mark on Quick Mark CTA press when online', async () => {
+    mockStore({
+      assignedListIds: ['l1'],
+      supplyListOptions: [{ listId: 'l1', name: 'Morning Milk' }],
+    })
+    const screen = await render(<StaffHomeScreen />)
+    fireEvent.press(screen.getByTestId('staff-home-quick-mark'))
+    expect(mockPush).toHaveBeenCalledWith('/(app)/deliveries/quick-mark')
   })
 })

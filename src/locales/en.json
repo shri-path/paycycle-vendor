@@ -20,7 +20,8 @@
     "back": "Go back",
     "menu": "Menu",
     "notifications": "Notifications",
-    "notifications_badge": "{{count}} unread notifications"
+    "notifications_badge": "{{count}} unread notifications",
+    "currency_symbol": "₹"
   },
   "auth": {
     "welcome": "Welcome",
@@ -413,6 +414,14 @@
     "empty_day": "No activity on this day.",
     "empty_customers": "No customers in your lists.",
     "quick_offline_blocked": "You need an internet connection to mark deliveries.",
-    "in_lists": "In {{count}} lists"
+    "in_lists": "In {{count}} lists",
+    "delivered_count_label": "{{value}} Delivered",
+    "leaves_count_label": "{{value}} On leave",
+    "pending_count_label": "{{value}} Pending",
+    "revenue_badge": "Revenue: {{value}}",
+    "total_leaves_badge": "Leaves: {{value}}",
+    "delivered_leaves_summary": "Delivered: {{delivered}} · On leave: {{leaves}}",
+    "next_month": "Next month",
+    "prev_month": "Previous month"
   }
 }

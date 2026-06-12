@@ -20,7 +20,8 @@
     "back": "பின் செல்",
     "menu": "மெனு",
     "notifications": "அறிவிப்புகள்",
-    "notifications_badge": "{{count}} படிக்காத அறிவிப்புகள்"
+    "notifications_badge": "{{count}} படிக்காத அறிவிப்புகள்",
+    "currency_symbol": "₹"
   },
   "auth": {
     "welcome": "வரவேற்கிறோம்",
@@ -413,6 +414,14 @@
     "empty_day": "இந்த நாளில் செயல்பாடு இல்லை.",
     "empty_customers": "உங்கள் பட்டியல்களில் வாடிக்கையாளர்கள் இல்லை.",
     "quick_offline_blocked": "விநியோகங்களைக் குறிக்க இணைய இணைப்பு தேவை.",
-    "in_lists": "{{count}} பட்டியல்களில்"
+    "in_lists": "{{count}} பட்டியல்களில்",
+    "delivered_count_label": "{{value}} வழங்கப்பட்டது",
+    "leaves_count_label": "{{value}} விடுப்பில்",
+    "pending_count_label": "{{value}} நிலுவையில்",
+    "revenue_badge": "வருவாய்: {{value}}",
+    "total_leaves_badge": "விடுப்புகள்: {{value}}",
+    "delivered_leaves_summary": "வழங்கப்பட்டது: {{delivered}} · விடுப்பில்: {{leaves}}",
+    "next_month": "அடுத்த மாதம்",
+    "prev_month": "முந்தைய மாதம்"
   }
 }

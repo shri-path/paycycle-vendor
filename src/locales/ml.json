@@ -20,7 +20,8 @@
     "back": "തിരികെ പോകുക",
     "menu": "മെനു",
     "notifications": "അറിയിപ്പുകൾ",
-    "notifications_badge": "{{count}} വായിക്കാത്ത അറിയിപ്പുകൾ"
+    "notifications_badge": "{{count}} വായിക്കാത്ത അറിയിപ്പുകൾ",
+    "currency_symbol": "₹"
   },
   "auth": {
     "welcome": "സ്വാഗതം",
@@ -413,6 +414,14 @@
     "empty_day": "ഈ ദിവസം പ്രവർത്തനമൊന്നുമില്ല.",
     "empty_customers": "നിങ്ങളുടെ പട്ടികകളിൽ ഉപഭോക്താക്കളില്ല.",
     "quick_offline_blocked": "ഡെലിവറികൾ അടയാളപ്പെടുത്താൻ ഇന്റർനെറ്റ് കണക്ഷൻ ആവശ്യമാണ്.",
-    "in_lists": "{{count}} പട്ടികകളിൽ"
+    "in_lists": "{{count}} പട്ടികകളിൽ",
+    "delivered_count_label": "{{value}} എത്തിച്ചു",
+    "leaves_count_label": "{{value}} അവധിയിൽ",
+    "pending_count_label": "{{value}} തീർപ്പാക്കാത്തത്",
+    "revenue_badge": "വരുമാനം: {{value}}",
+    "total_leaves_badge": "അവധികൾ: {{value}}",
+    "delivered_leaves_summary": "എത്തിച്ചു: {{delivered}} · അവധിയിൽ: {{leaves}}",
+    "next_month": "അടുത്ത മാസം",
+    "prev_month": "കഴിഞ്ഞ മാസം"
   }
 }

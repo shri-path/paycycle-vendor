@@ -106,10 +106,13 @@ function DeliveryListScreenContent() {
   const filterValue: FilterValue = (['all', 'pending', 'completed'] as const)[filterIndex] ?? 'all'
 
   const load = useCallback(() => {
+    // "Completed" spans all non-PENDING statuses (DELIVERED | LEAVE | AUTO_MARKED |
+    // CANCELLED). The API's `status` accepts a single enum, so we omit it for the
+    // completed tab and filter client-side (rows useMemo keeps only status !==
+    // 'PENDING'); only "pending" sends an explicit status filter.
     void fetchListDeliveries(listId, {
       search: search.trim() || undefined,
-      status:
-        filterValue === 'pending' ? 'PENDING' : filterValue === 'completed' ? 'DELIVERED' : undefined,
+      status: filterValue === 'pending' ? 'PENDING' : undefined,
     })
   }, [fetchListDeliveries, listId, search, filterValue])
 

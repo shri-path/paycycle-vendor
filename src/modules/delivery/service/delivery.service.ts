@@ -53,13 +53,18 @@ export interface ListDeliveriesPaginated {
 
 export const deliveryService = {
   /** GET /vendors/:vendorId/deliveries/today */
-  async getToday(vendorId: string, opts: TodayOptions = {}): Promise<TodayResultDto> {
+  async getToday(
+    vendorId: string,
+    opts: TodayOptions = {},
+    signal?: AbortSignal,
+  ): Promise<TodayResultDto> {
     if (isMockMode) {
       await simulateNetworkDelay()
       return mockToday(opts)
     }
     const { data } = await httpClient.get(APIPath.Delivery.Today(vendorId), {
       params: { date: opts.date, listId: opts.listId, staffId: opts.staffId },
+      signal,
     })
     return data.data as TodayResultDto
   },
@@ -69,6 +74,7 @@ export const deliveryService = {
     vendorId: string,
     listId: string,
     opts: ListDeliveriesOptions = {},
+    signal?: AbortSignal,
   ): Promise<ListDeliveriesPaginated> {
     if (isMockMode) {
       await simulateNetworkDelay()
@@ -82,6 +88,7 @@ export const deliveryService = {
         page: opts.page,
         limit: opts.limit,
       },
+      signal,
     })
     return {
       result: data.data as ListDeliveriesResultDto,
@@ -94,22 +101,29 @@ export const deliveryService = {
     vendorId: string,
     deliveryId: string,
     body: MarkDeliveryInput,
+    signal?: AbortSignal,
   ): Promise<MarkDeliveryResultDto> {
     if (isMockMode) {
       await simulateNetworkDelay()
       return buildMarkResult(deliveryId, body)
     }
-    const { data } = await httpClient.patch(APIPath.Delivery.Mark(vendorId, deliveryId), body)
+    const { data } = await httpClient.patch(APIPath.Delivery.Mark(vendorId, deliveryId), body, {
+      signal,
+    })
     return data.data as MarkDeliveryResultDto
   },
 
   /** POST /vendors/:vendorId/deliveries/mark-bulk */
-  async markBulk(vendorId: string, body: MarkBulkInput): Promise<MarkBulkResultDto> {
+  async markBulk(
+    vendorId: string,
+    body: MarkBulkInput,
+    signal?: AbortSignal,
+  ): Promise<MarkBulkResultDto> {
     if (isMockMode) {
       await simulateNetworkDelay()
       return { updated: 0, excluded: body.excludeDeliveryIds?.length ?? 0 }
     }
-    const { data } = await httpClient.post(APIPath.Delivery.MarkBulk(vendorId), body)
+    const { data } = await httpClient.post(APIPath.Delivery.MarkBulk(vendorId), body, { signal })
     return data.data as MarkBulkResultDto
   },
 
@@ -117,6 +131,7 @@ export const deliveryService = {
   async addExtraCharge(
     vendorId: string,
     body: ExtraChargeInput,
+    signal?: AbortSignal,
   ): Promise<ExtraChargeResultDto> {
     if (isMockMode) {
       await simulateNetworkDelay()
@@ -129,12 +144,16 @@ export const deliveryService = {
         createdAt: new Date().toISOString(),
       }
     }
-    const { data } = await httpClient.post(APIPath.Delivery.ExtraCharges(vendorId), body)
+    const { data } = await httpClient.post(APIPath.Delivery.ExtraCharges(vendorId), body, { signal })
     return data.data as ExtraChargeResultDto
   },
 
   /** POST /vendors/:vendorId/leaves */
-  async createLeave(vendorId: string, body: CreateLeaveInput): Promise<CreateLeaveResultDto> {
+  async createLeave(
+    vendorId: string,
+    body: CreateLeaveInput,
+    signal?: AbortSignal,
+  ): Promise<CreateLeaveResultDto> {
     if (isMockMode) {
       await simulateNetworkDelay()
       return {
@@ -150,7 +169,7 @@ export const deliveryService = {
         affectedDeliveries: body.supplyListIds.length,
       }
     }
-    const { data } = await httpClient.post(APIPath.Delivery.Leaves(vendorId), body)
+    const { data } = await httpClient.post(APIPath.Delivery.Leaves(vendorId), body, { signal })
     return data.data as CreateLeaveResultDto
   },
 
@@ -158,6 +177,7 @@ export const deliveryService = {
   async getLeaves(
     vendorId: string,
     opts: { status?: 'today' | 'upcoming'; staffId?: string } = {},
+    signal?: AbortSignal,
   ): Promise<ListLeavesResultDto> {
     if (isMockMode) {
       await simulateNetworkDelay()
@@ -165,17 +185,24 @@ export const deliveryService = {
     }
     const { data } = await httpClient.get(APIPath.Delivery.Leaves(vendorId), {
       params: { status: opts.status, staffId: opts.staffId },
+      signal,
     })
     return data.data as ListLeavesResultDto
   },
 
   /** DELETE /vendors/:vendorId/leaves/:leaveId */
-  async cancelLeave(vendorId: string, leaveId: string): Promise<CancelLeaveResultDto> {
+  async cancelLeave(
+    vendorId: string,
+    leaveId: string,
+    signal?: AbortSignal,
+  ): Promise<CancelLeaveResultDto> {
     if (isMockMode) {
       await simulateNetworkDelay()
       return { revertedDeliveries: 1 }
     }
-    const { data } = await httpClient.delete(APIPath.Delivery.LeaveDetail(vendorId, leaveId))
+    const { data } = await httpClient.delete(APIPath.Delivery.LeaveDetail(vendorId, leaveId), {
+      signal,
+    })
     return data.data as CancelLeaveResultDto
   },
 
@@ -184,6 +211,7 @@ export const deliveryService = {
     vendorId: string,
     month: string,
     opts: CalendarOptions = {},
+    signal?: AbortSignal,
   ): Promise<CalendarResultDto> {
     if (isMockMode) {
       await simulateNetworkDelay()
@@ -191,17 +219,22 @@ export const deliveryService = {
     }
     const { data } = await httpClient.get(APIPath.Delivery.Calendar(vendorId), {
       params: { month, listId: opts.listId, customerId: opts.customerId },
+      signal,
     })
     return data.data as CalendarResultDto
   },
 
   /** GET /vendors/:vendorId/deliveries/date/:date */
-  async getDateDetail(vendorId: string, date: string): Promise<DateDetailResultDto> {
+  async getDateDetail(
+    vendorId: string,
+    date: string,
+    signal?: AbortSignal,
+  ): Promise<DateDetailResultDto> {
     if (isMockMode) {
       await simulateNetworkDelay()
       return mockDateDetail(date)
     }
-    const { data } = await httpClient.get(APIPath.Delivery.DateDetail(vendorId, date))
+    const { data } = await httpClient.get(APIPath.Delivery.DateDetail(vendorId, date), { signal })
     return data.data as DateDetailResultDto
   },
 }
