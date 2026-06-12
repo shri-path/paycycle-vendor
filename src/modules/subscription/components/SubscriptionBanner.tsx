@@ -58,7 +58,7 @@ function computeMessage(
 
   // Priority 2: expiry within 7 days
   const days = daysUntil(nextBillingDate)
-  if (days <= 7 && days >= 0) {
+  if (days > 0 && days <= 7) {
     return {
       text: t('subscription.banner_expiring', { days: String(days) }),
       cta: t('subscription.banner_renew_cta'),
