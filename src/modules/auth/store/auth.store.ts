@@ -238,6 +238,16 @@ export const useAuthStore = create<AuthState>()(
           } catch {
             // subscription store not loaded yet — nothing to clear.
           }
+          // Wipe all local dashboard data (financial aggregates) on logout (US-010).
+          try {
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
+            const { useDashboardStore } = require('@modules/dashboard/store/dashboard.store') as {
+              useDashboardStore: { getState: () => { clearDashboard: () => void } }
+            }
+            useDashboardStore.getState().clearDashboard()
+          } catch {
+            // dashboard store not loaded yet — nothing to clear.
+          }
           set({
             isAuthenticated: false,
             user: null,
