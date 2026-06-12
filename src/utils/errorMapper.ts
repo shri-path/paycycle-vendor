@@ -20,6 +20,7 @@ export type ApiErrorContext =
   | 'resend'
   | 'supply'
   | 'delivery'
+  | 'customer'
 
 /**
  * Sub-action within the `'delivery'` context (US-006). Several delivery endpoints
@@ -48,6 +49,22 @@ export type SupplyErrorAction =
   | 'update_subscription'
 
 /**
+ * Sub-action within the `'customer'` context (US-008). Customer endpoints share
+ * status codes that resolve to different i18n keys depending on the action being
+ * performed (e.g. 409 on create/update = duplicate phone, on add_subscription =
+ * already subscribed; 422 on deactivate = already inactive, on remove_subscription =
+ * subscription ended). The store passes the action so the mapper resolves correctly.
+ */
+export type CustomerErrorAction =
+  | 'create'
+  | 'update'
+  | 'deactivate'
+  | 'add_subscription'
+  | 'remove_subscription'
+  | 'record_payment'
+  | 'set_credit_limit'
+
+/**
  * Maps an unknown API error to an i18n translation key.
  * Screens should call t(mapApiError(err)) to display a translated error message.
  *
@@ -57,7 +74,7 @@ export type SupplyErrorAction =
 export function mapApiError(
   err: unknown,
   context?: ApiErrorContext,
-  action?: SupplyErrorAction | DeliveryErrorAction,
+  action?: SupplyErrorAction | DeliveryErrorAction | CustomerErrorAction,
 ): string {
   if (axios.isAxiosError(err)) {
     // Network error (no response) = offline
@@ -131,6 +148,28 @@ export function mapApiError(
       }
     }
 
+    // Customer surfaces (US-008) — resolve shared status codes by sub-action.
+    if (context === 'customer') {
+      if (status === 403) return 'roles.error_forbidden'
+      if (status === 404) return 'customer.error_not_found'
+      if (status === 409) {
+        if (action === 'add_subscription') return 'customer.error_already_subscribed'
+        // create and update both produce a duplicate phone 409
+        return 'customer.error_duplicate_phone'
+      }
+      if (status === 422) {
+        if (action === 'deactivate') return 'customer.error_already_inactive'
+        if (action === 'remove_subscription') return 'customer.error_subscription_ended'
+        if (action === 'record_payment') return 'customer.error_invalid_payment'
+        return 'validation.required'
+      }
+      if (status === 400) {
+        if (action === 'record_payment') return 'customer.error_invalid_payment'
+        if (action === 'set_credit_limit') return 'customer.error_invalid_credit_limit'
+        return 'validation.required'
+      }
+    }
+
     if (status === 401) return 'auth.invalid_credentials'
     if (status === 403) return 'roles.error_forbidden'
     if (status === 409) return 'auth.phone_already_registered'
@@ -149,6 +188,7 @@ export function mapApiError(
       err.message.startsWith('roles.') ||
       err.message.startsWith('supply.') ||
       err.message.startsWith('delivery.') ||
+      err.message.startsWith('customer.') ||
       err.message.startsWith('common.'))
   ) {
     return err.message
