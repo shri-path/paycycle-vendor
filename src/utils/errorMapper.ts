@@ -22,6 +22,7 @@ export type ApiErrorContext =
   | 'delivery'
   | 'customer'
   | 'audit'
+  | 'subscription'
 
 /**
  * Sub-action within the `'delivery'` context (US-006). Several delivery endpoints
@@ -50,6 +51,14 @@ export type SupplyErrorAction =
   | 'update_subscription'
 
 /**
+ * Sub-action within the `'subscription'` context (US-009). Several subscription
+ * endpoints share status codes that resolve to different i18n keys depending on the
+ * action being performed (e.g. 422 on upgrade = not higher tier, on cancel = already
+ * cancelled). The store passes the action so the mapper resolves correctly.
+ */
+export type SubscriptionErrorAction = 'upgrade' | 'renew' | 'cancel' | 'auto_renewal'
+
+/**
  * Sub-action within the `'customer'` context (US-008). Customer endpoints share
  * status codes that resolve to different i18n keys depending on the action being
  * performed (e.g. 409 on create/update = duplicate phone, on add_subscription =
@@ -75,7 +84,7 @@ export type CustomerErrorAction =
 export function mapApiError(
   err: unknown,
   context?: ApiErrorContext,
-  action?: SupplyErrorAction | DeliveryErrorAction | CustomerErrorAction,
+  action?: SupplyErrorAction | DeliveryErrorAction | CustomerErrorAction | SubscriptionErrorAction,
 ): string {
   if (axios.isAxiosError(err)) {
     // Network error (no response) = offline
@@ -178,6 +187,19 @@ export function mapApiError(
       if (status === 400 || status === 422) return 'audit.error_invalid_filter'
     }
 
+    // Subscription surfaces (US-009) — resolve shared status codes by sub-action.
+    if (context === 'subscription') {
+      if (status === 403) return 'roles.error_forbidden' // staff hit owner-only manage action
+      if (status === 404) return 'subscription.error_no_subscription'
+      if (status === 422) {
+        if (action === 'upgrade') return 'subscription.error_not_higher_tier'
+        if (action === 'cancel') return 'subscription.error_already_cancelled'
+        return 'validation.required'
+      }
+      if (status === 400) return 'validation.required' // bad billingCycle / autoRenewal
+      if (status === 451) return 'subscription.error_limit_reached'
+    }
+
     if (status === 401) return 'auth.invalid_credentials'
     if (status === 403) return 'roles.error_forbidden'
     if (status === 409) return 'auth.phone_already_registered'
@@ -198,6 +220,7 @@ export function mapApiError(
       err.message.startsWith('delivery.') ||
       err.message.startsWith('customer.') ||
       err.message.startsWith('audit.') ||
+      err.message.startsWith('subscription.') ||
       err.message.startsWith('common.'))
   ) {
     return err.message
