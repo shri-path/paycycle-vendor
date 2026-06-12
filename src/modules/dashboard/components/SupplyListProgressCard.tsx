@@ -79,11 +79,11 @@ export const SupplyListProgressCard: React.FC<SupplyListProgressCardProps> = ({ 
           onPress={onPress}
           style={styles.viewBtn}
           accessibilityRole="button"
-          accessibilityLabel={t('common.edit')}
+          accessibilityLabel={`${t('delivery.open_list')} ${list.name}`}
           testID={`supply-list-view-${list.id}`}
         >
           <AppText variant="caption" weight="semibold" color={colors.primary}>
-            {t('delivery.open_list')} &rsaquo;
+            {t('delivery.open_list')} {'›'}
           </AppText>
         </TouchableOpacity>
       </View>

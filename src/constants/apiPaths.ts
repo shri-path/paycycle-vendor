@@ -183,8 +183,9 @@ export const APIPath = {
   Dashboard: {
     /** GET — owner dashboard aggregate. Owner only. */
     Owner: (vendorId: string) => `/vendors/${vendorId}/dashboard/owner`,
-    /** GET — staff dashboard aggregate. Staff only (staffId derived from JWT server-side). */
-    Staff: (vendorId: string) => `/vendors/${vendorId}/dashboard/staff`,
+    /** GET — staff dashboard aggregate. Staff only. staffId required in path (OQ-2 RESOLVED: staffId required in path, resolved from auth context). */
+    Staff: (vendorId: string, staffId: string) =>
+      `/vendors/${vendorId}/dashboard/staff/${staffId}`,
     /** GET — supply forecast. Owner only. Query: ?days=1|7&supplyType=<type>. */
     Forecast: (vendorId: string) => `/vendors/${vendorId}/supply-forecast`,
     /** GET — outstanding aging breakdown. Owner only. */

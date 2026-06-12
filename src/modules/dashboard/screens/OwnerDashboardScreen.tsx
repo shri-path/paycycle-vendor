@@ -111,9 +111,6 @@ function OwnerDashboardContent() {
     })),
   )
 
-  // Stale data indicator (edge case #9)
-  const [showStaleAlert, setShowStaleAlert] = useState(false)
-
   const refresh = useCallback(() => {
     void fetchOwnerDashboard()
     if (!currentSubscription) void fetchSubscription()
@@ -210,17 +207,6 @@ function OwnerDashboardContent() {
       {!isConnected ? (
         <View style={styles.alertRow}>
           <AppAlert type="warning" title={t('common.offline')} message={t('common.offline_message')} />
-        </View>
-      ) : null}
-
-      {/* Stale data banner (edge case #9) */}
-      {showStaleAlert ? (
-        <View style={styles.alertRow}>
-          <AppAlert
-            type="warning"
-            title={t('dashboard.showing_cached')}
-            onClose={() => setShowStaleAlert(false)}
-          />
         </View>
       ) : null}
 

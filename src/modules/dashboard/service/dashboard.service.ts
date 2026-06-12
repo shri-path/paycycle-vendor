@@ -22,6 +22,7 @@
 import { APIPath } from '@constants/apiPaths'
 import { isMockMode, simulateNetworkDelay } from '@services/config'
 import { httpClient } from '@services/http'
+import { useAuthStore } from '@modules/auth/store/auth.store'
 import type {
   OwnerDashboardDto,
   StaffDashboardDto,
@@ -67,15 +68,17 @@ export const dashboardService = {
   },
 
   /**
-   * GET /vendors/:vendorId/dashboard/staff
-   * Staff-only. staffId is JWT-derived on the server (OQ-2 — never passed by client).
+   * GET /vendors/:vendorId/dashboard/staff/:staffId
+   * Staff-only. OQ-2 RESOLVED: staffId required in path, resolved from auth context.
    */
   async getStaffDashboard(vendorId: string, signal?: AbortSignal): Promise<StaffDashboardDto> {
     if (isMockMode) {
       await simulateNetworkDelay()
       return { ...mockStaffDashboard }
     }
-    const { data } = await httpClient.get(APIPath.Dashboard.Staff(vendorId), { signal })
+    const staffId = useAuthStore.getState().user?.id ?? ''
+    const url = APIPath.Dashboard.Staff(vendorId, staffId)
+    const { data } = await httpClient.get(url, { signal })
     const dto = data.data as StaffDashboardDto & {
       assignedLists?: Array<StaffDashboardDto['assignedLists'][number] & { id: number | string }>
     }
