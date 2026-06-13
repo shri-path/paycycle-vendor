@@ -132,6 +132,16 @@ export const settingsService = {
   /**
    * POST /vendors/:vendorId/bulk-operations/mark-leave
    * Owner-only. Bulk marks leave for selected subscriptions.
+   *
+   * API contract (§3 of API_SPEC.md):
+   *   subscriptionIds: string[]  — when scope = single list / specific customers
+   *   all: boolean               — true when scope = all lists / all customers
+   *   date: "YYYY-MM-DD"         — single date (v1 only supports single-day leave)
+   *   reason?: string
+   *
+   * The frontend `BulkLeaveInput` uses a richer multi-day UI shape (startDate/endDate,
+   * supplyListId, customerIds). In real mode we map to the API wire shape. Mock mode
+   * exercises the UI shape directly and does not need the mapping.
    */
   async bulkMarkLeave(
     vendorId: string,
@@ -142,7 +152,23 @@ export const settingsService = {
       await simulateNetworkDelay()
       return { ...mockBulkLeaveResult }
     }
-    const { data } = await httpClient.post(APIPath.Settings.BulkMarkLeave(vendorId), input, {
+    // Map UI shape → API wire shape (§3 API_SPEC.md)
+    const hasSpecificIds =
+      !input.supplyListId && input.customerIds && input.customerIds.length > 0
+    const body: {
+      subscriptionIds?: string[]
+      all: boolean
+      date: string
+      reason?: string
+    } = {
+      // v1 only supports a single date; use startDate as the canonical date.
+      date: input.startDate,
+      // `all: true` when no explicit list or customer scope is provided.
+      all: !input.supplyListId && !hasSpecificIds,
+      ...(hasSpecificIds ? { subscriptionIds: input.customerIds } : {}),
+      ...(input.reason ? { reason: input.reason } : {}),
+    }
+    const { data } = await httpClient.post(APIPath.Settings.BulkMarkLeave(vendorId), body, {
       signal,
     })
     return data.data as BulkLeaveResultDto
@@ -171,6 +197,16 @@ export const settingsService = {
   /**
    * POST /vendors/:vendorId/bulk-operations/adjust-rate
    * Owner-only. Bulk adjusts rate for selected subscriptions.
+   *
+   * API contract (§4 of API_SPEC.md):
+   *   subscriptionIds: string[]  — when scope = single list
+   *   all: boolean               — true when scope = all lists same supply
+   *   newRate: number
+   *   effectiveDate: "YYYY-MM-DD"   (NOT effectiveFrom — note the field name difference)
+   *   notifyCustomers?: boolean
+   *
+   * The frontend `BulkRateInput` uses `effectiveFrom` and a `scope` discriminant.
+   * In real mode we map to the API wire shape. Mock mode uses the UI shape directly.
    */
   async bulkAdjustRate(
     vendorId: string,
@@ -181,7 +217,23 @@ export const settingsService = {
       await simulateNetworkDelay()
       return { ...mockBulkRateResult }
     }
-    const { data } = await httpClient.post(APIPath.Settings.BulkAdjustRate(vendorId), input, {
+    // Map UI shape → API wire shape (§4 API_SPEC.md)
+    const isAllScope = input.scope === 'all_lists_same_supply'
+    const body: {
+      subscriptionIds?: string[]
+      all: boolean
+      newRate: number
+      effectiveDate: string
+      notifyCustomers?: boolean
+    } = {
+      all: isAllScope,
+      ...((!isAllScope && input.supplyListId) ? { subscriptionIds: [input.supplyListId] } : {}),
+      newRate: input.newRate,
+      // Map effectiveFrom → effectiveDate (API wire field name)
+      effectiveDate: input.effectiveFrom,
+      notifyCustomers: input.notifyCustomers,
+    }
+    const { data } = await httpClient.post(APIPath.Settings.BulkAdjustRate(vendorId), body, {
       signal,
     })
     return data.data as BulkRateResultDto
@@ -190,6 +242,15 @@ export const settingsService = {
   /**
    * POST /vendors/:vendorId/bulk-operations/send-reminders
    * Owner-only. Bulk sends payment reminders to customers.
+   *
+   * API contract (§5 of API_SPEC.md):
+   *   customerIds: string[]  — when targeting specific customers
+   *   all: boolean           — true for overdue / all_pending targets
+   *   messageTemplate?: string   (NOT customMessage — note the field name difference)
+   *
+   * The frontend `BulkReminderInput` uses `targetType`/`customMessage`/`sendVia`.
+   * `sendVia` is a UI-only concern (channel selection) not in the v1 API contract.
+   * In real mode we map to the API wire shape. Mock mode uses the UI shape directly.
    */
   async bulkSendReminders(
     vendorId: string,
@@ -200,9 +261,24 @@ export const settingsService = {
       await simulateNetworkDelay()
       return { ...mockBulkReminderResult }
     }
+    // Map UI shape → API wire shape (§5 API_SPEC.md)
+    const isSpecific = input.targetType === 'specific_customers'
+    const body: {
+      customerIds?: string[]
+      all: boolean
+      messageTemplate?: string
+    } = {
+      // `all: true` for overdue/all_pending; customerIds for specific targets
+      all: !isSpecific,
+      ...(isSpecific && input.customerIds?.length
+        ? { customerIds: input.customerIds }
+        : {}),
+      // Map customMessage → messageTemplate (API wire field name)
+      ...(input.customMessage ? { messageTemplate: input.customMessage } : {}),
+    }
     const { data } = await httpClient.post(
       APIPath.Settings.BulkSendReminders(vendorId),
-      input,
+      body,
       { signal },
     )
     return data.data as BulkReminderResultDto

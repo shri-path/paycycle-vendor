@@ -107,11 +107,14 @@ function BulkSendRemindersContent() {
       sendVia: channel,
       customMessage: customMessage.trim() || undefined,
     }
-    if (targetType === 'specific_customers' && !allCustomers) {
+    // When targeting specific customers, always supply the selected ids.
+    // The `allCustomers` sub-toggle only controls the CustomerScopeSelector UI;
+    // the API discriminant is `targetType` alone.
+    if (targetType === 'specific_customers' && selectedIds.length > 0) {
       base.customerIds = selectedIds
     }
     return base
-  }, [targetType, channel, customMessage, allCustomers, selectedIds])
+  }, [targetType, channel, customMessage, selectedIds])
 
   const handleConfirm = useCallback(async () => {
     setShowConfirm(false)
