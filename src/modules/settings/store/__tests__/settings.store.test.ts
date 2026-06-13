@@ -223,7 +223,7 @@ describe('useSettingsStore', () => {
     it('bulkMarkLeave error does not persist to store (transient operation)', async () => {
       // Bulk results are never persisted to the store — they are transient.
       await useSettingsStore.getState().fetchSettings()
-      const result = await useSettingsStore.getState().bulkMarkLeave({
+      await useSettingsStore.getState().bulkMarkLeave({
         startDate: '2026-06-20',
         endDate: '2026-06-20',
       })
