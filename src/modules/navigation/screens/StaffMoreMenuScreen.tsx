@@ -11,7 +11,7 @@
  */
 
 import React, { useCallback, useMemo, useState } from 'react'
-import { StyleSheet, Platform } from 'react-native'
+import { StyleSheet, Platform, View, ActivityIndicator } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
 import * as Haptics from 'expo-haptics'
@@ -24,7 +24,7 @@ import { useTranslation } from '@hooks/useTranslation'
 import { useAuthStore } from '@modules/auth/store/auth.store'
 import { useRole } from '@modules/roles/hooks/useRole'
 import { getMoreSections } from '../nav.config'
-import { colors } from '@constants/tokens'
+import { colors, spacing } from '@constants/tokens'
 import { logError } from '@utils/logger'
 
 // ============================================================================
@@ -36,6 +36,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing[8],
+  },
 })
 
 // ============================================================================
@@ -46,7 +52,7 @@ function StaffMoreMenuScreenContent(): React.ReactElement {
   const { t } = useTranslation()
   const router = useRouter()
   const logout = useAuthStore((s) => s.logout)
-  const { hasPermission } = useRole()
+  const { hasPermission, isLoading } = useRole()
 
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
@@ -61,11 +67,12 @@ function StaffMoreMenuScreenContent(): React.ReactElement {
     [router],
   )
 
-  // Memoize sections
+  // Memoize sections — include `navigate` in deps to avoid stale-closure on router changes
+  // (MAJOR-4: removing the eslint-disable suppression; navigate is useCallback'd on [router]
+  //  so it only triggers a rebuild when the router identity changes, which is rare)
   const sections = useMemo(
     () => getMoreSections('staff', hasPermission, { navigate }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [hasPermission],
+    [hasPermission, navigate],
   )
 
   const handleLogoutPress = useCallback(() => {
@@ -92,8 +99,21 @@ function StaffMoreMenuScreenContent(): React.ReactElement {
     setShowLogoutConfirm(false)
   }, [])
 
+  // MAJOR-5: Loading state while role is still resolving from store hydration
+  if (isLoading) {
+    return (
+      <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
+        <AppHeader title={t('nav.more.title')} />
+        <View style={styles.loadingContainer} testID="staff-more-menu-loading">
+          <ActivityIndicator size="large" color={colors.primary} accessibilityLabel={t('common.loading')} />
+        </View>
+      </SafeAreaView>
+    )
+  }
+
   return (
-    <SafeAreaView style={styles.safe}>
+    // CRITICAL-3: omit 'bottom' edge — AppTabBar already applies paddingBottom: insets.bottom
+    <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
       <AppHeader title={t('nav.more.title')} />
 
       <MoreMenuList sections={sections} onLogout={handleLogoutPress} />

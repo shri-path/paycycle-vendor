@@ -101,4 +101,8 @@ describe('MoreMenuList', () => {
     const screen = await render(<MoreMenuList sections={[]} onLogout={onLogout} />)
     expect(await screen.findByTestId('more-logout-button')).toBeTruthy()
   })
+
+  it('has displayName set for React DevTools', () => {
+    expect(MoreMenuList.displayName).toBe('MoreMenuList')
+  })
 })

@@ -45,6 +45,18 @@ function mockStaffRole() {
   })
 }
 
+function mockStaffRoleLoading() {
+  useRoleMock.mockReturnValue({
+    roleContext: null,
+    isOwner: false,
+    isStaff: false,
+    hasPermission: () => false,
+    canAccessList: () => false,
+    isLoading: true,
+    error: null,
+  })
+}
+
 beforeEach(() => {
   jest.clearAllMocks()
   logoutMock.mockResolvedValue(undefined)
@@ -52,6 +64,16 @@ beforeEach(() => {
   useAuthStoreMock.mockImplementation((selector: (s: unknown) => unknown) =>
     selector({ logout: logoutMock }),
   )
+})
+
+describe('StaffMoreMenuScreen — loading state', () => {
+  it('shows a loading indicator while role is resolving', async () => {
+    mockStaffRoleLoading()
+    const screen = await render(<StaffMoreMenuScreen />)
+    expect(screen.getByTestId('staff-more-menu-loading')).toBeTruthy()
+    // Should not render the logout button while loading
+    expect(screen.queryByTestId('more-logout-button')).toBeNull()
+  })
 })
 
 describe('StaffMoreMenuScreen', () => {

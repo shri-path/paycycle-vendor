@@ -8,7 +8,8 @@
  */
 
 import React from 'react'
-import { ScrollView, StyleSheet, View } from 'react-native'
+import { StyleSheet } from 'react-native'
+import { ScrollView, YStack } from 'tamagui'
 import { AppSection } from '@components/composite/AppSection'
 import { AppMenuItem } from '@components/composite/AppMenuItem'
 import { AppButton } from '@components/primitives/AppButton'
@@ -37,10 +38,6 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingVertical: spacing[4],
     paddingBottom: spacing[8],
-  },
-  logoutContainer: {
-    paddingHorizontal: spacing[4],
-    paddingVertical: spacing[4],
   },
   sectionContent: {
     // Remove padding from AppSection's default content padding — AppMenuItem
@@ -101,16 +98,18 @@ export const MoreMenuList: React.FC<MoreMenuListProps> = React.memo(function Mor
       ))}
 
       {/* Log Out button */}
-      <View style={styles.logoutContainer}>
+      <YStack paddingHorizontal={spacing[4]} paddingVertical={spacing[4]}>
         <AppButton
           label={t('nav.logout.button')}
           variant="danger"
           onPress={onLogout}
           testID="more-logout-button"
         />
-      </View>
+      </YStack>
     </ScrollView>
   )
 })
+
+MoreMenuList.displayName = 'MoreMenuList'
 
 export default MoreMenuList

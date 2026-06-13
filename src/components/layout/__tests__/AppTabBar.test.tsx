@@ -215,4 +215,8 @@ describe('AppTabBar', () => {
     expect(await screen.findByText(t('nav.tab.customers'))).toBeTruthy()
     expect(await screen.findByText(t('nav.tab.more'))).toBeTruthy()
   })
+
+  it('has displayName set for React DevTools', () => {
+    expect(AppTabBar.displayName).toBe('AppTabBar')
+  })
 })

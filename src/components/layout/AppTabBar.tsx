@@ -23,6 +23,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   AccessibilityInfo,
+  I18nManager,
   Platform,
 } from 'react-native'
 import Animated, {
@@ -35,6 +36,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import * as Haptics from 'expo-haptics'
 import { Ionicons } from '@expo/vector-icons'
 import type { TabNavigationState, ParamListBase } from '@react-navigation/native'
+import type { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 
 import { AppText } from '../primitives/AppText'
 import { colors, spacing, fontSize, fontWeight, componentSizes, animation } from '@constants/tokens'
@@ -47,8 +49,7 @@ import type { TabItem } from '@modules/navigation/nav.config'
 
 export interface AppTabBarProps {
   state: TabNavigationState<ParamListBase>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  navigation: any
+  navigation: BottomTabBarProps['navigation']
   items: TabItem[]
   isOnline: boolean
   isSyncing: boolean
@@ -137,11 +138,16 @@ export const AppTabBar = React.memo<AppTabBarProps>(function AppTabBar({
   const insets = useSafeAreaInsets()
   const reduceMotion = useRef(false)
 
-  // Check reduce-motion preference once on mount
+  // Subscribe to reduce-motion preference — reads current value and listens for changes
+  // (INFO-1: live updates when user toggles system accessibility preference)
   useEffect(() => {
     void AccessibilityInfo.isReduceMotionEnabled().then((enabled) => {
       reduceMotion.current = enabled
     })
+    const sub = AccessibilityInfo.addEventListener('reduceMotionChanged', (enabled) => {
+      reduceMotion.current = enabled
+    })
+    return () => sub.remove()
   }, [])
 
   // Animated indicator x-position (proportional to tab index)
@@ -161,11 +167,15 @@ export const AppTabBar = React.memo<AppTabBarProps>(function AppTabBar({
     }
   }, [state.index, tabCount, indicatorLeft])
 
-  const indicatorStyle = useAnimatedStyle(() => ({
-    // left is expressed as a percentage of total bar width
-    left: `${indicatorLeft.value * 100}%` as `${number}%`,
-    width: `${(1 / tabCount) * 100}%` as `${number}%`,
-  }))
+  // RTL-safe active indicator: use `right` in RTL layouts so the indicator
+  // tracks the correct tab in bidirectional layouts (MAJOR-3)
+  const indicatorStyle = useAnimatedStyle(() => {
+    const pct = `${indicatorLeft.value * 100}%` as `${number}%`
+    const width = `${(1 / tabCount) * 100}%` as `${number}%`
+    return I18nManager.isRTL
+      ? { right: pct, width }
+      : { left: pct, width }
+  })
 
   const handleTabPress = useCallback(
     (routeName: string, index: number) => {
@@ -255,5 +265,7 @@ export const AppTabBar = React.memo<AppTabBarProps>(function AppTabBar({
     </View>
   )
 })
+
+AppTabBar.displayName = 'AppTabBar'
 
 export default AppTabBar

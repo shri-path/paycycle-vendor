@@ -7,7 +7,7 @@
  * frozen by the Architect. Unit-testable without any RN environment.
  */
 
-import React from 'react'
+import type React from 'react'
 import { HomeIcon, ListsIcon, CustomersIcon, MyListsIcon, MoreIcon } from './icons'
 import type { PermissionKey } from '../../types/roles'
 

@@ -16,7 +16,7 @@
  * which renders a thin strip above the bar.
  */
 
-import React, { useMemo } from 'react'
+import React, { useMemo, useCallback } from 'react'
 import { Tabs } from 'expo-router'
 import { useShallow } from 'zustand/react/shallow'
 
@@ -24,10 +24,12 @@ import { AppTabBar } from '@components/layout/AppTabBar'
 import { useRole } from '@modules/roles/hooks/useRole'
 import { useAppStore } from '@store/appStore'
 import { getTabsForRole } from '@modules/navigation/nav.config'
+import { useTranslation } from '@hooks/useTranslation'
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 
 export default function TabsLayout() {
   const { isOwner, isStaff } = useRole()
+  const { t } = useTranslation()
   const { isOnline, isSyncing } = useAppStore(
     useShallow((s) => ({ isOnline: s.isOnline, isSyncing: s.isSyncing })),
   )
@@ -38,14 +40,18 @@ export default function TabsLayout() {
   // Memoize tab items so the array identity is stable between renders
   const items = useMemo(() => getTabsForRole(role), [role])
 
-  // Custom tab bar renderer — receives navigation state from Expo Router
-  const renderTabBar = (props: BottomTabBarProps) => (
-    <AppTabBar
-      {...props}
-      items={items}
-      isOnline={isOnline}
-      isSyncing={isSyncing}
-    />
+  // Stable tab bar renderer — useCallback prevents remounting on isOnline/isSyncing/role changes
+  // which would otherwise lose Reanimated shared-value state and cause jank (CRITICAL-2 / MINOR-4)
+  const renderTabBar = useCallback(
+    (props: BottomTabBarProps) => (
+      <AppTabBar
+        {...props}
+        items={items}
+        isOnline={isOnline}
+        isSyncing={isSyncing}
+      />
+    ),
+    [items, isOnline, isSyncing],
   )
 
   return (
@@ -61,21 +67,21 @@ export default function TabsLayout() {
         name="home"
         options={{
           href: isOwner ? undefined : null,
-          title: 'Home',
+          title: t('nav.tab.home'),
         }}
       />
       <Tabs.Screen
         name="lists"
         options={{
           href: isOwner ? undefined : null,
-          title: 'Lists',
+          title: t('nav.tab.lists'),
         }}
       />
       <Tabs.Screen
         name="customers"
         options={{
           href: isOwner ? undefined : null,
-          title: 'Customers',
+          title: t('nav.tab.customers'),
         }}
       />
 
@@ -84,14 +90,14 @@ export default function TabsLayout() {
         name="staff-home"
         options={{
           href: isOwner ? null : undefined,
-          title: 'Home',
+          title: t('nav.tab.home'),
         }}
       />
       <Tabs.Screen
         name="my-lists"
         options={{
           href: isOwner ? null : undefined,
-          title: 'My Lists',
+          title: t('nav.tab.myLists'),
         }}
       />
 
@@ -99,7 +105,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="more"
         options={{
-          title: 'More',
+          title: t('nav.tab.more'),
         }}
       />
     </Tabs>

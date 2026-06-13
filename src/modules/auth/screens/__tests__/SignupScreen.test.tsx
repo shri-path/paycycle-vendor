@@ -234,6 +234,6 @@ describe('SignupScreen', () => {
     })
     // Success path also navigates home — asserted here so a separate (duplicate)
     // navigation test isn't needed.
-    await waitFor(() => expect(mockReplace).toHaveBeenCalledWith('/(app)/(tabs)/home'))
+    await waitFor(() => expect(mockReplace).toHaveBeenCalledWith('/(app)'))
   })
 })

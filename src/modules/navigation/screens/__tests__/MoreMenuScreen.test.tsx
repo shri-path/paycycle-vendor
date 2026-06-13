@@ -45,6 +45,18 @@ function mockOwnerRole() {
   })
 }
 
+function mockOwnerRoleLoading() {
+  useRoleMock.mockReturnValue({
+    roleContext: null,
+    isOwner: false,
+    isStaff: false,
+    hasPermission: () => false,
+    canAccessList: () => false,
+    isLoading: true,
+    error: null,
+  })
+}
+
 beforeEach(() => {
   jest.clearAllMocks()
   logoutMock.mockResolvedValue(undefined)
@@ -52,6 +64,16 @@ beforeEach(() => {
   useAuthStoreMock.mockImplementation((selector: (s: unknown) => unknown) =>
     selector({ logout: logoutMock }),
   )
+})
+
+describe('MoreMenuScreen — loading state', () => {
+  it('shows a loading indicator while role is resolving', async () => {
+    mockOwnerRoleLoading()
+    const screen = await render(<MoreMenuScreen />)
+    expect(screen.getByTestId('more-menu-loading')).toBeTruthy()
+    // Should not render the logout button while loading
+    expect(screen.queryByTestId('more-logout-button')).toBeNull()
+  })
 })
 
 describe('MoreMenuScreen — owner', () => {
