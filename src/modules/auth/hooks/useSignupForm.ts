@@ -150,7 +150,7 @@ export function useSignupForm(): UseSignupForm {
     try {
       await signup(fullPhone, password, businessName.trim())
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
-      router.replace('/(app)/home')
+      router.replace('/(app)/(tabs)/home')
     } catch {
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
     } finally {
