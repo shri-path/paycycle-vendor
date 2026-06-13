@@ -37,6 +37,14 @@ import type { DeliveryDto, MarkableStatus } from '../../../types/delivery'
 
 type FilterValue = 'all' | 'pending' | 'completed'
 
+// Stable fallbacks: the selector below runs on every store change and is compared
+// with `useShallow`. Returning fresh `[]` / `{}` literals would make every
+// snapshot shallow-unequal to the previous one, triggering React's
+// "getSnapshot should be cached" infinite loop. Hoisting them keeps the
+// reference identity stable when a list has no cached entry yet.
+const EMPTY_DELIVERIES: DeliveryDto[] = []
+const EMPTY_PROGRESS = { total: 0, delivered: 0, onLeave: 0, pending: 0 }
+
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
   controls: { paddingHorizontal: spacing[4], paddingTop: spacing[2], gap: spacing[2] },
@@ -85,8 +93,8 @@ function DeliveryListScreenContent() {
     clearError,
   } = useDeliveryStore(
     useShallow((s) => ({
-      deliveries: s.listDeliveries[listId] ?? [],
-      progress: s.listProgress[listId] ?? { total: 0, delivered: 0, onLeave: 0, pending: 0 },
+      deliveries: s.listDeliveries[listId] ?? EMPTY_DELIVERIES,
+      progress: s.listProgress[listId] ?? EMPTY_PROGRESS,
       isLoading: s.isListLoading,
       error: s.listError,
       isMutating: s.isMutating,

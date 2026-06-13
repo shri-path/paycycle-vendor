@@ -95,12 +95,12 @@ function StaffHomeScreenContent() {
   }, [refetchToday])
 
   // OQ-7 + security: re-fetch the role on every focus (catches mid-session staff
-  // disable/permission change), snapshotting permissions to detect drift.
+  // disable/permission change). Drift detection is handled by the useEffect below —
+  // roleContext must NOT be a dep here or fetchRole() updating it causes an infinite loop.
   useFocusEffect(
     useCallback(() => {
-      prevPermissions.current = roleContext ? [...roleContext.permissions].sort().join(',') : null
       void fetchRole()
-    }, [fetchRole, roleContext]),
+    }, [fetchRole]),
   )
 
   useEffect(() => {

@@ -728,6 +728,58 @@
     "confirm_cancel_title": "સબ્સ્ક્રિપ્શન રદ કરવું?",
     "confirm_cancel_body": "વર્તમાન બિલિંગ સમયગાળો સમાપ્ત થાય ત્યાં સુધી તમારું સબ્સ્ક્રિપ્શન સક્રિય રહેશે."
   },
+  "nav": {
+    "tab": {
+      "home": "હોમ",
+      "lists": "યાદીઓ",
+      "customers": "ગ્રાહકો",
+      "more": "વધુ",
+      "myLists": "મારી યાદીઓ"
+    },
+    "more": {
+      "title": "વધુ",
+      "section": {
+        "business": "વ્યવસાય",
+        "collections": "સંગ્રહ",
+        "billing": "બિલિંગ",
+        "reports": "અહેવાલ",
+        "account": "એકાઉન્ટ",
+        "support": "સહાય",
+        "today": "આજ"
+      },
+      "row": {
+        "businessProfile": "વ્યવસાય પ્રોફાઇલ",
+        "staffManagement": "કર્મચારી વ્યવસ્થાપન",
+        "subscription": "સદ્ членство",
+        "vendorSettings": "વિક્રેતા સેટિંગ્સ",
+        "outstanding": "બાકી અને સંગ્રહ",
+        "payments": "ચૂકવણીઓ",
+        "leaves": "રજાઓ",
+        "pendingInvites": "બાકી આમંત્રણો",
+        "staffActivity": "કર્મચારી પ્રવૃત્તિ",
+        "conflictLog": "સંઘર્ષ લૉગ",
+        "monthlySummary": "માસિક સારાંશ",
+        "changePassword": "પાસવર્ડ બદલો",
+        "notifications": "સૂચનાઓ",
+        "languageSettings": "ભાષા સેટિંગ્સ",
+        "helpFaq": "સહાય અને FAQ",
+        "contactSupport": "સહાય સંપર્ક",
+        "contactOwner": "માલિક સંપર્ક",
+        "todaysLeaves": "આજની રજાઓ",
+        "myDeliveryHistory": "મારો ડિલિવરી ઇતિહાસ"
+      }
+    },
+    "comingSoon": "ટૂંક સમયમાં",
+    "logout": {
+      "button": "લૉગ આઉટ",
+      "confirmTitle": "લૉગ આઉટ કરવું?",
+      "confirmBody": "તમે તમારા એકાઉન્ટમાંથી લૉગ આઉટ થઈ જશો.",
+      "confirm": "લૉગ આઉટ",
+      "cancel": "રદ કરો"
+    },
+    "offline": "તમે ઑફ્‌લાઇન છો",
+    "syncing": "સિંક થઈ રહ્યું છે…"
+  },
   "dashboard": {
     "total_revenue": "Total Revenue",
     "collected": "Collected",

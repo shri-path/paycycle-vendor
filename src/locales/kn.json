@@ -728,6 +728,58 @@
     "confirm_cancel_title": "ಚಂದಾದಾರಿಕೆ ರದ್ದುಮಾಡಲೇ?",
     "confirm_cancel_body": "ಪ್ರಸ್ತುತ ಬಿಲ್ಲಿಂಗ್ ಅವಧಿ ಮುಗಿಯುವವರೆಗೆ ನಿಮ್ಮ ಚಂದಾದಾರಿಕೆ ಸಕ್ರಿಯವಾಗಿ ಇರುತ್ತದೆ."
   },
+  "nav": {
+    "tab": {
+      "home": "ಮುಖಪುಟ",
+      "lists": "ಪಟ್ಟಿಗಳು",
+      "customers": "ಗ್ರಾಹಕರು",
+      "more": "ಇನ್ನಷ್ಟು",
+      "myLists": "ನನ್ನ ಪಟ್ಟಿಗಳು"
+    },
+    "more": {
+      "title": "ಇನ್ನಷ್ಟು",
+      "section": {
+        "business": "ವ್ಯವಹಾರ",
+        "collections": "ಸಂಗ್ರಹಗಳು",
+        "billing": "ಬಿಲ್ಲಿಂಗ್",
+        "reports": "ವರದಿಗಳು",
+        "account": "ಖಾತೆ",
+        "support": "ಸಹಾಯ",
+        "today": "ಇಂದು"
+      },
+      "row": {
+        "businessProfile": "ವ್ಯವಹಾರ ಪ್ರೊಫೈಲ್",
+        "staffManagement": "ಸಿಬ್ಬಂದಿ ನಿರ್ವಹಣೆ",
+        "subscription": "ಚಂದಾದಾರಿಕೆ",
+        "vendorSettings": "ಮಾರಾಟಗಾರ ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+        "outstanding": "ಬಾಕಿ ಮತ್ತು ಸಂಗ್ರಹಗಳು",
+        "payments": "ಪಾವತಿಗಳು",
+        "leaves": "ರಜೆಗಳು",
+        "pendingInvites": "ಬಾಕಿ ಆಹ್ವಾನಗಳು",
+        "staffActivity": "ಸಿಬ್ಬಂದಿ ಚಟುವಟಿಕೆ",
+        "conflictLog": "ವಿವಾದ ಲಾಗ್",
+        "monthlySummary": "ಮಾಸಿಕ ಸಾರಾಂಶ",
+        "changePassword": "ಪಾಸ್‌ವರ್ಡ್ ಬದಲಾಯಿಸಿ",
+        "notifications": "ಅಧಿಸೂಚನೆಗಳು",
+        "languageSettings": "ಭಾಷಾ ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+        "helpFaq": "ಸಹಾಯ ಮತ್ತು FAQ",
+        "contactSupport": "ಬೆಂಬಲವನ್ನು ಸಂಪರ್ಕಿಸಿ",
+        "contactOwner": "ಮಾಲೀಕರನ್ನು ಸಂಪರ್ಕಿಸಿ",
+        "todaysLeaves": "ಇಂದಿನ ರಜೆಗಳು",
+        "myDeliveryHistory": "ನನ್ನ ಡೆಲಿವರಿ ಇತಿಹಾಸ"
+      }
+    },
+    "comingSoon": "ಶೀಘ್ರದಲ್ಲಿ ಬರಲಿದೆ",
+    "logout": {
+      "button": "ಲಾಗ್ ಔಟ್",
+      "confirmTitle": "ಲಾಗ್ ಔಟ್ ಆಗುವಿರಾ?",
+      "confirmBody": "ನೀವು ನಿಮ್ಮ ಖಾತೆಯಿಂದ ಲಾಗ್ ಔಟ್ ಆಗುತ್ತೀರಿ.",
+      "confirm": "ಲಾಗ್ ಔಟ್",
+      "cancel": "ರದ್ದು ಮಾಡಿ"
+    },
+    "offline": "ನೀವು ಆಫ್‌ಲೈನ್‌ನಲ್ಲಿದ್ದೀರಿ",
+    "syncing": "ಸಿಂಕ್ ಆಗುತ್ತಿದೆ…"
+  },
   "dashboard": {
     "total_revenue": "Total Revenue",
     "collected": "Collected",

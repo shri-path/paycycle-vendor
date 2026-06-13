@@ -728,6 +728,58 @@
     "confirm_cancel_title": "सदस्यता रद्द करायची?",
     "confirm_cancel_body": "सध्याचा बिलिंग कालावधी संपेपर्यंत तुमची सदस्यता सक्रिय राहील."
   },
+  "nav": {
+    "tab": {
+      "home": "मुख्यपृष्ठ",
+      "lists": "याद्या",
+      "customers": "ग्राहक",
+      "more": "अधिक",
+      "myLists": "माझ्या याद्या"
+    },
+    "more": {
+      "title": "अधिक",
+      "section": {
+        "business": "व्यवसाय",
+        "collections": "संकलन",
+        "billing": "बिलिंग",
+        "reports": "अहवाल",
+        "account": "खाते",
+        "support": "मदत",
+        "today": "आज"
+      },
+      "row": {
+        "businessProfile": "व्यवसाय प्रोफाइल",
+        "staffManagement": "कर्मचारी व्यवस्थापन",
+        "subscription": "सदस्यता",
+        "vendorSettings": "विक्रेता सेटिंग्स",
+        "outstanding": "थकबाकी आणि संकलन",
+        "payments": "देयके",
+        "leaves": "सुट्ट्या",
+        "pendingInvites": "प्रलंबित आमंत्रणे",
+        "staffActivity": "कर्मचारी क्रियाकलाप",
+        "conflictLog": "संघर्ष लॉग",
+        "monthlySummary": "मासिक सारांश",
+        "changePassword": "पासवर्ड बदला",
+        "notifications": "सूचना",
+        "languageSettings": "भाषा सेटिंग्स",
+        "helpFaq": "मदत आणि FAQ",
+        "contactSupport": "सहाय्याशी संपर्क साधा",
+        "contactOwner": "मालकाशी संपर्क साधा",
+        "todaysLeaves": "आजच्या सुट्ट्या",
+        "myDeliveryHistory": "माझा डिलिव्हरी इतिहास"
+      }
+    },
+    "comingSoon": "लवकरच येत आहे",
+    "logout": {
+      "button": "लॉग आउट",
+      "confirmTitle": "लॉग आउट करायचे?",
+      "confirmBody": "तुम्ही तुमच्या खात्यातून लॉग आउट व्हाल.",
+      "confirm": "लॉग आउट",
+      "cancel": "रद्द करा"
+    },
+    "offline": "तुम्ही ऑफलाइन आहात",
+    "syncing": "सिंक होत आहे…"
+  },
   "dashboard": {
     "total_revenue": "Total Revenue",
     "collected": "Collected",

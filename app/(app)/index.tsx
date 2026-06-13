@@ -45,8 +45,12 @@ export default function AppRoleRouter() {
     )
   }
 
-  // Role resolved (from cache or fetch): owners → dashboard, everyone else → staff home.
+  // Role resolved (from cache or fetch): owners → tab home, everyone else → tab staff-home.
   // If the role is still unknown (no cache, fetch failed), default to staff-home — the
   // safer, least-privileged landing; owner-only routes are independently guarded.
-  return isOwner ? <Redirect href="/(app)/home" /> : <Redirect href="/(app)/staff-home" />
+  return isOwner ? (
+    <Redirect href="/(app)/(tabs)/home" />
+  ) : (
+    <Redirect href="/(app)/(tabs)/staff-home" />
+  )
 }

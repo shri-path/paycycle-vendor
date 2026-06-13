@@ -728,6 +728,58 @@
     "confirm_cancel_title": "சந்தாவை ரத்து செய்யவா?",
     "confirm_cancel_body": "தற்போதைய கட்டண காலம் முடியும் வரை உங்கள் சந்தா செயல்பாட்டில் இருக்கும்."
   },
+  "nav": {
+    "tab": {
+      "home": "முகப்பு",
+      "lists": "பட்டியல்கள்",
+      "customers": "வாடிக்கையாளர்கள்",
+      "more": "மேலும்",
+      "myLists": "என் பட்டியல்கள்"
+    },
+    "more": {
+      "title": "மேலும்",
+      "section": {
+        "business": "வணிகம்",
+        "collections": "வசூல்கள்",
+        "billing": "பில்லிங்",
+        "reports": "அறிக்கைகள்",
+        "account": "கணக்கு",
+        "support": "ஆதரவு",
+        "today": "இன்று"
+      },
+      "row": {
+        "businessProfile": "வணிக சுயவிவரம்",
+        "staffManagement": "ஊழியர் மேலாண்மை",
+        "subscription": "சந்தா",
+        "vendorSettings": "விற்பனையாளர் அமைப்புகள்",
+        "outstanding": "நிலுவை & வசூல்கள்",
+        "payments": "கொடுப்பனவுகள்",
+        "leaves": "விடுப்புகள்",
+        "pendingInvites": "நிலுவையில் உள்ள அழைப்புகள்",
+        "staffActivity": "ஊழியர் செயல்பாடு",
+        "conflictLog": "மோதல் பதிவு",
+        "monthlySummary": "மாதாந்திர சுருக்கம்",
+        "changePassword": "கடவுச்சொல் மாற்றவும்",
+        "notifications": "அறிவிப்புகள்",
+        "languageSettings": "மொழி அமைப்புகள்",
+        "helpFaq": "உதவி & FAQ",
+        "contactSupport": "ஆதரவை தொடர்பு கொள்ளவும்",
+        "contactOwner": "உரிமையாளரை தொடர்பு கொள்ளவும்",
+        "todaysLeaves": "இன்றைய விடுப்புகள்",
+        "myDeliveryHistory": "என் டெலிவரி வரலாறு"
+      }
+    },
+    "comingSoon": "விரைவில் வரும்",
+    "logout": {
+      "button": "வெளியேறு",
+      "confirmTitle": "வெளியேற?",
+      "confirmBody": "உங்கள் கணக்கிலிருந்து வெளியேறுவீர்கள்.",
+      "confirm": "வெளியேறு",
+      "cancel": "ரத்துசெய்"
+    },
+    "offline": "நீங்கள் ஆஃப்லைனில் உள்ளீர்கள்",
+    "syncing": "ஒத்திசைக்கிறது…"
+  },
   "dashboard": {
     "total_revenue": "Total Revenue",
     "collected": "Collected",

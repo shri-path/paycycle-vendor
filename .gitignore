@@ -30,6 +30,10 @@ yarn-error.*
 # runtime error logs (daily files, see CLAUDE.md "Error Logging")
 Logs/
 
+# test coverage output
+coverage/
+test_output.txt
+
 # macOS
 .DS_Store
 *.pem

@@ -728,6 +728,58 @@
     "confirm_cancel_title": "സബ്‌സ്‌ക്രിപ്ഷൻ റദ്ദാക്കണോ?",
     "confirm_cancel_body": "നിലവിലെ ബില്ലിംഗ് കാലാവധി അവസാനിക്കുന്നതുവരെ നിങ്ങളുടെ സബ്‌സ്‌ക്രിപ്ഷൻ സജീവമായി തുടരും."
   },
+  "nav": {
+    "tab": {
+      "home": "ഹോം",
+      "lists": "ലിസ്റ്റുകൾ",
+      "customers": "ഉപഭോക്താക്കൾ",
+      "more": "കൂടുതൽ",
+      "myLists": "എന്റെ ലിസ്റ്റുകൾ"
+    },
+    "more": {
+      "title": "കൂടുതൽ",
+      "section": {
+        "business": "ബിസിനസ്",
+        "collections": "ശേഖരണങ്ങൾ",
+        "billing": "ബില്ലിംഗ്",
+        "reports": "റിപ്പോർട്ടുകൾ",
+        "account": "അക്കൗണ്ട്",
+        "support": "സഹായം",
+        "today": "ഇന്ന്"
+      },
+      "row": {
+        "businessProfile": "ബിസിനസ് പ്രൊഫൈൽ",
+        "staffManagement": "സ്റ്റാഫ് മാനേജ്മെന്റ്",
+        "subscription": "സബ്‌സ്‌ക്രിപ്ഷൻ",
+        "vendorSettings": "വിൽപ്പനക്കാരന്റെ ക്രമീകരണങ്ങൾ",
+        "outstanding": "കുടിശ്ശിക & ശേഖരണങ്ങൾ",
+        "payments": "പേയ്‌മെന്റുകൾ",
+        "leaves": "ലീവുകൾ",
+        "pendingInvites": "കാത്തിരിക്കുന്ന ക്ഷണങ്ങൾ",
+        "staffActivity": "സ്റ്റാഫ് പ്രവർത്തനം",
+        "conflictLog": "സംഘർഷ ലോഗ്",
+        "monthlySummary": "മാസിക സംഗ്രഹം",
+        "changePassword": "പാസ്‌വേഡ് മാറ്റുക",
+        "notifications": "അറിയിപ്പുകൾ",
+        "languageSettings": "ഭാഷാ ക്രമീകരണങ്ങൾ",
+        "helpFaq": "സഹായം & FAQ",
+        "contactSupport": "സഹായ സേവനം ബന്ധപ്പെടുക",
+        "contactOwner": "ഉടമയെ ബന്ധപ്പെടുക",
+        "todaysLeaves": "ഇന്നത്തെ ലീവുകൾ",
+        "myDeliveryHistory": "എന്റെ ഡെലിവറി ചരിത്രം"
+      }
+    },
+    "comingSoon": "ഉടൻ വരുന്നു",
+    "logout": {
+      "button": "ലോഗ് ഔട്ട്",
+      "confirmTitle": "ലോഗ് ഔട്ട് ചെയ്യണോ?",
+      "confirmBody": "നിങ്ങൾ അക്കൗണ്ടിൽ നിന്ന് ലോഗ് ഔട്ട് ചെയ്യും.",
+      "confirm": "ലോഗ് ഔട്ട്",
+      "cancel": "റദ്ദാക്കുക"
+    },
+    "offline": "നിങ്ങൾ ഓഫ്‌ലൈനിൽ ആണ്",
+    "syncing": "സമന്വയിക്കുന്നു…"
+  },
   "dashboard": {
     "total_revenue": "Total Revenue",
     "collected": "Collected",
