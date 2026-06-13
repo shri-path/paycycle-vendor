@@ -39,6 +39,8 @@ export interface AppMenuItemProps {
   showDivider?: boolean
   /** Container style override */
   containerStyle?: ViewStyle
+  /** Optional testID forwarded to the TouchableOpacity for testing */
+  testID?: string
 }
 
 // ============================================================================
@@ -127,10 +129,12 @@ export const AppMenuItem: React.FC<AppMenuItemProps> = ({
   disabled = false,
   showDivider = false,
   containerStyle,
+  testID,
 }) => {
   return (
     <>
       <TouchableOpacity
+        testID={testID}
         onPress={onPress}
         disabled={disabled}
         style={[

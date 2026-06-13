@@ -729,6 +729,58 @@
     "error_no_membership": "You don’t have access to this vendor’s activity.",
     "error_invalid_filter": "Some filters are invalid. Adjust them and try again."
   },
+  "nav": {
+    "tab": {
+      "home": "Home",
+      "lists": "Lists",
+      "customers": "Customers",
+      "more": "More",
+      "myLists": "My Lists"
+    },
+    "more": {
+      "title": "More",
+      "section": {
+        "business": "Business",
+        "collections": "Collections",
+        "billing": "Billing",
+        "reports": "Reports",
+        "account": "Account",
+        "support": "Support",
+        "today": "Today"
+      },
+      "row": {
+        "businessProfile": "Business Profile",
+        "staffManagement": "Staff Management",
+        "subscription": "Subscription",
+        "vendorSettings": "Vendor Settings",
+        "outstanding": "Outstanding & Collections",
+        "payments": "Payments",
+        "leaves": "Leaves",
+        "pendingInvites": "Pending Invites",
+        "staffActivity": "Staff Activity",
+        "conflictLog": "Conflict Log",
+        "monthlySummary": "Monthly Summary",
+        "changePassword": "Change Password",
+        "notifications": "Notifications",
+        "languageSettings": "Language Settings",
+        "helpFaq": "Help & FAQ",
+        "contactSupport": "Contact Support",
+        "contactOwner": "Contact Owner",
+        "todaysLeaves": "Today's Leaves",
+        "myDeliveryHistory": "My Delivery History"
+      }
+    },
+    "comingSoon": "Coming soon",
+    "logout": {
+      "button": "Log Out",
+      "confirmTitle": "Log Out?",
+      "confirmBody": "You will be logged out of your account.",
+      "confirm": "Log Out",
+      "cancel": "Cancel"
+    },
+    "offline": "You are offline",
+    "syncing": "Syncing…"
+  },
   "dashboard": {
     "total_revenue": "Total Revenue",
     "collected": "Collected",

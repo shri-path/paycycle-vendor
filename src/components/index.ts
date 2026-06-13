@@ -79,6 +79,9 @@ export type { AppHeaderProps } from './layout/AppHeader'
 export { AppListItem } from './layout/AppListItem'
 export type { AppListItemProps } from './layout/AppListItem'
 
+export { AppTabBar } from './layout/AppTabBar'
+export type { AppTabBarProps } from './layout/AppTabBar'
+
 // ============================================================================
 // LAYER 2: COMPOSITE COMPONENTS
 // ============================================================================

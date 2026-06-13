@@ -728,6 +728,58 @@
     "confirm_cancel_title": "సబ్‌స్క్రిప్షన్ రద్దు చేయాలా?",
     "confirm_cancel_body": "ప్రస్తుత బిల్లింగ్ కాలం ముగిసే వరకు మీ సబ్‌స్క్రిప్షన్ చురుగ్గా ఉంటుంది."
   },
+  "nav": {
+    "tab": {
+      "home": "హోమ్",
+      "lists": "జాబితాలు",
+      "customers": "కస్టమర్లు",
+      "more": "మరిన్ని",
+      "myLists": "నా జాబితాలు"
+    },
+    "more": {
+      "title": "మరిన్ని",
+      "section": {
+        "business": "వ్యాపారం",
+        "collections": "వసూళ్లు",
+        "billing": "బిల్లింగ్",
+        "reports": "నివేదికలు",
+        "account": "ఖాతా",
+        "support": "సహాయం",
+        "today": "నేడు"
+      },
+      "row": {
+        "businessProfile": "వ్యాపార ప్రొఫైల్",
+        "staffManagement": "సిబ్బంది నిర్వహణ",
+        "subscription": "సభ్యత్వం",
+        "vendorSettings": "విక్రేత సెట్టింగులు",
+        "outstanding": "బకాయి & వసూళ్లు",
+        "payments": "చెల్లింపులు",
+        "leaves": "సెలవులు",
+        "pendingInvites": "పెండింగ్ ఆహ్వానాలు",
+        "staffActivity": "సిబ్బంది కార్యకలాపాలు",
+        "conflictLog": "వివాద లాగ్",
+        "monthlySummary": "నెలవారీ సారాంశం",
+        "changePassword": "పాస్‌వర్డ్ మార్చండి",
+        "notifications": "నోటిఫికేషన్లు",
+        "languageSettings": "భాష సెట్టింగులు",
+        "helpFaq": "సహాయం & FAQ",
+        "contactSupport": "సపోర్ట్‌ని సంప్రదించండి",
+        "contactOwner": "యజమానిని సంప్రదించండి",
+        "todaysLeaves": "నేటి సెలవులు",
+        "myDeliveryHistory": "నా డెలివరీ చరిత్ర"
+      }
+    },
+    "comingSoon": "త్వరలో వస్తుంది",
+    "logout": {
+      "button": "లాగ్ అవుట్",
+      "confirmTitle": "లాగ్ అవుట్ అవుతారా?",
+      "confirmBody": "మీరు మీ ఖాతా నుండి లాగ్ అవుట్ అవుతారు.",
+      "confirm": "లాగ్ అవుట్",
+      "cancel": "రద్దు చేయండి"
+    },
+    "offline": "మీరు ఆఫ్‌లైన్‌లో ఉన్నారు",
+    "syncing": "సమకాలీకరిస్తోంది…"
+  },
   "dashboard": {
     "total_revenue": "Total Revenue",
     "collected": "Collected",

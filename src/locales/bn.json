@@ -728,6 +728,58 @@
     "confirm_cancel_title": "সাবস্ক্রিপশন বাতিল করবেন?",
     "confirm_cancel_body": "বর্তমান বিলিং মেয়াদ শেষ না হওয়া পর্যন্ত আপনার সাবস্ক্রিপশন সক্রিয় থাকবে।"
   },
+  "nav": {
+    "tab": {
+      "home": "হোম",
+      "lists": "তালিকা",
+      "customers": "গ্রাহক",
+      "more": "আরও",
+      "myLists": "আমার তালিকা"
+    },
+    "more": {
+      "title": "আরও",
+      "section": {
+        "business": "ব্যবসা",
+        "collections": "সংগ্রহ",
+        "billing": "বিলিং",
+        "reports": "প্রতিবেদন",
+        "account": "অ্যাকাউন্ট",
+        "support": "সহায়তা",
+        "today": "আজ"
+      },
+      "row": {
+        "businessProfile": "ব্যবসায়িক প্রোফাইল",
+        "staffManagement": "কর্মী ব্যবস্থাপনা",
+        "subscription": "সাবস্ক্রিপশন",
+        "vendorSettings": "বিক্রেতা সেটিংস",
+        "outstanding": "বকেয়া ও সংগ্রহ",
+        "payments": "পেমেন্ট",
+        "leaves": "ছুটি",
+        "pendingInvites": "মুলতুবি আমন্ত্রণ",
+        "staffActivity": "কর্মী কার্যকলাপ",
+        "conflictLog": "দ্বন্দ্ব লগ",
+        "monthlySummary": "মাসিক সারসংক্ষেপ",
+        "changePassword": "পাসওয়ার্ড পরিবর্তন",
+        "notifications": "বিজ্ঞপ্তি",
+        "languageSettings": "ভাষা সেটিংস",
+        "helpFaq": "সাহায্য ও FAQ",
+        "contactSupport": "সহায়তায় যোগাযোগ",
+        "contactOwner": "মালিকের সাথে যোগাযোগ",
+        "todaysLeaves": "আজকের ছুটি",
+        "myDeliveryHistory": "আমার ডেলিভারি ইতিহাস"
+      }
+    },
+    "comingSoon": "শীঘ্রই আসছে",
+    "logout": {
+      "button": "লগ আউট",
+      "confirmTitle": "লগ আউট করবেন?",
+      "confirmBody": "আপনি আপনার অ্যাকাউন্ট থেকে লগ আউট হবেন।",
+      "confirm": "লগ আউট",
+      "cancel": "বাতিল"
+    },
+    "offline": "আপনি অফলাইনে আছেন",
+    "syncing": "সিঙ্ক হচ্ছে…"
+  },
   "dashboard": {
     "total_revenue": "Total Revenue",
     "collected": "Collected",
