@@ -225,9 +225,9 @@ export const useDashboardStore = create<DashboardState>()((set, get) => ({
   setAutoMark: async (enabled) => {
     const vendorId = getActiveVendorId()
     if (!vendorId) return
-    // 1. Snapshot previous value.
+    // 1. Snapshot previous value (for rollback).
     const prev = get().ownerDashboard?.autoMarkStatus ?? null
-    // 2. Optimistically set new value.
+    // 2. Optimistically set new value in the dashboard store.
     const currentDashboard = get().ownerDashboard
     if (currentDashboard) {
       set({
@@ -241,14 +241,20 @@ export const useDashboardStore = create<DashboardState>()((set, get) => ({
       set({ isUpdatingAutoMark: true })
     }
     try {
-      // 3. Call API and write server-confirmed value.
-      const result = await dashboardService.updateSettings(vendorId, { autoMarkEnabled: enabled })
-      const updated = get().ownerDashboard
-      if (updated) {
+      // 3. Delegate the write to the settings store (single writer — OQ-5 resolution).
+      // Lazy-require to avoid a module cycle (dashboard.store <-> settings.store).
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { useSettingsStore } = require('@modules/settings/store/settings.store') as {
+        useSettingsStore: { getState: () => { updateSettings: (patch: { autoMarkEnabled: boolean }) => Promise<void> } }
+      }
+      await useSettingsStore.getState().updateSettings({ autoMarkEnabled: enabled })
+      // 4. Write server-confirmed value from the updated settings store.
+      const updatedDashboard = get().ownerDashboard
+      if (updatedDashboard) {
         set({
           ownerDashboard: {
-            ...updated,
-            autoMarkStatus: result.autoMarkEnabled ? 'on' : 'off',
+            ...updatedDashboard,
+            autoMarkStatus: enabled ? 'on' : 'off',
           },
           isUpdatingAutoMark: false,
         })
@@ -256,7 +262,7 @@ export const useDashboardStore = create<DashboardState>()((set, get) => ({
         set({ isUpdatingAutoMark: false })
       }
     } catch (err) {
-      // 4. Rollback on failure, log, set error, rethrow for screen haptic.
+      // 5. Rollback on failure, log, set error, rethrow for screen haptic.
       const rollback = get().ownerDashboard
       if (rollback && prev !== null) {
         set({

@@ -26,7 +26,6 @@ const mockGetOwnerDashboard = jest.fn()
 const mockGetStaffDashboard = jest.fn()
 const mockGetSupplyForecast = jest.fn()
 const mockGetOutstandingAging = jest.fn()
-const mockUpdateSettings = jest.fn()
 
 jest.mock('../../service/dashboard.service', () => ({
   dashboardService: {
@@ -34,7 +33,17 @@ jest.mock('../../service/dashboard.service', () => ({
     getStaffDashboard: (...args: unknown[]) => mockGetStaffDashboard(...args),
     getSupplyForecast: (...args: unknown[]) => mockGetSupplyForecast(...args),
     getOutstandingAging: (...args: unknown[]) => mockGetOutstandingAging(...args),
-    updateSettings: (...args: unknown[]) => mockUpdateSettings(...args),
+  },
+}))
+
+// Mock the settings store for OQ-5 delegation pattern (setAutoMark delegates to settings store).
+// The mock must be set up BEFORE importing the dashboard store.
+const mockUpdateSettingsInStore = jest.fn()
+jest.mock('@modules/settings/store/settings.store', () => ({
+  useSettingsStore: {
+    getState: () => ({
+      updateSettings: mockUpdateSettingsInStore,
+    }),
   },
 }))
 
@@ -158,7 +167,7 @@ describe('useDashboardStore', () => {
     it('optimistically updates then confirms on success', async () => {
       // Seed initial data
       useDashboardStore.setState({ ownerDashboard: { ...mockOwnerDashboard, autoMarkStatus: 'on' } })
-      mockUpdateSettings.mockResolvedValueOnce({ autoMarkEnabled: false, autoSendBillsEnabled: false, autoSendBillsTime: '20:00' })
+      mockUpdateSettingsInStore.mockResolvedValueOnce(undefined)
 
       await act(async () => {
         await useDashboardStore.getState().setAutoMark(false)
@@ -170,7 +179,7 @@ describe('useDashboardStore', () => {
 
     it('rolls back to previous value on failure and rethrows', async () => {
       useDashboardStore.setState({ ownerDashboard: { ...mockOwnerDashboard, autoMarkStatus: 'on' } })
-      mockUpdateSettings.mockRejectedValueOnce(new Error('network'))
+      mockUpdateSettingsInStore.mockRejectedValueOnce(new Error('network'))
 
       await expect(
         act(async () => {
