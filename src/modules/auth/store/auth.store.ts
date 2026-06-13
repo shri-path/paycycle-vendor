@@ -248,6 +248,16 @@ export const useAuthStore = create<AuthState>()(
           } catch {
             // dashboard store not loaded yet — nothing to clear.
           }
+          // Wipe all local settings data (vendor config) on logout (US-011).
+          try {
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
+            const { useSettingsStore } = require('@modules/settings/store/settings.store') as {
+              useSettingsStore: { getState: () => { clearSettings: () => void } }
+            }
+            useSettingsStore.getState().clearSettings()
+          } catch {
+            // settings store not loaded yet — nothing to clear.
+          }
           set({
             isAuthenticated: false,
             user: null,

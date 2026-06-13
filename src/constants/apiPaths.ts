@@ -193,6 +193,33 @@ export const APIPath = {
     /** PATCH — update vendor settings (autoMarkEnabled etc). Owner only. */
     Settings: (vendorId: string) => `/vendors/${vendorId}/settings`,
   },
+  // Vendor Settings & Automation (US-011). Mounted at /api/v1/vendors. vendorId is
+  // JWT-derived on the server — present in the path only for routing, never as
+  // user-controlled tenant data. No `/v1` in the path strings (the base URL ends
+  // `/api/v1`), identical to the dashboard / subscription convention.
+  Settings: {
+    /** GET / PATCH — vendor settings (automation, credit, notification prefs). Owner only. */
+    Get: (vendorId: string) => `/vendors/${vendorId}/settings`,
+    Update: (vendorId: string) => `/vendors/${vendorId}/settings`,
+    /** PATCH — notification preferences sub-resource. Owner only. */
+    NotifPrefs: (vendorId: string) => `/vendors/${vendorId}/notification-preferences`,
+    /** POST — bulk mark leave for subscriptions. Owner only. */
+    BulkMarkLeave: (vendorId: string) => `/vendors/${vendorId}/bulk-operations/mark-leave`,
+    /** POST — bulk adjust rate for subscriptions. Owner only. */
+    BulkAdjustRate: (vendorId: string) => `/vendors/${vendorId}/bulk-operations/adjust-rate`,
+    /** POST — bulk send payment reminders to customers. Owner only. */
+    BulkSendReminders: (vendorId: string) =>
+      `/vendors/${vendorId}/bulk-operations/send-reminders`,
+    /** GET — impact preview for bulk leave (debounced). Owner only. */
+    LeaveImpact: (vendorId: string) =>
+      `/vendors/${vendorId}/bulk-operations/mark-leave/impact`,
+    /** GET — impact preview for bulk rate adjustment (debounced). Owner only. */
+    RateImpact: (vendorId: string) =>
+      `/vendors/${vendorId}/bulk-operations/adjust-rate/impact`,
+    /** GET — poll a bulk operation result. Owner only. */
+    BulkOperation: (vendorId: string, operationId: string) =>
+      `/vendors/${vendorId}/bulk-operations/${operationId}`,
+  },
 } as const;
 
 export default APIPath;

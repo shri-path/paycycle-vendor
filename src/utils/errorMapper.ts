@@ -23,6 +23,7 @@ export type ApiErrorContext =
   | 'customer'
   | 'audit'
   | 'subscription'
+  | 'settings'
 
 /**
  * Sub-action within the `'delivery'` context (US-006). Several delivery endpoints
@@ -59,6 +60,14 @@ export type SupplyErrorAction =
 export type SubscriptionErrorAction = 'upgrade' | 'renew' | 'cancel' | 'auto_renewal'
 
 /**
+ * Sub-action within the `'settings'` context (US-011). Several bulk-op endpoints
+ * share status codes that resolve to different i18n keys depending on the action
+ * (e.g. 400/422 on mark_leave vs adjust_rate means different things). The store
+ * passes the action so the mapper resolves correctly.
+ */
+export type SettingsErrorAction = 'mark_leave' | 'adjust_rate' | 'send_reminders'
+
+/**
  * Sub-action within the `'customer'` context (US-008). Customer endpoints share
  * status codes that resolve to different i18n keys depending on the action being
  * performed (e.g. 409 on create/update = duplicate phone, on add_subscription =
@@ -84,7 +93,7 @@ export type CustomerErrorAction =
 export function mapApiError(
   err: unknown,
   context?: ApiErrorContext,
-  action?: SupplyErrorAction | DeliveryErrorAction | CustomerErrorAction | SubscriptionErrorAction,
+  action?: SupplyErrorAction | DeliveryErrorAction | CustomerErrorAction | SubscriptionErrorAction | SettingsErrorAction,
 ): string {
   if (axios.isAxiosError(err)) {
     // Network error (no response) = offline
@@ -200,6 +209,19 @@ export function mapApiError(
       if (status === 451) return 'subscription.error_limit_reached'
     }
 
+    // Settings surfaces (US-011) — resolve shared status codes by sub-action.
+    if (context === 'settings') {
+      if (status === 403) return 'roles.error_forbidden'
+      if (status === 404) return 'settings.error_not_found'
+      if (status === 413) return 'settings.error_too_many_items'
+      if (status === 400 || status === 422) {
+        if (action === 'mark_leave') return 'settings.error_invalid_leave'
+        if (action === 'adjust_rate') return 'settings.error_invalid_rate'
+        if (action === 'send_reminders') return 'settings.error_invalid_reminder'
+        return 'validation.required'
+      }
+    }
+
     if (status === 401) return 'auth.invalid_credentials'
     if (status === 403) return 'roles.error_forbidden'
     if (status === 409) return 'auth.phone_already_registered'
@@ -221,6 +243,7 @@ export function mapApiError(
       err.message.startsWith('customer.') ||
       err.message.startsWith('audit.') ||
       err.message.startsWith('subscription.') ||
+      err.message.startsWith('settings.') ||
       err.message.startsWith('common.'))
   ) {
     return err.message
