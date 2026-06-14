@@ -220,6 +220,33 @@ export const APIPath = {
     BulkOperation: (vendorId: string, operationId: string) =>
       `/vendors/${vendorId}/bulk-operations/${operationId}`,
   },
+  // Credit Control & Outstanding Management (US-012). Mounted at /api/v1/vendors.
+  // vendorId is JWT-derived on the server — present in the path only for routing,
+  // never as user-controlled tenant data. No `/v1` in the path strings (the base
+  // URL ends `/api/v1`), identical to the dashboard / settings convention.
+  Credit: {
+    /** GET — outstanding overview, advance credit, net receivable, month progress, at-limit list. */
+    Dashboard: (vendorId: string) => `/vendors/${vendorId}/collections/dashboard`,
+    /** GET — customers grouped by collection priority (with advance-credit group). Query: ?sort= */
+    PriorityList: (vendorId: string) => `/vendors/${vendorId}/collections/priority-list`,
+    /** GET — monthly collection analytics. Query: ?month=YYYY-MM */
+    Analytics: (vendorId: string) => `/vendors/${vendorId}/collections/analytics`,
+    /** GET — standalone outstanding aging breakdown (same buckets as dashboard). */
+    Aging: (vendorId: string) => `/vendors/${vendorId}/collections/aging`,
+    /** PATCH — set a customer's credit policy (type, limit, threshold, breach action). */
+    CreditSettings: (vendorId: string, customerId: string) =>
+      `/vendors/${vendorId}/customers/${customerId}/credit-settings`,
+    /** POST — switch a customer to prepaid mode; discriminated response. */
+    EnablePrepaid: (vendorId: string, customerId: string) =>
+      `/vendors/${vendorId}/customers/${customerId}/enable-prepaid`,
+    /** GET (history) + POST (send single reminder) for one customer. */
+    Reminders: (vendorId: string, customerId: string) =>
+      `/vendors/${vendorId}/customers/${customerId}/reminders`,
+    /** POST — send reminders to many customers at once. */
+    SendBulk: (vendorId: string) => `/vendors/${vendorId}/reminders/send-bulk`,
+    /** GET / PATCH — vendor automated-reminder configuration. */
+    ReminderConfig: (vendorId: string) => `/vendors/${vendorId}/reminder-config`,
+  },
 } as const;
 
 export default APIPath;
