@@ -150,13 +150,27 @@ export const AppTabBar = React.memo<AppTabBarProps>(function AppTabBar({
     return () => sub.remove()
   }, [])
 
-  // Animated indicator x-position (proportional to tab index)
-  const indicatorLeft = useSharedValue(0)
-  const tabCount = items.length
+  // Resolve each role-appropriate item to its REAL route in state.routes.
+  // Expo Router keeps href:null screens in the navigator (it only hides their
+  // default button), so state.routes holds ALL screens regardless of role.
+  // We must match by name to get each tab's real key + real index — otherwise
+  // state.index (an index into the full route list) desyncs from the rendered
+  // items, breaking active highlighting and tap targeting.
+  const visibleTabs = items
+    .map((item) => {
+      const routeIndex = state.routes.findIndex((r) => r.name === item.name)
+      return routeIndex === -1 ? null : { item, route: state.routes[routeIndex], routeIndex }
+    })
+    .filter((t): t is { item: TabItem; route: typeof state.routes[number]; routeIndex: number } => t !== null)
 
-  // Update indicator when active index changes
+  // Animated indicator x-position (proportional to the active tab's VISIBLE position)
+  const indicatorLeft = useSharedValue(0)
+  const tabCount = visibleTabs.length
+  const activeVisiblePos = visibleTabs.findIndex((t) => t.routeIndex === state.index)
+
+  // Update indicator when active position changes
   useEffect(() => {
-    const pct = tabCount > 0 ? state.index / tabCount : 0
+    const pct = tabCount > 0 && activeVisiblePos >= 0 ? activeVisiblePos / tabCount : 0
     if (reduceMotion.current) {
       indicatorLeft.value = pct
     } else {
@@ -165,7 +179,7 @@ export const AppTabBar = React.memo<AppTabBarProps>(function AppTabBar({
         easing: Easing.out(Easing.cubic),
       })
     }
-  }, [state.index, tabCount, indicatorLeft])
+  }, [activeVisiblePos, tabCount, indicatorLeft])
 
   // RTL-safe active indicator: use `right` in RTL layouts so the indicator
   // tracks the correct tab in bidirectional layouts (MAJOR-3)
@@ -178,11 +192,11 @@ export const AppTabBar = React.memo<AppTabBarProps>(function AppTabBar({
   })
 
   const handleTabPress = useCallback(
-    (routeName: string, index: number) => {
-      const isFocused = state.index === index
+    (routeName: string, routeKey: string, routeIndex: number) => {
+      const isFocused = state.index === routeIndex
       const event = navigation.emit({
         type: 'tabPress',
-        target: state.routes[index]?.key,
+        target: routeKey,
         canPreventDefault: true,
       })
 
@@ -194,7 +208,7 @@ export const AppTabBar = React.memo<AppTabBarProps>(function AppTabBar({
         navigation.navigate(routeName)
       }
     },
-    [state, navigation],
+    [state.index, navigation],
   )
 
   const showStatusStrip = !isOnline || isSyncing
@@ -230,15 +244,15 @@ export const AppTabBar = React.memo<AppTabBarProps>(function AppTabBar({
         {/* Active indicator — slides across the top of the bar */}
         <Animated.View style={[styles.activeIndicator, indicatorStyle]} />
 
-        {items.map((item, index) => {
-          const isActive = state.index === index
+        {visibleTabs.map(({ item, route, routeIndex }) => {
+          const isActive = state.index === routeIndex
           const routeName = item.name
 
           return (
             <TouchableOpacity
               key={routeName}
               style={styles.tab}
-              onPress={() => handleTabPress(routeName, index)}
+              onPress={() => handleTabPress(routeName, route.key, routeIndex)}
               activeOpacity={animation.opacity.active}
               accessibilityRole="tab"
               accessibilityLabel={t(item.labelKey)}

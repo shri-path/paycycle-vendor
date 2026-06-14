@@ -7,10 +7,15 @@
  * - Staff  → 3 tabs: staff-home, my-lists, more
  * - Unknown → staff set (least-privilege default)
  *
- * Performance:
- * - lazy={true} (Expo Router default) — tabs mount only when first visited
- * - items memoized on role so the array isn't recreated every render
- * - useShallow on appStore to avoid spurious re-renders
+ * IMPORTANT — why <Tabs.Protected> and NOT `href: null`:
+ * `href: null` only hides a tab's button; Expo Router keeps the screen REGISTERED
+ * in the navigator, and React Navigation v7 mounts inactive tab screens at least
+ * once. That caused staff sessions to mount the owner-only screens (lists,
+ * customers), whose on-mount data fetch hit owner-only endpoints → 403 → the
+ * shared HTTP interceptor logged the user out (the "login then bounce" bug).
+ * Tabs.Protected with a role guard EXCLUDES the screens from the navigator
+ * entirely, so the wrong-role screens never mount. As a bonus, state.routes then
+ * matches the role's tab set exactly.
  *
  * Offline / sync: reads isOnline / isSyncing from appStore and passes to AppTabBar
  * which renders a thin strip above the bar.
@@ -28,14 +33,15 @@ import { useTranslation } from '@hooks/useTranslation'
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 
 export default function TabsLayout() {
-  const { isOwner, isStaff } = useRole()
+  const { isOwner } = useRole()
   const { t } = useTranslation()
   const { isOnline, isSyncing } = useAppStore(
     useShallow((s) => ({ isOnline: s.isOnline, isSyncing: s.isSyncing })),
   )
 
-  // Derive role string — null until resolved (renders staff set as least-privilege)
-  const role: 'owner' | 'staff' | null = isOwner ? 'owner' : isStaff ? 'staff' : null
+  // Role string for the tab-bar item set — null/unknown falls back to the staff
+  // (least-privilege) set, matching the !isOwner guard on the staff screen group.
+  const role: 'owner' | 'staff' = isOwner ? 'owner' : 'staff'
 
   // Memoize tab items so the array identity is stable between renders
   const items = useMemo(() => getTabsForRole(role), [role])
@@ -59,55 +65,23 @@ export default function TabsLayout() {
       tabBar={renderTabBar}
       screenOptions={{
         headerShown: false,
-        lazy: true,
       }}
     >
-      {/* Owner-only tabs — hidden for staff via href: null */}
-      <Tabs.Screen
-        name="home"
-        options={{
-          href: isOwner ? undefined : null,
-          title: t('nav.tab.home'),
-        }}
-      />
-      <Tabs.Screen
-        name="lists"
-        options={{
-          href: isOwner ? undefined : null,
-          title: t('nav.tab.lists'),
-        }}
-      />
-      <Tabs.Screen
-        name="customers"
-        options={{
-          href: isOwner ? undefined : null,
-          title: t('nav.tab.customers'),
-        }}
-      />
+      {/* Owner-only tabs — excluded from the navigator for non-owners */}
+      <Tabs.Protected guard={isOwner}>
+        <Tabs.Screen name="home" options={{ title: t('nav.tab.home') }} />
+        <Tabs.Screen name="lists" options={{ title: t('nav.tab.lists') }} />
+        <Tabs.Screen name="customers" options={{ title: t('nav.tab.customers') }} />
+      </Tabs.Protected>
 
-      {/* Staff-only tabs — hidden for owner via href: null */}
-      <Tabs.Screen
-        name="staff-home"
-        options={{
-          href: isOwner ? null : undefined,
-          title: t('nav.tab.home'),
-        }}
-      />
-      <Tabs.Screen
-        name="my-lists"
-        options={{
-          href: isOwner ? null : undefined,
-          title: t('nav.tab.myLists'),
-        }}
-      />
+      {/* Staff (and unknown/loading) tabs — excluded for owners */}
+      <Tabs.Protected guard={!isOwner}>
+        <Tabs.Screen name="staff-home" options={{ title: t('nav.tab.home') }} />
+        <Tabs.Screen name="my-lists" options={{ title: t('nav.tab.myLists') }} />
+      </Tabs.Protected>
 
-      {/* Shared: More menu — always visible */}
-      <Tabs.Screen
-        name="more"
-        options={{
-          title: t('nav.tab.more'),
-        }}
-      />
+      {/* Shared: More menu — always registered */}
+      <Tabs.Screen name="more" options={{ title: t('nav.tab.more') }} />
     </Tabs>
   )
 }
