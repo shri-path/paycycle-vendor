@@ -29,6 +29,7 @@ import type {
   CollectionAnalyticsDto,
   ReminderConfigDto,
   ReminderHistoryDto,
+  ReminderHistoryMeta,
   UpdateCreditSettingsDto,
   CreditSettingsResultDto,
   EnablePrepaidDto,
@@ -77,6 +78,8 @@ export interface CreditState {
 
   // --- History slice (keyed by customerId; append on page > 1) ---
   history: Record<string, ReminderHistoryDto>
+  /** Pagination meta keyed by customerId — used by the screen to guard onEndReached. */
+  historyMeta: Record<string, ReminderHistoryMeta>
   isHistoryLoading: boolean
   historyError: string | null
 
@@ -147,6 +150,7 @@ const initialState = {
   reminderConfigError: null as string | null,
 
   history: {} as Record<string, ReminderHistoryDto>,
+  historyMeta: {} as Record<string, ReminderHistoryMeta>,
   isHistoryLoading: false,
   historyError: null as string | null,
 
@@ -269,7 +273,7 @@ export const useCreditStore = create<CreditState>()((set, get) => ({
     if (!vendorId) return
     set({ isHistoryLoading: true, historyError: null })
     try {
-      const { data } = await creditService.getReminderHistory(vendorId, customerId, page)
+      const { data, meta } = await creditService.getReminderHistory(vendorId, customerId, page)
       set((state) => {
         if (page > 1) {
           // Append reminders for subsequent pages
@@ -285,11 +289,13 @@ export const useCreditStore = create<CreditState>()((set, get) => ({
                   }
                 : data,
             },
+            historyMeta: { ...state.historyMeta, [customerId]: meta },
           }
         }
         return {
           isHistoryLoading: false,
           history: { ...state.history, [customerId]: data },
+          historyMeta: { ...state.historyMeta, [customerId]: meta },
         }
       })
     } catch (err) {

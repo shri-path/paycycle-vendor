@@ -51,6 +51,7 @@ function ReminderHistoryContent() {
 
   const {
     history,
+    historyMeta,
     isHistoryLoading,
     historyError,
     remindingCustomerIds,
@@ -60,6 +61,7 @@ function ReminderHistoryContent() {
   } = useCreditStore(
     useShallow((s) => ({
       history: s.history,
+      historyMeta: s.historyMeta,
       isHistoryLoading: s.isHistoryLoading,
       historyError: s.historyError,
       remindingCustomerIds: s.remindingCustomerIds,
@@ -100,6 +102,7 @@ function ReminderHistoryContent() {
   }, [customerId, isSending, isConnected, sendReminder, t, fetchReminderHistory])
 
   const historyData = customerId ? (history[customerId] ?? null) : null
+  const historyMetaForCustomer = customerId ? (historyMeta[customerId] ?? null) : null
 
   if (isHistoryLoading && !historyData) {
     return (
@@ -198,11 +201,13 @@ function ReminderHistoryContent() {
         }
         onEndReachedThreshold={0.3}
         onEndReached={() => {
-          if (customerId && historyData && !isHistoryLoading) {
-            const nextPage = currentPage + 1
-            setCurrentPage(nextPage)
-            void fetchReminderHistory(customerId, nextPage)
-          }
+          if (!customerId || !historyData || isHistoryLoading) return
+          // Guard: do not request beyond the last page
+          const totalPages = historyMetaForCustomer?.totalPages ?? 1
+          if (currentPage >= totalPages) return
+          const nextPage = currentPage + 1
+          setCurrentPage(nextPage)
+          void fetchReminderHistory(customerId, nextPage)
         }}
       />
     </SafeAreaView>
