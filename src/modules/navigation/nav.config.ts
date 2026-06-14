@@ -178,8 +178,13 @@ function getOwnerMoreSections(handlers: MoreMenuHandlers): MoreMenuSection[] {
         },
         {
           labelKey: 'nav.more.row.languageSettings',
-          onPress: undefined,
+          onPress: () => handlers.navigate('/(app)/settings/language'),
           testID: 'more-row-language-settings',
+        },
+        {
+          labelKey: 'nav.more.row.messageTemplates',
+          onPress: () => handlers.navigate('/(app)/settings/message-templates'),
+          testID: 'more-row-message-templates',
         },
       ],
     },
@@ -230,6 +235,11 @@ function getStaffMoreSections(handlers: MoreMenuHandlers): MoreMenuSection[] {
           labelKey: 'nav.more.row.notifications',
           onPress: () => handlers.navigate('/(app)/settings/notifications'),
           testID: 'more-row-notifications',
+        },
+        {
+          labelKey: 'nav.more.row.languageSettings',
+          onPress: () => handlers.navigate('/(app)/settings/language'),
+          testID: 'more-row-language-settings',
         },
       ],
     },

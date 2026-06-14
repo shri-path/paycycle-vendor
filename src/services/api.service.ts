@@ -17,3 +17,6 @@ export { supplyListsService } from '../modules/supply-lists/service/supplyLists.
 export { deliveryService } from '../modules/delivery/service/delivery.service'
 export { dashboardService } from '../modules/dashboard/service/dashboard.service'
 export { creditService } from '../modules/credit/service/credit.service'
+export { languageService } from '../modules/voice/service/language.service'
+export { templateService } from '../modules/voice/service/template.service'
+export { voiceService } from '../modules/voice/service/voice.service'

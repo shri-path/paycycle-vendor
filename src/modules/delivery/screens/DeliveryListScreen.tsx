@@ -10,7 +10,7 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { View, StyleSheet, FlatList, RefreshControl } from 'react-native'
+import { View, Pressable, StyleSheet, FlatList, RefreshControl } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
@@ -33,6 +33,7 @@ import { useRole } from '@modules/roles/hooks/useRole'
 import { useTranslation } from '@hooks/useTranslation'
 import { useNetworkStatus } from '@hooks/useNetworkStatus'
 import { colors, spacing, componentSizes } from '@constants/tokens'
+import { useLanguageStore } from '@modules/voice/store/language.store'
 import type { DeliveryDto, MarkableStatus } from '../../../types/delivery'
 
 type FilterValue = 'all' | 'pending' | 'completed'
@@ -63,6 +64,22 @@ const styles = StyleSheet.create({
     padding: spacing[4],
     backgroundColor: colors.surface,
   },
+  micFab: {
+    position: 'absolute',
+    end: spacing[4],
+    bottom: spacing[20],
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+  },
   skeletonRow: { height: 88, marginHorizontal: spacing[4], marginBottom: spacing[2], backgroundColor: colors.gray100, borderRadius: spacing[2] },
 })
 
@@ -79,6 +96,9 @@ function DeliveryListScreenContent() {
   const { isConnected } = useNetworkStatus()
   const { isOwner, hasPermission } = useRole()
   const canMark = isOwner || hasPermission('mark_deliveries')
+  const voiceCommandsEnabled = useLanguageStore(
+    (s) => s.preferences?.voiceCommandsEnabled ?? false,
+  )
 
   const {
     deliveries,
@@ -324,6 +344,19 @@ function DeliveryListScreenContent() {
             testID="mark-all-btn"
           />
         </View>
+      ) : null}
+
+      {/* Mic FAB — visible only when voiceCommandsEnabled */}
+      {voiceCommandsEnabled && isConnected ? (
+        <Pressable
+          onPress={() => router.push(`/(app)/deliveries/${listId}/voice`)}
+          accessibilityRole="button"
+          accessibilityLabel={t('voice.tap_to_speak')}
+          style={styles.micFab}
+          testID="voice-fab"
+        >
+          <Ionicons name="mic" size={24} color={colors.white} />
+        </Pressable>
       ) : null}
 
       <AppConfirmDialog

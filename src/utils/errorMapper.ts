@@ -25,6 +25,7 @@ export type ApiErrorContext =
   | 'subscription'
   | 'settings'
   | 'credit'
+  | 'voice'
 
 /**
  * Sub-action within the `'delivery'` context (US-006). Several delivery endpoints
@@ -240,6 +241,17 @@ export function mapApiError(
       }
     }
 
+    // Voice Command surfaces (US-013) — resolve shared status codes by meaning.
+    if (context === 'voice') {
+      if (status === 403) return 'roles.error_forbidden'
+      if (status === 404) return 'voice.error.not_found'
+      if (status === 422) return 'voice.error.unprocessable'
+      if (status === 429) return 'voice.error.too_many_requests'
+      if (status === 502) return 'voice.error.speech_provider'
+      if (status >= 500) return 'errors.server_error'
+      return 'common.error'
+    }
+
     if (status === 401) return 'auth.invalid_credentials'
     if (status === 403) return 'roles.error_forbidden'
     if (status === 409) return 'auth.phone_already_registered'
@@ -263,6 +275,7 @@ export function mapApiError(
       err.message.startsWith('subscription.') ||
       err.message.startsWith('settings.') ||
       err.message.startsWith('credit.') ||
+      err.message.startsWith('voice.') ||
       err.message.startsWith('common.'))
   ) {
     return err.message

@@ -20,7 +20,8 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.paycycle_vendor"
+      "package": "com.anonymous.paycycle_vendor",
+      "permissions": ["android.permission.RECORD_AUDIO"]
     },
     "web": {
       "output": "static",
@@ -40,7 +41,13 @@
           }
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "PayCycle needs microphone access to record voice commands for hands-free delivery marking."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

@@ -268,6 +268,36 @@ export const useAuthStore = create<AuthState>()(
           } catch {
             // credit store not loaded yet — nothing to clear.
           }
+          // Wipe server language preferences (keep UI language) on logout (US-013).
+          try {
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
+            const { useLanguageStore } = require('@modules/voice/store/language.store') as {
+              useLanguageStore: { getState: () => { clearLanguage: () => void } }
+            }
+            useLanguageStore.getState().clearLanguage()
+          } catch {
+            // language store not loaded yet — nothing to clear.
+          }
+          // Wipe all local message template data on logout (US-013).
+          try {
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
+            const { useTemplateStore } = require('@modules/voice/store/template.store') as {
+              useTemplateStore: { getState: () => { clearTemplates: () => void } }
+            }
+            useTemplateStore.getState().clearTemplates()
+          } catch {
+            // template store not loaded yet — nothing to clear.
+          }
+          // Wipe all local voice state on logout (US-013).
+          try {
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
+            const { useVoiceStore } = require('@modules/voice/store/voice.store') as {
+              useVoiceStore: { getState: () => { clearVoice: () => void } }
+            }
+            useVoiceStore.getState().clearVoice()
+          } catch {
+            // voice store not loaded yet — nothing to clear.
+          }
           set({
             isAuthenticated: false,
             user: null,
