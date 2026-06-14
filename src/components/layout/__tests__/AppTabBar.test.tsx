@@ -219,4 +219,94 @@ describe('AppTabBar', () => {
   it('has displayName set for React DevTools', () => {
     expect(AppTabBar.displayName).toBe('AppTabBar')
   })
+
+  // Regression: Expo Router keeps href:null screens in the navigator, so a custom
+  // tab bar always receives the FULL route set (all 6 screens) regardless of role.
+  // The bar must resolve each role item to its real route by name — not assume
+  // state.index lines up with the items array. (Owner "no/!broken menu" bug.)
+  describe('full navigator route set (all screens present)', () => {
+    const ALL_ROUTES = ['home', 'lists', 'customers', 'staff-home', 'my-lists', 'more']
+
+    it('owner: renders only the 4 owner tabs and none of the staff-only ones', async () => {
+      const screen = await render(
+        <AppTabBar
+          state={mockState(0, ALL_ROUTES)}
+          navigation={mockNavigation}
+          items={ownerItems}
+          isOnline
+          isSyncing={false}
+        />,
+      )
+      expect(await screen.findByTestId('tab-home')).toBeTruthy()
+      expect(await screen.findByTestId('tab-lists')).toBeTruthy()
+      expect(await screen.findByTestId('tab-customers')).toBeTruthy()
+      expect(await screen.findByTestId('tab-more')).toBeTruthy()
+      expect(screen.queryByTestId('tab-staff-home')).toBeNull()
+      expect(screen.queryByTestId('tab-my-lists')).toBeNull()
+    })
+
+    it('owner: marks the More tab selected when its REAL route index is active', async () => {
+      // 'more' is at index 5 in the full route set
+      const screen = await render(
+        <AppTabBar
+          state={mockState(5, ALL_ROUTES)}
+          navigation={mockNavigation}
+          items={ownerItems}
+          isOnline
+          isSyncing={false}
+        />,
+      )
+      expect((await screen.findByTestId('tab-more')).props.accessibilityState?.selected).toBe(true)
+      expect((await screen.findByTestId('tab-home')).props.accessibilityState?.selected).toBe(false)
+    })
+
+    it('owner: pressing More navigates to more and emits with the real route key', async () => {
+      const screen = await render(
+        <AppTabBar
+          state={mockState(0, ALL_ROUTES)}
+          navigation={mockNavigation}
+          items={ownerItems}
+          isOnline
+          isSyncing={false}
+        />,
+      )
+      fireEvent.press(await screen.findByTestId('tab-more'))
+      expect(navigateMock).toHaveBeenCalledWith('more')
+      expect(emitMock).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'tabPress', target: 'more-5' }),
+      )
+    })
+
+    it('staff: marks staff-home selected when its real route index is active', async () => {
+      // 'staff-home' is at index 3 in the full route set
+      const screen = await render(
+        <AppTabBar
+          state={mockState(3, ALL_ROUTES)}
+          navigation={mockNavigation}
+          items={staffItems}
+          isOnline
+          isSyncing={false}
+        />,
+      )
+      expect((await screen.findByTestId('tab-staff-home')).props.accessibilityState?.selected).toBe(true)
+      expect(screen.queryByTestId('tab-home')).toBeNull()
+    })
+
+    it('staff: pressing My Lists navigates to my-lists with its real key', async () => {
+      const screen = await render(
+        <AppTabBar
+          state={mockState(3, ALL_ROUTES)}
+          navigation={mockNavigation}
+          items={staffItems}
+          isOnline
+          isSyncing={false}
+        />,
+      )
+      fireEvent.press(await screen.findByTestId('tab-my-lists'))
+      expect(navigateMock).toHaveBeenCalledWith('my-lists')
+      expect(emitMock).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'tabPress', target: 'my-lists-4' }),
+      )
+    })
+  })
 })
