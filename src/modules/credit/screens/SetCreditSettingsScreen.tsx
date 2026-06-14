@@ -82,6 +82,18 @@ function SetCreditSettingsContent() {
   const [thresholdError, setThresholdError] = useState<string | undefined>()
   const [warningBanner, setWarningBanner] = useState<string | null>(null)
   const [pausedBanner, setPausedBanner] = useState(false)
+  // Track whether we have already initiated navigation after a post-save dismiss.
+  // Both banners share this guard so router.back() fires only once regardless of
+  // which banner the user closes first.
+  const navigatingRef = useRef(false)
+
+  const dismissPostSave = useCallback(() => {
+    if (navigatingRef.current) return
+    navigatingRef.current = true
+    setWarningBanner(null)
+    setPausedBanner(false)
+    router.back()
+  }, [router])
 
   const busy = useRef(false)
 
@@ -110,6 +122,7 @@ function SetCreditSettingsContent() {
     if (!customerId || busy.current || !isConnected) return
     if (!validate()) return
     busy.current = true
+    navigatingRef.current = false
     clearErrors()
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
 
@@ -125,15 +138,20 @@ function SetCreditSettingsContent() {
     try {
       const result = await updateCreditSettings(customerId, patch)
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
-      if (result.warning === 'limit_below_outstanding') {
+      const hasWarning = result.warning === 'limit_below_outstanding'
+      const hasPaused = result.deliveriesPaused === true
+      if (hasWarning) {
         setWarningBanner(t('credit.warning_limit_below_outstanding'))
       }
-      if (result.deliveriesPaused) {
+      if (hasPaused) {
         setPausedBanner(true)
       }
-      if (!result.warning && !result.deliveriesPaused) {
+      // No banners to show → navigate immediately (the common success path)
+      if (!hasWarning && !hasPaused) {
         router.back()
       }
+      // Otherwise, dismissPostSave() will be called when the user closes whichever
+      // banner they see first; the navigatingRef guard prevents a second back().
     } catch {
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
     } finally {
@@ -150,6 +168,7 @@ function SetCreditSettingsContent() {
     actionOnBreach,
     minimumBalanceWarning,
     updateCreditSettings,
+    dismissPostSave,
     router,
     t,
   ])
@@ -178,10 +197,7 @@ function SetCreditSettingsContent() {
             type="warning"
             title={t('common.warning')}
             message={warningBanner}
-            onClose={() => {
-              setWarningBanner(null)
-              router.back()
-            }}
+            onClose={dismissPostSave}
           />
         </View>
       ) : null}
@@ -192,10 +208,7 @@ function SetCreditSettingsContent() {
             type="info"
             title={t('credit.deliveries_paused_title')}
             message={t('credit.deliveries_paused_message')}
-            onClose={() => {
-              setPausedBanner(false)
-              router.back()
-            }}
+            onClose={dismissPostSave}
           />
         </View>
       ) : null}
