@@ -1,10 +1,11 @@
 /**
- * Collections route — /(app)/collections (US-010)
- * Owner-only drill-down. useRequireOwner() is called inside CollectionsScreen.
+ * Collections route — /(app)/collections (US-012)
+ * Repointed from US-010 CollectionsScreen to the richer US-012 CollectionsDashboardScreen.
+ * Owner-only guard is enforced inside the screen.
  */
 
-import CollectionsScreen from '@modules/dashboard/screens/CollectionsScreen'
+import CollectionsDashboardScreen from '@modules/credit/screens/CollectionsDashboardScreen'
 
 export default function CollectionsRoute() {
-  return <CollectionsScreen />
+  return <CollectionsDashboardScreen />
 }
