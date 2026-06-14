@@ -156,13 +156,16 @@ describe('getMoreSections — owner', () => {
     expect(navigateMock).toHaveBeenCalledWith('/(app)/settings/notifications')
   })
 
-  it('change-password and language-settings are coming soon', () => {
+  it('change-password is coming soon but language-settings is wired (US-013)', () => {
     const sections = buildSections()
     const account = sections.find((s) => s.titleKey === 'nav.more.section.account')
     const changePwd = account!.rows.find((r) => r.testID === 'more-row-change-password')
     const lang = account!.rows.find((r) => r.testID === 'more-row-language-settings')
     expect(changePwd?.onPress).toBeUndefined()
-    expect(lang?.onPress).toBeUndefined()
+    // Language Settings is now live — onPress navigates to /(app)/settings/language
+    expect(lang?.onPress).toBeDefined()
+    lang!.onPress!()
+    expect(navigateMock).toHaveBeenCalledWith('/(app)/settings/language')
   })
 
   it('help and contact-support are coming soon', () => {

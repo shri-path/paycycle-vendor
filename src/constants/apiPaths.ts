@@ -247,6 +247,26 @@ export const APIPath = {
     /** GET / PATCH — vendor automated-reminder configuration. */
     ReminderConfig: (vendorId: string) => `/vendors/${vendorId}/reminder-config`,
   },
+  // Multi-Language & Voice Interface (US-013).
+  // Language preferences are self-scoped: userId must equal the authenticated user.
+  // Message templates are vendor-scoped and owner-only.
+  // Voice endpoints require delivery-marking access on the target supply list.
+  Users: {
+    /** GET / PATCH — caller's own language & voice preferences (self-scoped). */
+    LanguagePreferences: (userId: string) => `/users/${userId}/language-preferences`,
+  },
+  MessageTemplates: {
+    /** GET (list) + PUT (upsert) message templates for a vendor. */
+    List: (vendorId: string) => `/vendors/${vendorId}/message-templates`,
+    /** POST — render template preview without saving. */
+    Preview: (vendorId: string) => `/vendors/${vendorId}/message-templates/preview`,
+  },
+  Voice: {
+    /** POST — transcribe audio and interpret the command (no delivery state change). */
+    Transcribe: '/voice/transcribe',
+    /** POST — execute a previously interpreted voice command against delivery data. */
+    Execute: '/voice/execute-command',
+  },
 } as const;
 
 export default APIPath;
