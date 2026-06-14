@@ -978,6 +978,7 @@
     "error_already_prepaid": "This customer is already prepaid.",
     "error_rate_limited": "Too many reminders. Try again shortly.",
     "error_not_found": "Customer not found.",
-    "365_plus_days": "365+ days"
+    "365_plus_days": "365+ days",
+    "error_argument_invalid": "Invalid value — please check your inputs and try again."
   }
 }
