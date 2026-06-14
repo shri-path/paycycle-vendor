@@ -1,12 +1,16 @@
 /**
- * BulkSendRemindersScreen (US-011, FEATURE_PLAN §2.5, S5)
+ * BulkSendRemindersScreen (US-011 / US-012, FEATURE_PLAN §2.5, S5)
  * Purpose: Bulk send payment reminders to customers.
+ *
+ * US-012 (OQ-6): Repointed to creditService.sendBulkReminders
+ * (POST /vendors/:v/reminders/send-bulk) with { target, customerIds } payload.
+ * The US-012 response shape is { sent, skipped, failed }.
  *
  * States:
  *  Loading  — customer fetch for specific scope
  *  Error    — mutation error banner
  *  Offline  — AppAlert + disabled Send button
- *  Result   — sent/delivered/failed summary
+ *  Result   — sent/skipped/failed summary
  *
  * Defence-in-depth: useRequireOwner() redirects staff users.
  */
@@ -26,12 +30,13 @@ import { AppConfirmDialog } from '@components/composite/AppConfirmDialog'
 import { ScreenErrorBoundary } from '@components/composite/ScreenErrorBoundary'
 import { useRequireOwner } from '@modules/roles/hooks/useRequireOwner'
 import { useAuthStore } from '@modules/auth/store/auth.store'
-import { useSettingsStore } from '../store/settings.store'
+import { useCreditStore } from '@modules/credit/store/credit.store'
 import { useTranslation } from '@hooks/useTranslation'
 import { useNetworkStatus } from '@hooks/useNetworkStatus'
 import { colors, spacing } from '@constants/tokens'
 import { CustomerScopeSelector } from '../components'
-import type { BulkReminderInput, BulkReminderResultDto, ReminderTarget, ReminderChannel } from '../../../types/settings'
+import type { BulkReminderResultDto as CreditBulkResult } from '../../../types/credit'
+import type { ReminderTarget, ReminderChannel } from '../../../types/settings'
 import type { CustomerOption } from '../components'
 
 const styles = StyleSheet.create({
@@ -57,14 +62,18 @@ function BulkSendRemindersContent() {
 
   const vendorId = useAuthStore(useShallow((s) => s.vendorContext?.vendorId ?? null))
 
-  const { isMutating, mutationError, bulkSendReminders, clearError } = useSettingsStore(
+  // US-012 (OQ-6): use the credit store's sendBulkReminders action
+  // (POST /vendors/:v/reminders/send-bulk with { target, customerIds, customMessage })
+  const { isMutating, mutationError, sendBulkReminders, clearErrors } = useCreditStore(
     useShallow((s) => ({
       isMutating: s.isMutating,
       mutationError: s.mutationError,
-      bulkSendReminders: s.bulkSendReminders,
-      clearError: s.clearError,
+      sendBulkReminders: s.sendBulkReminders,
+      clearErrors: s.clearErrors,
     })),
   )
+  // Alias to match previous clearError usage
+  const clearError = clearErrors
 
   const [targetType, setTargetType] = useState<ReminderTarget>('overdue')
   const [channel, setChannel] = useState<ReminderChannel>('whatsapp')
@@ -73,7 +82,7 @@ function BulkSendRemindersContent() {
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [customers, setCustomers] = useState<CustomerOption[]>([])
   const [showConfirm, setShowConfirm] = useState(false)
-  const [result, setResult] = useState<BulkReminderResultDto | null>(null)
+  const [result, setResult] = useState<CreditBulkResult | null>(null)
 
   // For specific_customers scope, load a flat list from the first supply list
   useEffect(() => {
@@ -101,30 +110,21 @@ function BulkSendRemindersContent() {
   const isValid =
     targetType !== 'specific_customers' || selectedIds.length > 0
 
-  const buildInput = useCallback((): BulkReminderInput => {
-    const base: BulkReminderInput = {
-      targetType,
-      sendVia: channel,
-      customMessage: customMessage.trim() || undefined,
-    }
-    // When targeting specific customers, always supply the selected ids.
-    // The `allCustomers` sub-toggle only controls the CustomerScopeSelector UI;
-    // the API discriminant is `targetType` alone.
-    if (targetType === 'specific_customers' && selectedIds.length > 0) {
-      base.customerIds = selectedIds
-    }
-    return base
-  }, [targetType, channel, customMessage, selectedIds])
-
   const handleConfirm = useCallback(async () => {
     setShowConfirm(false)
+    // US-012 payload: { target: 'all_overdue' | 'selected', customerIds?, customMessage? }
+    const target = targetType === 'specific_customers' ? 'selected' : 'all_overdue'
     try {
-      const res = await bulkSendReminders(buildInput())
+      const res = await sendBulkReminders({
+        target,
+        customerIds: target === 'selected' ? selectedIds : undefined,
+        customMessage: customMessage.trim() || undefined,
+      })
       setResult(res)
     } catch {
       // handled in store
     }
-  }, [bulkSendReminders, buildInput])
+  }, [sendBulkReminders, targetType, selectedIds, customMessage])
 
   const targetOptions = [
     { label: t('settings.reminder_target_overdue'), value: 'overdue' },
@@ -147,17 +147,17 @@ function BulkSendRemindersContent() {
               {t('settings.bulk_operation_complete')}
             </AppText>
             <View style={styles.resultRow}>
-              <AppText variant="body" color={colors.textSecondary}>{t('settings.reminder_total_sent')}</AppText>
-              <AppText variant="body" weight="semibold">{result.summary.totalSent}</AppText>
+              <AppText variant="body" color={colors.textSecondary}>{t('credit.bulk_sent')}</AppText>
+              <AppText variant="body" weight="semibold">{result.sent}</AppText>
             </View>
             <View style={styles.resultRow}>
-              <AppText variant="body" color={colors.textSecondary}>{t('settings.reminder_delivered')}</AppText>
-              <AppText variant="body" weight="semibold" color={colors.success}>{result.summary.delivered}</AppText>
+              <AppText variant="body" color={colors.textSecondary}>{t('credit.bulk_skipped')}</AppText>
+              <AppText variant="body" weight="semibold" color={colors.textSecondary}>{result.skipped}</AppText>
             </View>
             <View style={styles.resultRow}>
-              <AppText variant="body" color={colors.textSecondary}>{t('settings.reminder_failed')}</AppText>
-              <AppText variant="body" weight="semibold" color={result.summary.failed > 0 ? colors.error : colors.textPrimary}>
-                {result.summary.failed}
+              <AppText variant="body" color={colors.textSecondary}>{t('credit.bulk_failed')}</AppText>
+              <AppText variant="body" weight="semibold" color={result.failed > 0 ? colors.error : colors.textPrimary}>
+                {result.failed}
               </AppText>
             </View>
           </AppCard>

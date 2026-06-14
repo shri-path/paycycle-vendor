@@ -220,7 +220,9 @@ function CustomerDetailScreenContent() {
   const goToSetCreditLimit = useCallback(() => {
     if (!customerId) return
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
-    router.push(`/(app)/customers/${customerId}/credit-limit` as Href)
+    // US-012: primary credit entry point is the richer SetCreditSettingsScreen.
+    // The legacy credit-limit screen (US-008) is preserved but no longer linked here.
+    router.push(`/(app)/customers/${customerId}/credit-settings` as Href)
   }, [customerId, router])
 
   const goToCalendar = useCallback(() => {
