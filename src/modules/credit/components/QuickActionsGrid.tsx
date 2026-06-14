@@ -6,7 +6,6 @@
 import React, { useCallback } from 'react'
 import { View, Pressable, StyleSheet } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
-import * as Haptics from 'expo-haptics'
 import { AppText } from '@components/primitives/AppText'
 import { AppCard } from '@components/primitives/AppCard'
 import { useTranslation } from '@hooks/useTranslation'
@@ -53,7 +52,7 @@ export const QuickActionsGrid = React.memo<QuickActionsGridProps>(({ actions, te
 
   const handlePress = useCallback((action: QuickAction) => {
     if (action.disabled || action.comingSoon) return
-    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+    // Note: Individual actions handle their own haptics to avoid duplication
     action.onPress()
   }, [])
 

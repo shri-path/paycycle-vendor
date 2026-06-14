@@ -185,16 +185,15 @@ function CollectionsDashboardContent() {
       ) : null}
 
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Empty/celebratory state */}
         {dashboard && dashboard.outstandingOverview.totalOutstanding === 0 ? (
+          // Empty/celebratory state (mutually exclusive with populated state)
           <AppEmptyState
             icon={<Ionicons name="checkmark-circle-outline" size={componentSizes.icon.xxxl} color={colors.success} />}
             title={t('credit.empty_outstanding_title')}
             description={t('credit.empty_outstanding_desc')}
           />
-        ) : null}
-
-        {dashboard ? (
+        ) : dashboard ? (
+          // Populated state
           <>
             <OutstandingOverviewCard overview={dashboard.outstandingOverview} />
             <NetReceivableCard
