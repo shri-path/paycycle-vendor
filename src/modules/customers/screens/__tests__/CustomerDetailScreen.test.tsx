@@ -328,11 +328,11 @@ describe('CustomerDetailScreen — navigation', () => {
     expect(mockPush).toHaveBeenCalledWith('/(app)/customers/c1/record-payment')
   })
 
-  it('navigates to credit-limit screen on action press', async () => {
+  it('navigates to credit-settings screen on action press', async () => {
     mockStore({ detail: { c1: makeCustomer({}) } })
     const screen = await act(async () => render(<CustomerDetailScreen />))
     fireEvent.press(screen.getByTestId('action-set-credit-limit'))
-    expect(mockPush).toHaveBeenCalledWith('/(app)/customers/c1/credit-limit')
+    expect(mockPush).toHaveBeenCalledWith('/(app)/customers/c1/credit-settings')
   })
 
   it('navigates to add-subscription screen', async () => {

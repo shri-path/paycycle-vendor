@@ -1,7 +1,10 @@
 /**
- * BulkSendRemindersScreen tests (US-011)
- * Covers: renders target/channel radios, send btn disabled for specific+no selection,
- * result summary card rendered after success, offline disables Send, owner gating.
+ * BulkSendRemindersScreen tests (US-011 / US-012)
+ * US-012 repointed the screen to creditService.sendBulkReminders. Tests updated to
+ * reflect the new store and verify the channel radio group was removed (SHOULD-FIX-1).
+ *
+ * Covers: renders target radio, send btn state, result summary card, offline banner,
+ *         no channel radio (SHOULD-FIX-1 regression guard).
  */
 
 jest.mock('@expo/vector-icons', () => ({ Ionicons: 'Ionicons' }))
@@ -23,8 +26,9 @@ jest.mock('@hooks/useReducedMotion', () => ({
 }))
 
 jest.mock('@modules/auth/store/auth.store', () => ({
-  useAuthStore: jest.fn().mockImplementation((selector: (s: { vendorContext: { vendorId: string } }) => unknown) =>
-    selector({ vendorContext: { vendorId: 'vendor-1' } })
+  useAuthStore: jest.fn().mockImplementation(
+    (selector: (s: { vendorContext: { vendorId: string } }) => unknown) =>
+      selector({ vendorContext: { vendorId: 'vendor-1' } }),
   ),
 }))
 
@@ -36,38 +40,43 @@ jest.mock('@modules/supply-lists/service/supplyLists.service', () => ({
   },
 }))
 
-const mockBulkSendReminders = jest.fn().mockResolvedValue({
-  operationId: 'op-reminder-1',
-  summary: { totalSent: 20, delivered: 18, failed: 2 },
-})
-const mockClearError = jest.fn()
+const mockSendBulkReminders = jest.fn().mockResolvedValue({ sent: 20, skipped: 1, failed: 0 })
+const mockClearErrors = jest.fn()
 
-jest.mock('../../store/settings.store', () => ({ useSettingsStore: jest.fn() }))
+// US-012: screen now uses credit store, not settings store
+jest.mock('@modules/credit/store/credit.store', () => ({ useCreditStore: jest.fn() }))
 
 import React from 'react'
 import { render, act, fireEvent } from '@testing-library/react-native'
 import BulkSendRemindersScreen from '../BulkSendRemindersScreen'
 import { t } from '@locales/index'
 
-const { useSettingsStore } = jest.requireMock('../../store/settings.store') as {
-  useSettingsStore: jest.Mock
+const { useCreditStore } = jest.requireMock('@modules/credit/store/credit.store') as {
+  useCreditStore: jest.Mock
 }
 
-function mockStoreState(overrides: Record<string, unknown> = {}) {
-  const base = {
+interface CreditStoreSlice {
+  isMutating: boolean
+  mutationError: string | null
+  sendBulkReminders: jest.Mock
+  clearErrors: jest.Mock
+}
+
+function mockCreditStore(overrides: Partial<CreditStoreSlice> = {}) {
+  const base: CreditStoreSlice = {
     isMutating: false,
     mutationError: null,
-    bulkSendReminders: mockBulkSendReminders,
-    clearError: mockClearError,
+    sendBulkReminders: mockSendBulkReminders,
+    clearErrors: mockClearErrors,
   }
-  useSettingsStore.mockImplementation((selector: (s: typeof base) => unknown) =>
-    selector({ ...base, ...overrides } as typeof base)
+  useCreditStore.mockImplementation((selector: (s: CreditStoreSlice) => unknown) =>
+    selector({ ...base, ...overrides }),
   )
 }
 
 beforeEach(() => {
   jest.clearAllMocks()
-  mockStoreState()
+  mockCreditStore()
 })
 
 describe('BulkSendRemindersScreen', () => {
@@ -96,9 +105,23 @@ describe('BulkSendRemindersScreen', () => {
     expect(screen.getByText(t('settings.reminder_target_label'))).toBeTruthy()
   })
 
-  it('renders channel radio group label', async () => {
+  // SHOULD-FIX-1 regression guard: the /reminders/send-bulk endpoint has no channel
+  // field — the server derives channel from vendor config. The UI must not expose it.
+  it('does NOT render a channel radio group (channel is server-derived per US-012 spec)', async () => {
     const screen = await act(async () => render(<BulkSendRemindersScreen />))
-    expect(screen.getByText(t('settings.reminder_channel_label'))).toBeTruthy()
+    expect(screen.queryByText(t('settings.reminder_channel_label'))).toBeNull()
+  })
+
+  it('send button is disabled when mutating', async () => {
+    mockCreditStore({ isMutating: true })
+    const screen = await act(async () => render(<BulkSendRemindersScreen />))
+    expect(screen.getByTestId('send-reminders-btn').props.accessibilityState?.disabled).toBeTruthy()
+  })
+
+  it('shows mutation error banner', async () => {
+    mockCreditStore({ mutationError: 'credit.error_rate_limited' })
+    const screen = await act(async () => render(<BulkSendRemindersScreen />))
+    expect(screen.getByText(t('credit.error_rate_limited'))).toBeTruthy()
   })
 
   it('pressing send btn opens confirm dialog (no crash)', async () => {

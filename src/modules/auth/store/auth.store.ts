@@ -258,6 +258,16 @@ export const useAuthStore = create<AuthState>()(
           } catch {
             // settings store not loaded yet — nothing to clear.
           }
+          // Wipe all local credit / collections data (financial aggregates) on logout (US-012).
+          try {
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
+            const { useCreditStore } = require('@modules/credit/store/credit.store') as {
+              useCreditStore: { getState: () => { clearCredit: () => void } }
+            }
+            useCreditStore.getState().clearCredit()
+          } catch {
+            // credit store not loaded yet — nothing to clear.
+          }
           set({
             isAuthenticated: false,
             user: null,

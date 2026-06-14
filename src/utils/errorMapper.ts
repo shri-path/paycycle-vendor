@@ -24,6 +24,7 @@ export type ApiErrorContext =
   | 'audit'
   | 'subscription'
   | 'settings'
+  | 'credit'
 
 /**
  * Sub-action within the `'delivery'` context (US-006). Several delivery endpoints
@@ -209,6 +210,23 @@ export function mapApiError(
       if (status === 451) return 'subscription.error_limit_reached'
     }
 
+    // Credit Control surfaces (US-012) — resolve shared status codes by meaning.
+    if (context === 'credit') {
+      if (status === 403) return 'roles.error_forbidden'
+      if (status === 404) return 'credit.error_not_found'
+      if (status === 409) return 'credit.error_already_prepaid'
+      if (status === 429) return 'credit.error_rate_limited'
+      // ARGUMENT_INVALID is distinct from VALIDATION_ERROR: it means a value is
+      // structurally valid but semantically out of range or internally inconsistent
+      // (e.g. warningThreshold out of 0-100, unknown template placeholder, auto-on
+      // with no schedule). Surface a specific, actionable message rather than the
+      // generic "required field" copy.
+      if (status === 400 && typeof code === 'string' && code === 'ARGUMENT_INVALID') {
+        return 'credit.error_argument_invalid'
+      }
+      if (status === 400 || status === 422) return 'validation.required'
+    }
+
     // Settings surfaces (US-011) — resolve shared status codes by sub-action.
     if (context === 'settings') {
       if (status === 403) return 'roles.error_forbidden'
@@ -244,6 +262,7 @@ export function mapApiError(
       err.message.startsWith('audit.') ||
       err.message.startsWith('subscription.') ||
       err.message.startsWith('settings.') ||
+      err.message.startsWith('credit.') ||
       err.message.startsWith('common.'))
   ) {
     return err.message
