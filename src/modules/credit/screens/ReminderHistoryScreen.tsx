@@ -70,11 +70,13 @@ function ReminderHistoryContent() {
   )
 
   const [skippedInfo, setSkippedInfo] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
   const isSending = customerId ? remindingCustomerIds.includes(customerId) : false
 
   useFocusEffect(
     useCallback(() => {
-      if (customerId) void fetchReminderHistory(customerId)
+      setCurrentPage(1)
+      if (customerId) void fetchReminderHistory(customerId, 1)
       return () => clearErrors()
     }, [customerId, fetchReminderHistory, clearErrors]),
   )
@@ -197,8 +199,9 @@ function ReminderHistoryContent() {
         onEndReachedThreshold={0.3}
         onEndReached={() => {
           if (customerId && historyData && !isHistoryLoading) {
-            // Load next page (simple pagination)
-            void fetchReminderHistory(customerId, 2)
+            const nextPage = currentPage + 1
+            setCurrentPage(nextPage)
+            void fetchReminderHistory(customerId, nextPage)
           }
         }}
       />

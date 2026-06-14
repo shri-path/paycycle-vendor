@@ -14,7 +14,7 @@ export interface SortDropdownProps {
   disabled?: boolean
 }
 
-const SORT_OPTIONS: Array<{ label: string; value: PrioritySort }> = [
+const SORT_OPTIONS: { label: string; value: PrioritySort }[] = [
   { label: 'credit.sort_oldest_first', value: 'oldest_first' },
   { label: 'credit.sort_amount_desc', value: 'amount_desc' },
   { label: 'credit.sort_utilization_desc', value: 'utilization_desc' },

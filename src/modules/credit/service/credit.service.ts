@@ -44,6 +44,7 @@ import {
   mockReminderHistory,
   mockCreditSettingsResult,
   mockEnablePrepaidSuccess,
+  mockEnablePrepaidBlocked,
   mockSendReminderResult,
   mockBulkReminderResult,
 } from './credit.mock'
@@ -70,7 +71,7 @@ export const creditService = {
     }
     const { data } = await httpClient.get(APIPath.Credit.Dashboard(vendorId), { signal })
     const dto = data.data as CollectionsDashboardDto & {
-      customersAtLimit?: Array<{ customerId: number | string; name: string; utilizationPercentage: number }>
+      customersAtLimit?: { customerId: number | string; name: string; utilizationPercentage: number }[]
     }
     return {
       ...dto,
@@ -236,9 +237,9 @@ export const creditService = {
   ): Promise<EnablePrepaidResultDto> {
     if (isMockMode) {
       await simulateNetworkDelay()
-      // Mock: return blocked if clearOutstandingFirst=true and customer has outstanding
-      if (dto.clearOutstandingFirst) return { ...mockEnablePrepaidSuccess }
-      return { ...mockEnablePrepaidSuccess }
+      // Mock: return blocked when clearOutstandingFirst=true (simulates a customer with outstanding)
+      if (dto.clearOutstandingFirst) return { ...mockEnablePrepaidBlocked, customerId }
+      return { ...mockEnablePrepaidSuccess, customerId }
     }
     const { data } = await httpClient.post(
       APIPath.Credit.EnablePrepaid(vendorId, customerId),
