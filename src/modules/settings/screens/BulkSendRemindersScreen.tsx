@@ -36,7 +36,7 @@ import { useNetworkStatus } from '@hooks/useNetworkStatus'
 import { colors, spacing } from '@constants/tokens'
 import { CustomerScopeSelector } from '../components'
 import type { BulkReminderResultDto as CreditBulkResult } from '../../../types/credit'
-import type { ReminderTarget, ReminderChannel } from '../../../types/settings'
+import type { ReminderTarget } from '../../../types/settings'
 import type { CustomerOption } from '../components'
 
 const styles = StyleSheet.create({
@@ -76,7 +76,6 @@ function BulkSendRemindersContent() {
   const clearError = clearErrors
 
   const [targetType, setTargetType] = useState<ReminderTarget>('overdue')
-  const [channel, setChannel] = useState<ReminderChannel>('whatsapp')
   const [customMessage, setCustomMessage] = useState('')
   const [allCustomers, setAllCustomers] = useState(true)
   const [selectedIds, setSelectedIds] = useState<string[]>([])
@@ -132,11 +131,6 @@ function BulkSendRemindersContent() {
     { label: t('settings.reminder_target_specific'), value: 'specific_customers' },
   ]
 
-  const channelOptions = [
-    { label: t('settings.reminder_channel_whatsapp'), value: 'whatsapp' },
-    { label: t('settings.reminder_channel_sms'), value: 'sms' },
-  ]
-
   if (result) {
     return (
       <SafeAreaView style={styles.safe} edges={['bottom']}>
@@ -167,7 +161,6 @@ function BulkSendRemindersContent() {
             onPress={() => {
               setResult(null)
               setTargetType('overdue')
-              setChannel('whatsapp')
               setCustomMessage('')
               setSelectedIds([])
             }}
@@ -220,15 +213,6 @@ function BulkSendRemindersContent() {
             onSelectionsChange={setSelectedIds}
           />
         ) : null}
-
-        <AppRadioGroup
-          label={t('settings.reminder_channel_label')}
-          options={channelOptions}
-          value={channel}
-          onChange={(v) => setChannel(v as ReminderChannel)}
-          disabled={!isConnected || isMutating}
-          layout="horizontal"
-        />
 
         <AppTextArea
           label={t('settings.reminder_custom_message_label')}
