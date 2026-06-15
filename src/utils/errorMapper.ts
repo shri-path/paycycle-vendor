@@ -26,6 +26,8 @@ export type ApiErrorContext =
   | 'settings'
   | 'credit'
   | 'voice'
+  | 'referral'
+  | 'vendor_credit'
 
 /**
  * Sub-action within the `'delivery'` context (US-006). Several delivery endpoints
@@ -241,6 +243,32 @@ export function mapApiError(
       }
     }
 
+    // Referral Engine surfaces (US-014) — resolve by specific error code first.
+    if (context === 'referral') {
+      if (typeof code === 'string') {
+        if (code === 'SELF_REFERRAL_BLOCKED') return 'referral.error.self_referral'
+        if (code === 'DUPLICATE_REFERRAL') return 'referral.error.duplicate'
+        if (code === 'RATE_LIMITED') return 'referral.error.rate_limited'
+      }
+      if (status === 429) return 'referral.error.rate_limited'
+      if (status === 403) return 'roles.error_forbidden'
+      if (status === 404) return 'common.not_found'
+      if (status === 400 || status === 422) return 'validation.required'
+      if (status === 409) return 'referral.error.duplicate'
+    }
+
+    // Vendor Credit surfaces (US-014) — resolve shared status codes by meaning.
+    if (context === 'vendor_credit') {
+      if (typeof code === 'string') {
+        if (code === 'WITHDRAWAL_THRESHOLD') return 'referral.error.withdrawal_threshold'
+        if (code === 'INSUFFICIENT_CREDITS') return 'referral.error.insufficient_credits'
+      }
+      if (status === 403) return 'roles.error_forbidden'
+      if (status === 404) return 'common.not_found'
+      if (status === 400 || status === 422) return 'validation.required'
+      if (status === 409) return 'referral.error.insufficient_credits'
+    }
+
     // Voice Command surfaces (US-013) — resolve shared status codes by meaning.
     if (context === 'voice') {
       if (status === 403) return 'roles.error_forbidden'
@@ -276,6 +304,7 @@ export function mapApiError(
       err.message.startsWith('settings.') ||
       err.message.startsWith('credit.') ||
       err.message.startsWith('voice.') ||
+      err.message.startsWith('referral.') ||
       err.message.startsWith('common.'))
   ) {
     return err.message

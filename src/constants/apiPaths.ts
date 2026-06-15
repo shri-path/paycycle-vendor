@@ -267,6 +267,36 @@ export const APIPath = {
     /** POST — execute a previously interpreted voice command against delivery data. */
     Execute: '/voice/execute-command',
   },
+  // Referral Engine (US-014). All endpoints are owner-only and vendor-scoped.
+  // vendorId is JWT-derived on the server — present in the path only for routing,
+  // never as user-controlled tenant data. No `/v1` in the path strings (the base
+  // URL ends `/api/v1`), identical to the credit / subscription convention.
+  Referral: {
+    /** POST — create a vendor-to-vendor referral; returns code + message. */
+    CreateVendor: (vendorId: string) => `/vendors/${vendorId}/referrals/vendor`,
+    /** GET — paginated list of vendor referrals. Query: ?status=&page=&limit= */
+    VendorList: (vendorId: string) => `/vendors/${vendorId}/referrals/vendor`,
+    /** GET — full referral dashboard (earnings, milestones, customer growth). */
+    Dashboard: (vendorId: string) => `/vendors/${vendorId}/referrals/dashboard`,
+    /** GET — pre-computed leaderboard. Query: ?period=&page=&limit= */
+    Leaderboard: (vendorId: string) => `/vendors/${vendorId}/referrals/leaderboard`,
+    /** GET — customer referral summary + top referrers + recent additions. */
+    CustomerReferrals: (vendorId: string) => `/vendors/${vendorId}/customer-referrals`,
+    /** POST — send WhatsApp bulk invites to customers not yet on PayCycle. */
+    BulkInvite: (vendorId: string) => `/vendors/${vendorId}/customers/bulk-invite`,
+    /** GET — nearby vendors grouped by category. Query: ?radius= */
+    NearbyVendors: (vendorId: string) => `/vendors/${vendorId}/nearby-vendors`,
+  },
+  // Vendor Credit (US-014). Credit balance, ledger, and redemption are
+  // vendor-scoped owner-only. Uses distinct `vendor_credit:*` permissions.
+  VendorCredit: {
+    /** GET — credit balance summary (availableCredits, withdrawalEligible etc). */
+    Balance: (vendorId: string) => `/vendors/${vendorId}/credits`,
+    /** GET — paginated immutable credit ledger. Query: ?type=&page=&limit= */
+    Transactions: (vendorId: string) => `/vendors/${vendorId}/credits/transactions`,
+    /** POST — redeem credits toward subscription, upgrade, or cash withdrawal. */
+    Redeem: (vendorId: string) => `/vendors/${vendorId}/credits/redeem`,
+  },
 } as const;
 
 export default APIPath;
