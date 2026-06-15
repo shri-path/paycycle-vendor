@@ -109,7 +109,7 @@ const makePagination = (page = 1, total = 5) => ({
 describe('useReferralStore', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    act(() => {
+    void act(async () => {
       useReferralStore.getState().clearReferral()
     })
   })

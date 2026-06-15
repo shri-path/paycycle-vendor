@@ -78,7 +78,7 @@ function CustomerReferralsContent() {
     [],
   )
 
-  const keyExtractor = useCallback((_item: RecentAdditionDto, idx: number) => String(idx), [])
+  const keyExtractor = useCallback((item: RecentAdditionDto, idx: number) => `${item.referredCustomerName}-${item.joinedDate}-${idx}`, [])
 
   if (isCustomerRefsLoading && !customerRefs) {
     return (
