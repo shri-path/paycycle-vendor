@@ -21,7 +21,10 @@
     "menu": "ಮೆನು",
     "notifications": "ಅಧಿಸೂಚನೆಗಳು",
     "notifications_badge": "{{count}} ಓದದ ಅಧಿಸೂಚನೆಗಳು",
-    "currency_symbol": "₹"
+    "currency_symbol": "₹",
+    "offline_writes_disabled": "ನೀವು ಆಫ್‌ಲೈನ್‌ನಲ್ಲಿದ್ದೀರಿ. ಈಗ ಬದಲಾವಣೆಗಳನ್ನು ಉಳಿಸಲಾಗುವುದಿಲ್ಲ.",
+    "not_found": "ಕಂಡುಬಂದಿಲ್ಲ. ಹಿಂದೆ ಹೋಗಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+    "coming_soon": "ಶೀಘ್ರದಲ್ಲಿ"
   },
   "auth": {
     "welcome": "ಸ್ವಾಗತ",
@@ -1137,7 +1140,18 @@
       "vendor_phone_placeholder": "10 ಅಂಕಿ ಸಂಖ್ಯೆ",
       "message_default": "PayCycle-ಗೆ ಸೇರಿ — ಭಾರತದ ಅತ್ಯುತ್ತಮ ಡೈಲಿ ಡೆಲಿವರಿ ಆಪ್! ನನ್ನ ರೆಫರಲ್ ಕೋಡ್ {{code}} ಬಳಸಿ: {{link}}",
       "share_whatsapp": "WhatsApp-ನಲ್ಲಿ ಹಂಚಿ",
-      "success": "ರೆಫರಲ್ ಕಳಿಸಲಾಗಿದೆ!"
+      "success": "ರೆಫರಲ್ ಕಳಿಸಲಾಗಿದೆ!",
+      "benefits_title": "ಏಕೆ ರೆಫರ್ ಮಾಡಬೇಕು?",
+      "your_code": "ನಿಮ್ಮ ರೆಫರಲ್ ಕೋಡ್",
+      "copy_code": "ಕೋಡ್ ಕಾಪಿ ಮಾಡಿ",
+      "share_link": "ಲಿಂಕ್ ಹಂಚಿಕೊಳ್ಳಿ",
+      "phone_label": "ವ್ಯಾಪಾರಿ ಫೋನ್ ಸಂಖ್ಯೆ",
+      "phone_placeholder": "10 ಅಂಕಿಯ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ",
+      "vendor_name_label": "ವ್ಯಾಪಾರಿ ಹೆಸರು (ಐಚ್ಛಿಕ)",
+      "message_preview_label": "ಸಂದೇಶ ಪೂರ್ವವೀಕ್ಷಣೆ",
+      "message_preview_placeholder": "ನಿಮ್ಮ ರೆಫರಲ್ ಸಂದೇಶ ಇಲ್ಲಿ ತೋರಿಸುತ್ತದೆ",
+      "send_via_whatsapp": "WhatsApp ಮೂಲಕ ಹಂಚಿಕೊಳ್ಳಿ",
+      "submit": "ರೆಫರಲ್ ಕಳುಹಿಸಿ"
     },
     "dashboard": {
       "title": "ರೆಫರಲ್ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
@@ -1160,7 +1174,18 @@
       "refer_more": "ಇನ್ನಷ್ಟು ರೆಫರ್",
       "top_referrer": "ಟಾಪ್ ರೆಫರರ್",
       "new_this_month": "ಈ ತಿಂಗಳು ಹೊಸ",
-      "revenue_added": "ಸೇರಿಸಿದ ಆದಾಯ"
+      "revenue_added": "ಸೇರಿಸಿದ ಆದಾಯ",
+      "credits_earned": "ಗಳಿಸಿದ ಕ್ರೆಡಿಟ್",
+      "milestone_progress": "{{progress}}/{{target}} ಗ್ರಾಹಕರು",
+      "milestone_reward": "+₹{{reward}}",
+      "all_milestones_achieved": "ಎಲ್ಲಾ ಮೈಲ್‌ಸ್ಟೋನ್‌ಗಳು ಸಾಧಿಸಲಾಗಿದೆ!",
+      "total_from_referrals": "ರೆಫರಲ್‌ನಿಂದ ಒಟ್ಟು",
+      "customers": "ಗ್ರಾಹಕರು",
+      "refer_now": "ಈಗ ವ್ಯಾಪಾರಿ ರೆಫರ್ ಮಾಡಿ",
+      "vendor_referrals_section": "ನಿಮ್ಮ ರೆಫರಲ್‌ಗಳು",
+      "empty_title": "ಇನ್ನೂ ರೆಫರಲ್ ಇಲ್ಲ",
+      "empty_desc": "ವ್ಯಾಪಾರಿ ರೆಫರ್ ಮಾಡಿ ಮತ್ತು ಸೈನ್‌ಅಪ್‌ನಲ್ಲಿ ₹500 ಗಳಿಸಿ.",
+      "error_load": "ರೆಫರಲ್ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ಲೋಡ್ ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
     },
     "redeem": {
       "title": "ಕ್ರೆಡಿಟ್ ರಿಡೀಮ್",
@@ -1181,7 +1206,22 @@
       "withdraw_pending": "ವಿನಂತಿ ಸ್ವೀಕೃತ — 2-3 ದಿನ.",
       "applied_success": "ಕ್ರೆಡಿಟ್ ಅನ್ವಯ!",
       "subscription_unavailable": "ಬಿಲ್ ಲೋಡ್ ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
-      "apply": "ಅನ್ವಯಿಸಿ"
+      "apply": "ಅನ್ವಯಿಸಿ",
+      "available_balance": "ಲಭ್ಯ ಬ್ಯಾಲೆನ್ಸ್",
+      "options_title": "ರಿಡೀಮ್ ಆಯ್ಕೆಗಳು",
+      "subscription_title": "ಚಂದಾದಾರಿಕೆ ಪಾವತಿ",
+      "subscription_desc": "ಮುಂದಿನ ಬಿಲ್ ಕ್ರೆಡಿಟ್‌ನಿಂದ ಪಾವತಿಸಿ",
+      "upgrade_title": "ಪ್ಲಾನ್ ಅಪ್‌ಗ್ರೇಡ್",
+      "upgrade_desc": "ಕ್ರೆಡಿಟ್‌ನಿಂದ ಪ್ಲಾನ್ ಅಪ್‌ಗ್ರೇಡ್ ಮಾಡಿ",
+      "upgrade_amount_label": "ಮುಂದಿನ ಪರದೆಯಲ್ಲಿ ಅಪ್‌ಗ್ರೇಡ್ ಆಯ್ಕೆ ಮಾಡಿ",
+      "withdrawal_title": "ನಗದು ಹಿಂಪಡೆಯುವಿಕೆ",
+      "withdrawal_desc": "ಕ್ರೆಡಿಟ್ ಬ್ಯಾಂಕ್‌ಗೆ ವರ್ಗಾಯಿಸಿ (ಕನಿಷ್ಠ ₹2,000)",
+      "withdrawal_coming_soon_label": "ಶೀಘ್ರದಲ್ಲಿ",
+      "withdrawal_coming_soon": "ಕನಿಷ್ಠ ₹{{minimum}} ಅಗತ್ಯ. 10% ಶುಲ್ಕ. 2–3 ದಿನ.",
+      "subscription_unavailable_title": "ಬಿಲ್ ಲಭ್ಯವಿಲ್ಲ",
+      "subscription_unavailable_desc": "ಬಿಲ್ ಮೊತ್ತ ಲೋಡ್ ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+      "amount_unavailable": "ಲಭ್ಯವಿಲ್ಲ",
+      "error_load": "ಕ್ರೆಡಿಟ್ ಬ್ಯಾಲೆನ್ಸ್ ಲೋಡ್ ಆಗಲಿಲ್ಲ."
     },
     "invite": {
       "title": "ಗ್ರಾಹಕರನ್ನು ಆಹ್ವಾನಿಸಿ",
@@ -1203,10 +1243,16 @@
       "send_n_plural": "{{count}} ಗ್ರಾಹಕರಿಗೆ",
       "no_eligible": "ಯಾರೂ ಇಲ್ಲ.",
       "result_summary": "ಫಲಿತಾಂಶ",
-      "result_sent": "ಕಳಿಸಿದ",
+      "result_sent": "{{count}} ಆಮಂತ್ರಣ ಕಳುಹಿಸಲಾಗಿದೆ",
       "result_delivered": "ತಲುಪಿದ",
       "result_failed": "ವಿಫಲ",
-      "result_skipped": "PayCycle-ನಲ್ಲಿ"
+      "result_skipped": "{{count}} ಬಿಟ್ಟಿದ್ದೇನೆ (ಈಗಾಗಲೇ PayCycle ನಲ್ಲಿ)",
+      "settings_title": "ಆಮಂತ್ರಣ ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+      "eligible": "ಆಮಂತ್ರಣಕ್ಕೆ ಅರ್ಹ",
+      "target_label": "ಯಾರಿಗೆ ಕಳುಹಿಸಬೇಕು",
+      "language_label": "ಸಂದೇಶ ಭಾಷೆ",
+      "language_placeholder": "ಭಾಷೆ ಆಯ್ಕೆ ಮಾಡಿ",
+      "send_button": "ಆಮಂತ್ರಣ ಕಳುಹಿಸಿ"
     },
     "customer": {
       "title": "ಗ್ರಾಹಕ ರೆಫರಲ್",
@@ -1220,7 +1266,15 @@
       "referred_by": "ರೆಫರ್",
       "joined": "{{date}} ಸೇರಿದರು",
       "bill_credit_note": "₹50 ಬಿಲ್ ಕ್ರೆಡಿಟ್",
-      "view_all": "ಎಲ್ಲ"
+      "view_all": "ಎಲ್ಲ",
+      "top_referrers_title": "ಉನ್ನತ ರೆಫರರ್‌ಗಳು",
+      "recent_additions_title": "ಇತ್ತೀಚಿನ ಸೇರ್ಪಡೆಗಳು",
+      "referral_count": "{{count}} ರೆಫರಲ್‌ಗಳು",
+      "thank_message": "{{name}}, ರೆಫರ್ ಮಾಡಿದಕ್ಕಾಗಿ ಧನ್ಯವಾದಗಳು! 🙏",
+      "summary_label": "ಒಟ್ಟು {{total}} ರೆಫರಲ್ · ಈ ತಿಂಗಳು {{month}}",
+      "empty_title": "ಇನ್ನೂ ಗ್ರಾಹಕ ರೆಫರಲ್ ಇಲ್ಲ",
+      "empty_desc": "ಗ್ರಾಹಕರು ರೆಫರ್ ಮಾಡಿದಾಗ ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ.",
+      "error_load": "ಗ್ರಾಹಕ ರೆಫರಲ್ ಲೋಡ್ ಆಗಲಿಲ್ಲ."
     },
     "nearby": {
       "title": "ಹತ್ತಿರದ ಮಾರಾಟಗಾರರು",
@@ -1238,7 +1292,12 @@
         "water": "ನೀರು",
         "vegetables": "ತರಕಾರಿ",
         "other": "ಇತರೆ"
-      }
+      },
+      "customer_count": "{{count}} ಗ್ರಾಹಕರು",
+      "empty_title": "ಹತ್ತಿರ ಯಾವುದೇ ವ್ಯಾಪಾರಿ ಇಲ್ಲ",
+      "empty_desc": "ನಿಮ್ಮ ಪ್ರದೇಶದಲ್ಲಿ ಬೇರೆ ವ್ಯಾಪಾರಿ PayCycle ನಲ್ಲಿ ಇಲ್ಲ.",
+      "invite_now": "ನಿಮ್ಮ ಪ್ರದೇಶದಲ್ಲಿ ವ್ಯಾಪಾರಿ ರೆಫರ್ ಮಾಡಿ",
+      "error_load": "ಹತ್ತಿರದ ವ್ಯಾಪಾರಿಗಳು ಲೋಡ್ ಆಗಲಿಲ್ಲ."
     },
     "error": {
       "self_referral": "ನಿಮ್ಮ ಸಂಖ್ಯೆ ರೆಫರ್ ಆಗುವುದಿಲ್ಲ.",

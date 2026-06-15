@@ -21,7 +21,10 @@
     "menu": "మెను",
     "notifications": "నోటిఫికేషన్లు",
     "notifications_badge": "{{count}} చదవని నోటిఫికేషన్లు",
-    "currency_symbol": "₹"
+    "currency_symbol": "₹",
+    "offline_writes_disabled": "మీరు ఆఫ్‌లైన్‌లో ఉన్నారు. ఇప్పుడు మార్పులు సేవ్ చేయలేరు.",
+    "not_found": "కనుగొనబడలేదు. వెనుకకు వెళ్ళి మళ్ళీ ప్రయత్నించండి.",
+    "coming_soon": "త్వరలో"
   },
   "auth": {
     "welcome": "స్వాగతం",
@@ -1137,7 +1140,18 @@
       "vendor_phone_placeholder": "10 అంకెల నంబర్",
       "message_default": "PayCycle-లో చేరండి! నా కోడ్ {{code}} ఉపయోగించండి: {{link}}",
       "share_whatsapp": "WhatsApp-లో షేర్ చేయండి",
-      "success": "రిఫరల్ పంపబడింది!"
+      "success": "రిఫరల్ పంపబడింది!",
+      "benefits_title": "ఎందుకు రిఫర్ చేయాలి?",
+      "your_code": "మీ రెఫరల్ కోడ్",
+      "copy_code": "కోడ్ కాపీ చేయండి",
+      "share_link": "లింక్ షేర్ చేయండి",
+      "phone_label": "వ్యాపారి ఫోన్ నంబర్",
+      "phone_placeholder": "10 అంకెల మొబైల్ నంబర్",
+      "vendor_name_label": "వ్యాపారి పేరు (ఐచ్ఛికం)",
+      "message_preview_label": "సందేశం ప్రివ్యూ",
+      "message_preview_placeholder": "మీ రెఫరల్ సందేశం ఇక్కడ కనిపిస్తుంది",
+      "send_via_whatsapp": "WhatsApp ద్వారా షేర్ చేయండి",
+      "submit": "రెఫరల్ పంపండి"
     },
     "dashboard": {
       "title": "రిఫరల్ డాష్‌బోర్డ్",
@@ -1160,7 +1174,18 @@
       "refer_more": "మరింత రిఫర్",
       "top_referrer": "టాప్ రిఫరర్",
       "new_this_month": "ఈ నెల కొత్తవారు",
-      "revenue_added": "ఆదాయం జోడించబడింది"
+      "revenue_added": "ఆదాయం జోడించబడింది",
+      "credits_earned": "సంపాదించిన క్రెడిట్‌లు",
+      "milestone_progress": "{{progress}}/{{target}} కస్టమర్లు",
+      "milestone_reward": "+₹{{reward}}",
+      "all_milestones_achieved": "అన్ని మైలురాళ్ళు సాధించారు!",
+      "total_from_referrals": "రెఫరల్స్ నుండి మొత్తం",
+      "customers": "కస్టమర్లు",
+      "refer_now": "ఇప్పుడు వ్యాపారిని రిఫర్ చేయండి",
+      "vendor_referrals_section": "మీ రెఫరల్స్",
+      "empty_title": "ఇంకా రెఫరల్స్ లేవు",
+      "empty_desc": "ఒక వ్యాపారిని రిఫర్ చేసి సైన్-అప్‌పై ₹500 సంపాదించండి.",
+      "error_load": "రెఫరల్ డ్యాష్‌బోర్డ్ లోడ్ కాలేదు. మళ్ళీ ప్రయత్నించండి."
     },
     "redeem": {
       "title": "క్రెడిట్స్ రీడీమ్",
@@ -1181,7 +1206,22 @@
       "withdraw_pending": "అభ్యర్థన — 2-3 రోజులు.",
       "applied_success": "క్రెడిట్స్ వర్తించాయి!",
       "subscription_unavailable": "బిల్లు లోడ్ కాలేదు. మళ్లీ ప్రయత్నించండి.",
-      "apply": "వర్తింపజేయండి"
+      "apply": "వర్తింపజేయండి",
+      "available_balance": "అందుబాటులో ఉన్న బ్యాలెన్స్",
+      "options_title": "రిడీమ్ ఎంపికలు",
+      "subscription_title": "సబ్‌స్క్రిప్షన్ చెల్లింపు",
+      "subscription_desc": "క్రెడిట్‌తో తదుపరి బిల్లు చెల్లించండి",
+      "upgrade_title": "ప్లాన్ అప్‌గ్రేడ్",
+      "upgrade_desc": "క్రెడిట్‌తో ప్లాన్ అప్‌గ్రేడ్ చేయండి",
+      "upgrade_amount_label": "తదుపరి స్క్రీన్‌లో అప్‌గ్రేడ్ ఎంచుకోండి",
+      "withdrawal_title": "నగదు ఉపసంహరణ",
+      "withdrawal_desc": "క్రెడిట్‌లను బ్యాంక్‌కు బదిలీ చేయండి (కనీసం ₹2,000)",
+      "withdrawal_coming_soon_label": "త్వరలో",
+      "withdrawal_coming_soon": "కనీసం ₹{{minimum}} అవసరం. 10% రుసుము. 2–3 రోజులు.",
+      "subscription_unavailable_title": "బిల్లు అందుబాటులో లేదు",
+      "subscription_unavailable_desc": "బిల్లు మొత్తం లోడ్ కాలేదు. మళ్ళీ ప్రయత్నించండి.",
+      "amount_unavailable": "అందుబాటులో లేదు",
+      "error_load": "క్రెడిట్ బ్యాలెన్స్ లోడ్ కాలేదు."
     },
     "invite": {
       "title": "కస్టమర్లను ఆహ్వానించండి",
@@ -1203,10 +1243,16 @@
       "send_n_plural": "{{count}} కస్టమర్లకు",
       "no_eligible": "ఎవరూ లేరు.",
       "result_summary": "ఫలితం",
-      "result_sent": "పంపబడింది",
+      "result_sent": "{{count}} ఆహ్వానాలు పంపబడ్డాయి",
       "result_delivered": "అందింది",
       "result_failed": "విఫలం",
-      "result_skipped": "PayCycle-లో"
+      "result_skipped": "{{count}} వదిలివేయబడ్డాయి (ఇప్పటికే PayCycle లో)",
+      "settings_title": "ఆహ్వాన సెట్టింగ్‌లు",
+      "eligible": "ఆహ్వానానికి అర్హులు",
+      "target_label": "ఎవరికి పంపాలి",
+      "language_label": "సందేశం భాష",
+      "language_placeholder": "భాష ఎంచుకోండి",
+      "send_button": "ఆహ్వానాలు పంపండి"
     },
     "customer": {
       "title": "కస్టమర్ రిఫరల్",
@@ -1220,7 +1266,15 @@
       "referred_by": "రిఫర్ చేసింది",
       "joined": "{{date}} చేరారు",
       "bill_credit_note": "₹50 బిల్లు క్రెడిట్",
-      "view_all": "అన్నీ"
+      "view_all": "అన్నీ",
+      "top_referrers_title": "టాప్ రిఫరరులు",
+      "recent_additions_title": "ఇటీవలి చేర్పులు",
+      "referral_count": "{{count}} రెఫరల్స్",
+      "thank_message": "{{name}}, రిఫర్ చేసినందుకు ధన్యవాదాలు! 🙏",
+      "summary_label": "మొత్తం {{total}} రెఫరల్స్ · ఈ నెల {{month}}",
+      "empty_title": "ఇంకా కస్టమర్ రెఫరల్స్ లేవు",
+      "empty_desc": "కస్టమర్లు రిఫర్ చేసినప్పుడు ఇక్కడ కనిపిస్తుంది.",
+      "error_load": "కస్టమర్ రెఫరల్స్ లోడ్ కాలేదు."
     },
     "nearby": {
       "title": "దగ్గరలోని విక్రేతలు",
@@ -1238,7 +1292,12 @@
         "water": "నీరు",
         "vegetables": "కూరగాయలు",
         "other": "ఇతరాలు"
-      }
+      },
+      "customer_count": "{{count}} కస్టమర్లు",
+      "empty_title": "దగ్గర వ్యాపారులు లేరు",
+      "empty_desc": "మీ ప్రాంతంలో ఇతర వ్యాపారులు PayCycle లో లేరు.",
+      "invite_now": "మీ ప్రాంతంలో వ్యాపారిని రిఫర్ చేయండి",
+      "error_load": "సమీప వ్యాపారులు లోడ్ కాలేదు."
     },
     "error": {
       "self_referral": "మీ నంబర్‌ను రిఫర్ చేయలేరు.",

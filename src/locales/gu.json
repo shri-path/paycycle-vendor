@@ -21,7 +21,10 @@
     "menu": "મેનુ",
     "notifications": "સૂચનાઓ",
     "notifications_badge": "{{count}} વાંચ્યા વગરની સૂચનાઓ",
-    "currency_symbol": "₹"
+    "currency_symbol": "₹",
+    "offline_writes_disabled": "તમે ઓફ્લાઇન છો. ફેરફારો હવે સાચવી શકાતા નથી.",
+    "not_found": "મળ્યું નહીં. પાછા જઈ ફરીથી પ્રયાસ કરો.",
+    "coming_soon": "ટૂંક સમયમાં"
   },
   "auth": {
     "welcome": "સ્વાગત છે",
@@ -1137,7 +1140,18 @@
       "vendor_phone_placeholder": "10 અંકનો મોબાઇલ નંબર",
       "message_default": "PayCycle-માં જોડાઓ — ભારતની શ્રેષ્ઠ ડેઇલી ડિલિવરી એપ! મારો રેફરલ કોડ {{code}} વાપરીને સાઇનઅપ કરો: {{link}}",
       "share_whatsapp": "WhatsApp પર શેર કરો",
-      "success": "રેફરલ મોકલ્યો! સાઇનઅપ થશે ત્યારે અમે જાણ કરીશું."
+      "success": "રેફરલ મોકલ્યો! સાઇનઅપ થશે ત્યારે અમે જાણ કરીશું.",
+      "benefits_title": "શા માટે રેફર કરો?",
+      "your_code": "તમારો રેફરલ કોડ",
+      "copy_code": "કોડ કૉપિ કરો",
+      "share_link": "લિંક શેર કરો",
+      "phone_label": "વિક્રેતા ફોન નંબર",
+      "phone_placeholder": "10 અંકનો મોબાઇલ નંબર",
+      "vendor_name_label": "વિક્રેતાનું નામ (વૈકલ્પિક)",
+      "message_preview_label": "સંદેશ પૂર્વાવલોકન",
+      "message_preview_placeholder": "તમારો રેફરલ સંદેશ અહીં દેખાશે",
+      "send_via_whatsapp": "WhatsApp દ્વારા શેર કરો",
+      "submit": "રેફરલ મોકલો"
     },
     "dashboard": {
       "title": "રેફરલ ડેશબોર્ડ",
@@ -1160,7 +1174,18 @@
       "refer_more": "વધુ વિક્રેતા રેફર કરો",
       "top_referrer": "ટૉપ રેફરરl",
       "new_this_month": "આ મહિને નવા",
-      "revenue_added": "ઉમેરાયેલ આવક"
+      "revenue_added": "ઉમેરાયેલ આવક",
+      "credits_earned": "મેળવેલ ક્રેડિટ",
+      "milestone_progress": "{{progress}}/{{target}} ગ્રાહક",
+      "milestone_reward": "+₹{{reward}}",
+      "all_milestones_achieved": "તમામ માઇલસ્ટોન પ્રાપ્ત!",
+      "total_from_referrals": "રેફરલ કુલ",
+      "customers": "ગ્રાહક",
+      "refer_now": "હવે વિક્રેતા રેફર કરો",
+      "vendor_referrals_section": "તમારા રેફરલ",
+      "empty_title": "હજી કોઈ રેફરલ નથી",
+      "empty_desc": "વિક્રેતા રેફર કરો અને સાઇન-અપ પર ₹500 કમાઓ.",
+      "error_load": "રેફરલ ડૅશબૉર્ડ લોડ થઈ શક્યું નહીં. ફરી પ્રયાસ કરો."
     },
     "redeem": {
       "title": "ક્રેડિટ રિડીમ કરો",
@@ -1181,7 +1206,22 @@
       "withdraw_pending": "ઉપાડ વિનંતી સ્વીકૃત — 2-3 કામકાજ દિવસોમાં રકમ.",
       "applied_success": "ક્રેડિટ સફળ!",
       "subscription_unavailable": "બિલ લોડ ન થઈ. ફરી પ્રયાસ કરો.",
-      "apply": "ક્રેડિટ ઉપયોગ"
+      "apply": "ક્રેડિટ ઉપયોગ",
+      "available_balance": "ઉપલબ્ધ બૅલૅન્સ",
+      "options_title": "રિડીમ વિકલ્પ",
+      "subscription_title": "સભ્યપદ ચુકવણી",
+      "subscription_desc": "ક્રેડિટ વડે આગળનું બિલ ચૂકવો",
+      "upgrade_title": "પ્લાન અપગ્રેડ",
+      "upgrade_desc": "ક્રેડિટ વડે પ્લાન અપગ્રેડ કરો",
+      "upgrade_amount_label": "આગળની સ્ક્રીન પર અપગ્રેડ પસંદ કરો",
+      "withdrawal_title": "રોકડ ઉપાડ",
+      "withdrawal_desc": "ક્રેડિટ બૅંકમાં ટ્રાન્સ્ફર કરો (ન્યૂનતમ ₹2,000)",
+      "withdrawal_coming_soon_label": "ટૂંક સમયમાં",
+      "withdrawal_coming_soon": "ન્યૂનતમ ₹{{minimum}} જરૂરી. 10% ફી. 2–3 કામના દિવસ.",
+      "subscription_unavailable_title": "બિલ ઉપલબ્ધ નથી",
+      "subscription_unavailable_desc": "બિલ રકમ લોડ થઈ ન શકી. ફરી પ્રયાસ કરો.",
+      "amount_unavailable": "ઉપલબ્ધ નથી",
+      "error_load": "ક્રેડિટ બૅલૅન્સ લોડ થઈ ન શક્યું."
     },
     "invite": {
       "title": "ગ્રાહકોને આમંત્રણ",
@@ -1203,10 +1243,16 @@
       "send_n_plural": "{{count}} ગ્રાહકોને",
       "no_eligible": "આમંત્રણ લાયક ગ્રાહક નથી.",
       "result_summary": "આમંત્રણ પરિણામ",
-      "result_sent": "મોકલ્યા",
+      "result_sent": "{{count}} આમંત્રણ મોકલ્યા",
       "result_delivered": "મળ્યા",
       "result_failed": "નિષ્ફળ",
-      "result_skipped": "PayCycle પર"
+      "result_skipped": "{{count}} છોડ્યા (પહેલેથી PayCycle પર)",
+      "settings_title": "આમંત્રણ સેટિંગ",
+      "eligible": "આમંત્રણ માટે પાત્ર",
+      "target_label": "કોને મોકલો",
+      "language_label": "સંદેશ ભાષા",
+      "language_placeholder": "ભાષા પસંદ કરો",
+      "send_button": "આમંત્રણ મોકલો"
     },
     "customer": {
       "title": "ગ્રાહક રેફરલ",
@@ -1220,7 +1266,15 @@
       "referred_by": "ભલામણ",
       "joined": "{{date}} ના જોડ્યા",
       "bill_credit_note": "ભલામણ ગ્રાહક ₹50 બિલ ક્રેડિટ",
-      "view_all": "બધા"
+      "view_all": "બધા",
+      "top_referrers_title": "ટોચના રેફરરો",
+      "recent_additions_title": "તાજેતરના ઉમેરા",
+      "referral_count": "{{count}} રેફરલ",
+      "thank_message": "{{name}}, રેફર કરવા બદલ આભાર! 🙏",
+      "summary_label": "કુલ {{total}} રેફરલ · આ મહિને {{month}}",
+      "empty_title": "હજી કોઈ ગ્રાહક રેફરલ નથી",
+      "empty_desc": "ગ્રાહકો રેફર કરશે ત્યારે અહીં દેખાશે.",
+      "error_load": "ગ્રાહક રેફરલ લોડ થઈ ન શક્યા."
     },
     "nearby": {
       "title": "નજીકના વિક્રેતા",
@@ -1238,7 +1292,12 @@
         "water": "પાણી",
         "vegetables": "શાકભાજી",
         "other": "અન્ય"
-      }
+      },
+      "customer_count": "{{count}} ગ્રાહક",
+      "empty_title": "કોઈ નજીકના વિક્રેતા નથી",
+      "empty_desc": "તમારા વિસ્તારમાં અન્ય કોઈ વિક્રેતા PayCycle પર નથી.",
+      "invite_now": "તમારા વિસ્તારમાં વિક્રેતા રેફર કરો",
+      "error_load": "નજીકના વિક્રેતા લોડ થઈ ન શક્યા."
     },
     "error": {
       "self_referral": "પોતાનો નંબર રેફર ન થાય.",

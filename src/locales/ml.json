@@ -21,7 +21,10 @@
     "menu": "മെനു",
     "notifications": "അറിയിപ്പുകൾ",
     "notifications_badge": "{{count}} വായിക്കാത്ത അറിയിപ്പുകൾ",
-    "currency_symbol": "₹"
+    "currency_symbol": "₹",
+    "offline_writes_disabled": "നിങ്ങൾ ഓഫ്‌ലൈനിലാണ്. ഇപ്പോൾ മാറ്റങ്ങൾ സംരക്ഷിക്കാൻ കഴിയില്ല.",
+    "not_found": "കണ്ടെത്തിയില്ല. തിരിച്ചുപോയി വീണ്ടും ശ്രമിക്കുക.",
+    "coming_soon": "ഉടൻ"
   },
   "auth": {
     "welcome": "സ്വാഗതം",
@@ -1137,7 +1140,18 @@
       "vendor_phone_placeholder": "10 അക്ക നമ്പർ",
       "message_default": "PayCycle-ൽ ചേരൂ! എന്റെ കോഡ് {{code}} ഉപയോഗിക്കൂ: {{link}}",
       "share_whatsapp": "WhatsApp-ൽ പങ്കിടുക",
-      "success": "റഫറൽ അയച്ചു!"
+      "success": "റഫറൽ അയച്ചു!",
+      "benefits_title": "എന്തുകൊണ്ട് റഫർ ചെയ്യണം?",
+      "your_code": "നിങ്ങളുടെ റഫറൽ കോഡ്",
+      "copy_code": "കോഡ് കോപ്പി ചെയ്യുക",
+      "share_link": "ലിങ്ക് ഷെയർ ചെയ്യുക",
+      "phone_label": "വ്യാപാരി ഫോൺ നമ്പർ",
+      "phone_placeholder": "10 അക്ക മൊബൈൽ നമ്പർ",
+      "vendor_name_label": "വ്യാപാരി പേര് (ഓപ്ഷണൽ)",
+      "message_preview_label": "സന്ദേശ പ്രിവ്യൂ",
+      "message_preview_placeholder": "നിങ്ങളുടെ റഫറൽ സന്ദേശം ഇവിടെ കാണിക്കും",
+      "send_via_whatsapp": "WhatsApp വഴി ഷെയർ ചെയ്യുക",
+      "submit": "റഫറൽ അയക്കുക"
     },
     "dashboard": {
       "title": "റഫറൽ ഡാഷ്‌ബോർഡ്",
@@ -1160,7 +1174,18 @@
       "refer_more": "കൂടുതൽ റഫർ",
       "top_referrer": "ടോപ് റഫററർ",
       "new_this_month": "ഈ മാസം പുതിയത്",
-      "revenue_added": "ചേർത്ത വരുമാനം"
+      "revenue_added": "ചേർത്ത വരുമാനം",
+      "credits_earned": "നേടിയ ക്രെഡിറ്റ്",
+      "milestone_progress": "{{progress}}/{{target}} ഉപഭോക്താക്കൾ",
+      "milestone_reward": "+₹{{reward}}",
+      "all_milestones_achieved": "എല്ലാ മൈൽസ്റ്റോണുകളും നേടി!",
+      "total_from_referrals": "റഫറലുകളിൽ നിന്ന് ആകെ",
+      "customers": "ഉപഭോക്താക്കൾ",
+      "refer_now": "ഇപ്പോൾ വ്യാപാരിയെ റഫർ ചെയ്യുക",
+      "vendor_referrals_section": "നിങ്ങളുടെ റഫറലുകൾ",
+      "empty_title": "ഇതുവരെ റഫറൽ ഇല്ല",
+      "empty_desc": "ഒരു വ്യാപാരിയെ റഫർ ചെയ്ത് സൈൻ‌അപ്പിൽ ₹500 നേടൂ.",
+      "error_load": "റഫറൽ ഡാഷ്‌ബോർഡ് ലോഡ് ആയില്ല. വീണ്ടും ശ്രമിക്കുക."
     },
     "redeem": {
       "title": "ക്രെഡിറ്റ് റിഡീം",
@@ -1181,7 +1206,22 @@
       "withdraw_pending": "അഭ്യർഥന — 2-3 ദിവസം.",
       "applied_success": "ക്രെഡിറ്റ് ബാധകം!",
       "subscription_unavailable": "ബിൽ ലോഡ് ആകുന്നില്ല. വീണ്ടും ശ്രമിക്കൂ.",
-      "apply": "ബാധകം"
+      "apply": "ബാധകം",
+      "available_balance": "ലഭ്യമായ ബാലൻസ്",
+      "options_title": "റിഡീം ഓപ്ഷനുകൾ",
+      "subscription_title": "സബ്‌സ്‌ക്രിപ്ഷൻ പേയ്‌മെന്റ്",
+      "subscription_desc": "ക്രെഡിറ്റ് ഉപയോഗിച്ച് അടുത്ത ബിൽ അടക്കുക",
+      "upgrade_title": "പ്ലാൻ അപ്‌ഗ്രേഡ്",
+      "upgrade_desc": "ക്രെഡിറ്റ് ഉപയോഗിച്ച് പ്ലാൻ അപ്‌ഗ്രേഡ് ചെയ്യുക",
+      "upgrade_amount_label": "അടുത്ത സ്ക്രീനിൽ അപ്‌ഗ്രേഡ് തിരഞ്ഞെടുക്കുക",
+      "withdrawal_title": "പണം പിൻവലിക്കൽ",
+      "withdrawal_desc": "ക്രെഡിറ്റ് ബാങ്കിലേക്ക് മാറ്റുക (കുറഞ്ഞത് ₹2,000)",
+      "withdrawal_coming_soon_label": "ഉടൻ",
+      "withdrawal_coming_soon": "കുറഞ്ഞത് ₹{{minimum}} ആവശ്യം. 10% ഫീ. 2–3 ദിവസം.",
+      "subscription_unavailable_title": "ബിൽ ലഭ്യമല്ല",
+      "subscription_unavailable_desc": "ബിൽ തുക ലോഡ് ആയില്ല. വീണ്ടും ശ്രമിക്കുക.",
+      "amount_unavailable": "ലഭ്യമല്ല",
+      "error_load": "ക്രെഡിറ്റ് ബാലൻസ് ലോഡ് ആയില്ല."
     },
     "invite": {
       "title": "ഉപഭോക്താക്കളെ ക്ഷണിക്കൂ",
@@ -1203,10 +1243,16 @@
       "send_n_plural": "{{count}} ഉപഭോക്താക്കൾക്ക്",
       "no_eligible": "ആരുമില്ല.",
       "result_summary": "ഫലം",
-      "result_sent": "അയച്ചു",
+      "result_sent": "{{count}} ക്ഷണം അയച്ചു",
       "result_delivered": "ലഭിച്ചു",
       "result_failed": "പരാജയം",
-      "result_skipped": "PayCycle-ൽ"
+      "result_skipped": "{{count}} ഒഴിവാക്കി (ഇതിനകം PayCycle-ൽ)",
+      "settings_title": "ക്ഷണ ക്രമീകരണങ്ങൾ",
+      "eligible": "ക്ഷണത്തിന് അർഹം",
+      "target_label": "ആർക്ക് അയക്കണം",
+      "language_label": "സന്ദേശ ഭാഷ",
+      "language_placeholder": "ഭാഷ തിരഞ്ഞെടുക്കുക",
+      "send_button": "ക്ഷണം അയക്കുക"
     },
     "customer": {
       "title": "ഉപഭോക്തൃ റഫറൽ",
@@ -1220,7 +1266,15 @@
       "referred_by": "റഫർ",
       "joined": "{{date}} ചേർന്നു",
       "bill_credit_note": "₹50 ബിൽ ക്രെഡിറ്റ്",
-      "view_all": "എല്ലാം"
+      "view_all": "എല്ലാം",
+      "top_referrers_title": "മുൻനിര റഫറർമാർ",
+      "recent_additions_title": "സമീപകാല കൂട്ടിച്ചേർക്കലുകൾ",
+      "referral_count": "{{count}} റഫറലുകൾ",
+      "thank_message": "{{name}}, റഫർ ചെയ്തതിന് നന്ദി! 🙏",
+      "summary_label": "ആകെ {{total}} റഫറൽ · ഈ മാസം {{month}}",
+      "empty_title": "ഇതുവരെ ഉപഭോക്തൃ റഫറൽ ഇല്ല",
+      "empty_desc": "ഉപഭോക്താക്കൾ റഫർ ചെയ്യുമ്പോൾ ഇവിടെ കാണിക്കും.",
+      "error_load": "ഉപഭോക്തൃ റഫറൽ ലോഡ് ആയില്ല."
     },
     "nearby": {
       "title": "സമീപ വ്യാപാരികൾ",
@@ -1238,7 +1292,12 @@
         "water": "വെള്ളം",
         "vegetables": "പച്ചക്കറി",
         "other": "മറ്റുള്ളവ"
-      }
+      },
+      "customer_count": "{{count}} ഉപഭോക്താക്കൾ",
+      "empty_title": "സമീപത്ത് വ്യാപാരികളില്ല",
+      "empty_desc": "നിങ്ങളുടെ പ്രദേശത്ത് മറ്റ് വ്യാപാരികൾ PayCycle-ൽ ഇല്ല.",
+      "invite_now": "നിങ്ങളുടെ പ്രദേശത്ത് വ്യാപാരിയെ റഫർ ചെയ്യുക",
+      "error_load": "സമീപ വ്യാപാരികൾ ലോഡ് ആയില്ല."
     },
     "error": {
       "self_referral": "സ്വന്തം നമ്പർ റഫർ ചെയ്യാൻ കഴിയില്ല.",

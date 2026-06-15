@@ -21,7 +21,10 @@
     "menu": "मेनू",
     "notifications": "सूचनाएं",
     "notifications_badge": "{{count}} अपठित सूचनाएं",
-    "currency_symbol": "₹"
+    "currency_symbol": "₹",
+    "offline_writes_disabled": "आप ऑफ़लाइन हैं। अभी परिवर्तन सहेजे नहीं जा सकते।",
+    "not_found": "नहीं मिला। कृपया वापस जाएं और पुनः प्रयास करें।",
+    "coming_soon": "जल्द आ रहा है"
   },
   "auth": {
     "welcome": "स्वागत है",
@@ -1137,7 +1140,18 @@
       "vendor_phone_placeholder": "10 अंकों का मोबाइल नंबर",
       "message_default": "PayCycle में शामिल हों — भारत का सबसे अच्छा डेली डिलीवरी ऐप! मेरा रेफरल कोड {{code}} उपयोग करके साइनअप करें: {{link}}",
       "share_whatsapp": "WhatsApp पर शेयर करें",
-      "success": "रेफरल भेज दिया गया! साइनअप होने पर हम आपको सूचित करेंगे।"
+      "success": "रेफरल भेज दिया गया! साइनअप होने पर हम आपको सूचित करेंगे।",
+      "benefits_title": "क्यों रेफर करें?",
+      "your_code": "आपका रेफरल कोड",
+      "copy_code": "कोड कॉपी करें",
+      "share_link": "लिंक शेयर करें",
+      "phone_label": "विक्रेता फ़ोन नंबर",
+      "phone_placeholder": "10 अंकों का मोबाइल नंबर",
+      "vendor_name_label": "विक्रेता का नाम (वैकल्पिक)",
+      "message_preview_label": "संदेश पूर्वावलोकन",
+      "message_preview_placeholder": "आपका रेफरल संदेश यहाँ दिखेगा",
+      "send_via_whatsapp": "WhatsApp से शेयर करें",
+      "submit": "रेफरल भेजें"
     },
     "dashboard": {
       "title": "रेफरल डैशबोर्ड",
@@ -1160,7 +1174,18 @@
       "refer_more": "अधिक विक्रेताओं को रेफर करें",
       "top_referrer": "सर्वश्रेष्ठ रेफरर",
       "new_this_month": "इस महीने नए",
-      "revenue_added": "जोड़ा गया राजस्व"
+      "revenue_added": "जोड़ा गया राजस्व",
+      "credits_earned": "अर्जित क्रेडिट",
+      "milestone_progress": "{{progress}}/{{target}} ग्राहक",
+      "milestone_reward": "+₹{{reward}}",
+      "all_milestones_achieved": "सभी माइलस्टोन प्राप्त!",
+      "total_from_referrals": "रेफरल से कुल",
+      "customers": "ग्राहक",
+      "refer_now": "अभी विक्रेता रेफर करें",
+      "vendor_referrals_section": "आपके रेफरल",
+      "empty_title": "अभी कोई रेफरल नहीं",
+      "empty_desc": "विक्रेता रेफर करें और साइनअप पर ₹500 कमाएं।",
+      "error_load": "रेफरल डैशबोर्ड लोड नहीं हो सका। पुनः प्रयास करें।"
     },
     "redeem": {
       "title": "क्रेडिट रिडीम करें",
@@ -1181,7 +1206,22 @@
       "withdraw_pending": "निकासी अनुरोध स्वीकार हुआ — 2–3 कार्य दिवसों में राशि प्राप्त होगी।",
       "applied_success": "क्रेडिट सफलतापूर्वक लागू हुए!",
       "subscription_unavailable": "आपका बिल लोड नहीं हो सका। क्रेडिट लगाने के लिए पुनः प्रयास करें।",
-      "apply": "क्रेडिट लगाएं"
+      "apply": "क्रेडिट लगाएं",
+      "available_balance": "उपलब्ध बैलेंस",
+      "options_title": "रिडीम विकल्प",
+      "subscription_title": "सदस्यता भुगतान",
+      "subscription_desc": "अगला बिल क्रेडिट से भुगतान करें",
+      "upgrade_title": "प्लान अपग्रेड",
+      "upgrade_desc": "क्रेडिट से प्लान अपग्रेड करें",
+      "upgrade_amount_label": "अगली स्क्रीन पर अपग्रेड चुनें",
+      "withdrawal_title": "नकद निकासी",
+      "withdrawal_desc": "क्रेडिट बैंक में ट्रांसफर करें (न्यूनतम ₹2,000)",
+      "withdrawal_coming_soon_label": "जल्द आ रहा है",
+      "withdrawal_coming_soon": "न्यूनतम ₹{{minimum}} आवश्यक। 10% शुल्क। 2–3 कार्यदिवस।",
+      "subscription_unavailable_title": "बिल अनुपलब्ध",
+      "subscription_unavailable_desc": "बिल राशि लोड नहीं हो सका। पुनः प्रयास करें।",
+      "amount_unavailable": "अनुपलब्ध",
+      "error_load": "क्रेडिट बैलेंस लोड नहीं हो सका।"
     },
     "invite": {
       "title": "ग्राहकों को आमंत्रित करें",
@@ -1203,10 +1243,16 @@
       "send_n_plural": "{{count}} ग्राहकों को भेजें",
       "no_eligible": "आमंत्रित करने के लिए कोई योग्य ग्राहक नहीं।",
       "result_summary": "आमंत्रण परिणाम",
-      "result_sent": "भेजे गए",
+      "result_sent": "{{count}} आमंत्रण भेजे",
       "result_delivered": "डिलीवर हुए",
       "result_failed": "विफल",
-      "result_skipped": "पहले से PayCycle पर"
+      "result_skipped": "{{count}} छोड़े (पहले से PayCycle पर)",
+      "settings_title": "आमंत्रण सेटिंग",
+      "eligible": "आमंत्रण के लिए पात्र",
+      "target_label": "किसे भेजें",
+      "language_label": "संदेश भाषा",
+      "language_placeholder": "भाषा चुनें",
+      "send_button": "आमंत्रण भेजें"
     },
     "customer": {
       "title": "ग्राहक रेफरल",
@@ -1220,7 +1266,15 @@
       "referred_by": "रेफर किया",
       "joined": "{{date}} को जुड़े",
       "bill_credit_note": "रेफर करने वाले ग्राहकों को ₹50 बिल क्रेडिट मिलता है",
-      "view_all": "सभी देखें"
+      "view_all": "सभी देखें",
+      "top_referrers_title": "शीर्ष रेफरकर्ता",
+      "recent_additions_title": "हाल के जुड़े",
+      "referral_count": "{{count}} रेफरल",
+      "thank_message": "{{name}} जी, धन्यवाद! 🙏",
+      "summary_label": "कुल {{total}} रेफरल · इस माह {{month}}",
+      "empty_title": "अभी कोई ग्राहक रेफरल नहीं",
+      "empty_desc": "जब ग्राहक रेफर करेंगे, वे यहाँ दिखेंगे।",
+      "error_load": "ग्राहक रेफरल लोड नहीं हो सका।"
     },
     "nearby": {
       "title": "नज़दीकी विक्रेता",
@@ -1238,7 +1292,12 @@
         "water": "पानी",
         "vegetables": "सब्जियां",
         "other": "अन्य"
-      }
+      },
+      "customer_count": "{{count}} ग्राहक",
+      "empty_title": "कोई नजदीकी विक्रेता नहीं",
+      "empty_desc": "आपके क्षेत्र में कोई विक्रेता PayCycle पर नहीं है।",
+      "invite_now": "अपने क्षेत्र में विक्रेता रेफर करें",
+      "error_load": "नजदीकी विक्रेता लोड नहीं हो सके।"
     },
     "error": {
       "self_referral": "आप अपना नंबर रेफर नहीं कर सकते।",
