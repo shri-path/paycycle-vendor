@@ -298,6 +298,16 @@ export const useAuthStore = create<AuthState>()(
           } catch {
             // voice store not loaded yet — nothing to clear.
           }
+          // Wipe all local referral / vendor credit data (financial + PII) on logout (US-014).
+          try {
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
+            const { useReferralStore } = require('@modules/referral/store/referral.store') as {
+              useReferralStore: { getState: () => { clearReferral: () => void } }
+            }
+            useReferralStore.getState().clearReferral()
+          } catch {
+            // referral store not loaded yet — nothing to clear.
+          }
           set({
             isAuthenticated: false,
             user: null,

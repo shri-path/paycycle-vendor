@@ -114,6 +114,31 @@ function getOwnerMoreSections(handlers: MoreMenuHandlers): MoreMenuSection[] {
       ],
     },
     {
+      titleKey: 'nav.more.section.growth',
+      rows: [
+        {
+          labelKey: 'nav.more.row.referralDashboard',
+          onPress: () => handlers.navigate('/(app)/referrals/dashboard'),
+          testID: 'more-row-referral-dashboard',
+        },
+        {
+          labelKey: 'nav.more.row.referVendor',
+          onPress: () => handlers.navigate('/(app)/referrals/refer-vendor'),
+          testID: 'more-row-refer-vendor',
+        },
+        {
+          labelKey: 'nav.more.row.inviteCustomers',
+          onPress: () => handlers.navigate('/(app)/referrals/invite-customers'),
+          testID: 'more-row-invite-customers',
+        },
+        {
+          labelKey: 'nav.more.row.nearbyVendors',
+          onPress: () => handlers.navigate('/(app)/referrals/nearby-vendors'),
+          testID: 'more-row-nearby-vendors',
+        },
+      ],
+    },
+    {
       titleKey: 'nav.more.section.collections',
       rows: [
         {
