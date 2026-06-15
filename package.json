@@ -14,6 +14,7 @@
     "preweb": "node ./scripts/free-port.js",
     "web": "expo start --web",
     "lint": "expo lint",
+    "audit:locales": "node ./scripts/audit_locales.js",
     "typecheck": "tsc --noEmit",
     "test": "jest --passWithNoTests",
     "test:coverage": "jest --coverage --passWithNoTests",
